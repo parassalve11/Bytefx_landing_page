@@ -252,7 +252,6 @@ export function AccountTypes() {
       id="accounts"
       bg="alt"
       align="center"
-      eyebrow="Account types"
       title={
         <>
           Just one click away to{" "}

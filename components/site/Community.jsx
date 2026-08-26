@@ -42,7 +42,6 @@ export function Community() {
     <Section
       id="community"
       align="center"
-      eyebrow="Community"
       title={
         <>
           Never <span className="text-gradient-brand">trade alone.</span>

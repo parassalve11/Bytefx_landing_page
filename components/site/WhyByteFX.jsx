@@ -41,7 +41,6 @@ export function WhyByteFX() {
   return (
     <Section
       id="why"
-      eyebrow="Why ByteFX"
       title={
         <>
           Conditions you can measure,{" "}

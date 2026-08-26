@@ -39,13 +39,37 @@ Typeface is **Poppins** 300–700 via `next/font/google`.
 
 Three rules that carry most of the look:
 
-1. **Every section gets an eyebrow above the H2.** `Section` handles it.
-2. **Sections alternate white / `bg-alt`.** That alternation is the rhythm — no dividers. Adding a section means re-checking the run.
+1. **Nothing sits above the H2.** The kicker line every section used to carry
+   ("Markets", "Funding", "Mobile"…) restated the heading directly underneath
+   it, so it was a word of chrome on every screen — removed, along with the
+   category line on each market tile ("EQUITIES" over "Stocks"). The `eyebrow`
+   class stays for labels *inside* a card or table (Min. deposit, Watchlist,
+   Method / Withdrawal); that is a different job.
+2. **Sections alternate white / `bg-alt`,** broken by the two saturated bands.
+   That alternation is the rhythm — no dividers. Adding a section means
+   re-checking the run.
 3. **Never a blue→green gradient on text.** Blue and green have separate jobs.
    `text-gradient-brand` is display headings only — at most one per section.
    The metrics strip deliberately does *not* use it.
 
 All numbers use `.tnum` (tabular figures) so prices never jitter.
+
+### The saturated band
+
+`Section` takes `bg="brand"` — the deep blue `band-brand`, used once on the
+landing page (the platforms section) to break the light run so the page is not
+one long scroll of white.
+
+Anything placed on it must use fixed-colour classes (`text-white`,
+`border-white/20`, `bg-white/8`, the white `pay-puck`) rather than theme
+tokens: the band does not invert with the theme, so `text-ink` and friends
+would invert out from under it.
+
+A lime `band-go` was tried for the mobile section and removed — that section is
+back on `bg-alt`. Worth knowing if it is ever revisited: white on `#4CD201` is
+2.3:1 and fails outright, so a green band has to carry near-black type
+(`on-go`), and deepening the green enough to carry white stops it reading as
+the brand green at all.
 
 ### Dark mode
 
@@ -158,6 +182,31 @@ poster is the whole story.
 (1.3 MB) and `forex_video.mp4` (2.3 MB) are still in `public/assets` and still
 ship. Delete them once you are happy with the derived versions.
 
+## Platforms: MT5, TradingView, Atlas AI
+
+`components/site/TradingPlatforms.jsx`, on the blue band, between the mobile
+section and funding.
+
+The organising idea is that the three are **not alternatives — they are three
+jobs on one balance**, so each card leads with the job (Execution / Analysis /
+Insight) and the row reads as a workflow rather than a menu of logins. That is
+what carries the section; there is no per-platform screenshot to lean on.
+
+An earlier version put the three marks in a small row at the foot of the mobile
+section and it read as an afterthought — three logos bolted onto someone
+else's section. Weight is the whole difference here.
+
+All three sit on white app tiles (`pay-puck`). The marks are wildly different —
+a five-colour MT5 glyph, a near-black TradingView wordmark, a blue-green Atlas
+monogram — and white is the only ground all three read on equally, on the band
+or anywhere else.
+
+**Overlap to resolve:** `components/site/Platforms.jsx` is an older, larger
+take on the same idea (a hand-built WebTrader mock on the same band). It is
+still **unmounted on every route** and is not what renders this section. Either
+fold its terminal mock into `TradingPlatforms` or delete it — right now the
+repo has two components for one section.
+
 ## The two Aceternity components
 
 Both were shipped as TSX and are **converted to JSX and re-tuned for light mode** here:
@@ -180,6 +229,9 @@ Both were shipped as TSX and are **converted to JSX and re-tuned for light mode*
   site says ~1 hour. The conservative number ships — flip it only on sign-off.
 - WebTrader and phone screens are hand-built placeholders; swap for real product captures.
 - `components/site/Ticker.jsx` runs a simulated feed. Replace `useSimulatedFeed` with the real socket; the contract is `{ symbol, price, change }`.
+- Platform capability lines and availability chips in `TradingPlatforms.jsx`
+  are written from what each platform does generally, not from an integration
+  spec. Confirm the TradingView broker link and what Atlas AI actually ships.
 - Mobile has been audited statically but not viewed on a device. Check 390 / 768 / 1024.
   The funding rail (hub + connector fan) is `lg:` and up only; below that the
   method list carries the section on its own.

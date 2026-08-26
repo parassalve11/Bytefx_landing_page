@@ -62,8 +62,7 @@ export function Faq() {
       />
       <div className="grid gap-10 lg:grid-cols-[minmax(0,360px)_minmax(0,1fr)] lg:gap-16">
         <div className="lg:sticky lg:top-28 lg:self-start">
-          <p className="eyebrow">Support</p>
-          <Reveal as="h2" className="h-section mt-3">
+          <Reveal as="h2" className="h-section">
             Questions, answered before you ask.
           </Reveal>
           <Reveal

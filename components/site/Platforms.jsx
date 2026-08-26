@@ -207,7 +207,6 @@ export function Platforms() {
     <Section
       id="platforms"
       bg="brand"
-      eyebrow="Platforms"
       title={
         <>
           The terminal professionals{" "}

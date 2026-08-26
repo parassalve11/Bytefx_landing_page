@@ -51,7 +51,6 @@ export function Trust() {
     <Section
       id="trust"
       bg="alt"
-      eyebrow="Trust and security"
       title={
         <>
           Who you are <span className="text-brand-blue">sending money to.</span>

@@ -16,7 +16,6 @@ export function Partnership() {
     <Section
       id="partnership"
       bg="alt"
-      eyebrow="Partnership"
       title={
         <>
           Grow <span className="text-gradient-brand">with ByteFX.</span>

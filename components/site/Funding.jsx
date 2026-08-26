@@ -135,8 +135,7 @@ export function Funding() {
       <div className="grid items-center gap-12 lg:grid-cols-[minmax(0,0.82fr)_minmax(0,1fr)] lg:gap-14 xl:gap-20">
         {/* ---------------------------------------------------------- */}
         <Reveal>
-          <p className="eyebrow">Funding</p>
-          <h2 className="h-section mt-3">
+          <h2 className="h-section">
             Fast and reliable{" "}
             <span className="text-gradient-brand">payment methods.</span>
           </h2>

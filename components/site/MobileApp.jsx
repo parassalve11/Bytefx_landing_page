@@ -1,11 +1,20 @@
 "use client";
 
 import Image from "next/image";
-import { useRef } from "react";
-import { motion, useReducedMotion, useScroll, useTransform } from "motion/react";
+import { useId, useRef, useState } from "react";
+import {
+  AnimatePresence,
+  motion,
+  useReducedMotion,
+  useScroll,
+  useTransform,
+} from "motion/react";
 import { Apple, Play } from "lucide-react";
 import { Section } from "@/components/ui/section";
 import { Reveal } from "@/components/ui/reveal";
+import { cn } from "@/lib/utils";
+
+const EASE = [0.22, 1, 0.36, 1];
 
 const FEATURES = [
   {
@@ -19,6 +28,35 @@ const FEATURES = [
   {
     title: "One account, every device",
     copy: "Positions opened on mobile show instantly in MT5 and WebTrader.",
+  },
+];
+
+/**
+ * TODO [PRODUCT]: these three lines describe what each platform does
+ * generally, not a ByteFX integration spec. Confirm the TradingView broker
+ * link and whatever Atlas AI actually ships before launch.
+ */
+const PLATFORMS = [
+  {
+    id: "mt5",
+    name: "MetaTrader 5",
+    copy: "Every order type, Expert Advisors and 21 timeframes — running on your live balance.",
+    icon: "/assets/mobile-section/meta-treader.png",
+    markClass: "h-[22px] w-[22px]",
+  },
+  {
+    id: "tradingview",
+    name: "TradingView",
+    copy: "Chart where you already chart. Orders and open positions stay linked to your account.",
+    icon: "/assets/mobile-section/treadingview.png",
+    markClass: "h-[26px] w-[26px]",
+  },
+  {
+    id: "atlas",
+    name: "Atlas AI",
+    copy: "Reads your trade history and scores it, so you can see what is actually costing you.",
+    icon: "/assets/mobile-section/atlas.png",
+    markClass: "h-6 w-6",
   },
 ];
 
@@ -37,6 +75,121 @@ function StoreBadge({ icon: Icon, top, bottom, href }) {
   );
 }
 
+/**
+ * The three platforms the same account opens in, as one small switcher rather
+ * than a section: this band is already the "one account, every device"
+ * argument, and three logos do not need a section of their own to make the
+ * same point. Picking one swaps the line underneath it, so the whole thing
+ * stays two rows tall no matter how many platforms are listed.
+ *
+ * Real tabs — click, arrow keys, Home/End — not hover-only, which would put
+ * the copy out of reach on touch. Each mark sits on a white puck for the same
+ * reason as the funding icons: TradingView's near-black wordmark has no other
+ * ground it reads on in both themes.
+ */
+function PlatformSwitch() {
+  const [active, setActive] = useState(PLATFORMS[0].id);
+  const reduced = useReducedMotion();
+  const refs = useRef([]);
+  const baseId = useId();
+  const current = PLATFORMS.find((p) => p.id === active) ?? PLATFORMS[0];
+
+  const onKeyDown = (e) => {
+    const i = PLATFORMS.findIndex((p) => p.id === active);
+    const last = PLATFORMS.length - 1;
+    let next = null;
+    if (e.key === "ArrowRight") next = i === last ? 0 : i + 1;
+    if (e.key === "ArrowLeft") next = i === 0 ? last : i - 1;
+    if (e.key === "Home") next = 0;
+    if (e.key === "End") next = last;
+    if (next === null) return;
+    e.preventDefault();
+    setActive(PLATFORMS[next].id);
+    refs.current[next]?.focus();
+  };
+
+  return (
+    <div className="text-center">
+      <p className="text-[13.5px] text-muted">
+        The same account opens in all three.
+      </p>
+
+      <div
+        role="tablist"
+        aria-label="Trading platforms"
+        onKeyDown={onKeyDown}
+        className="mx-auto mt-4 inline-flex max-w-full flex-wrap justify-center gap-1 rounded-full border border-line bg-surface p-1 shadow-sm"
+      >
+        {PLATFORMS.map((p, i) => {
+          const isActive = p.id === active;
+          return (
+            <button
+              key={p.id}
+              ref={(el) => {
+                refs.current[i] = el;
+              }}
+              role="tab"
+              type="button"
+              id={`${baseId}-tab-${p.id}`}
+              aria-selected={isActive}
+              aria-controls={`${baseId}-panel`}
+              tabIndex={isActive ? 0 : -1}
+              onClick={() => setActive(p.id)}
+              className={cn(
+                "relative inline-flex items-center gap-2 rounded-full py-1.5 pr-4 pl-1.5 text-[13.5px] font-semibold whitespace-nowrap transition-colors",
+                isActive ? "text-brand" : "text-body hover:text-ink"
+              )}
+            >
+              {isActive &&
+                (reduced ? (
+                  <span className="absolute inset-0 rounded-full bg-brand-50" />
+                ) : (
+                  <motion.span
+                    layoutId="platform-pill"
+                    className="absolute inset-0 rounded-full bg-brand-50"
+                    transition={{ duration: 0.28, ease: EASE }}
+                  />
+                ))}
+              <span className="pay-puck relative flex h-7 w-7 shrink-0 items-center justify-center rounded-full">
+                <Image
+                  src={p.icon}
+                  alt=""
+                  width={1254}
+                  height={1254}
+                  sizes="28px"
+                  className={cn("object-contain", p.markClass)}
+                />
+              </span>
+              <span className="relative">{p.name}</span>
+            </button>
+          );
+        })}
+      </div>
+
+      {/* Fixed height so swapping the line never nudges the page. */}
+      <div
+        id={`${baseId}-panel`}
+        role="tabpanel"
+        aria-labelledby={`${baseId}-tab-${current.id}`}
+        className="mx-auto mt-4 flex min-h-[48px] max-w-lg items-start justify-center"
+      >
+        <AnimatePresence mode="wait" initial={false}>
+          <motion.p
+            key={current.id}
+            initial={reduced ? false : { opacity: 0, y: 6 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={reduced ? undefined : { opacity: 0, y: -6 }}
+            transition={{ duration: 0.22, ease: EASE }}
+            className="text-[14.5px] leading-relaxed text-body"
+          >
+            {current.copy}
+          </motion.p>
+        </AnimatePresence>
+      </div>
+    </div>
+  );
+}
+
 export function MobileApp() {
   const ref = useRef(null);
   const reduced = useReducedMotion();
@@ -52,7 +205,6 @@ export function MobileApp() {
       id="app"
       bg="alt"
       align="center"
-      eyebrow="Mobile"
       title={
         <>
           Trade anywhere.{" "}
@@ -134,6 +286,10 @@ export function MobileApp() {
               install
             </span>
           </div>
+        </Reveal>
+
+        <Reveal delay={0.14} className="mt-12">
+          <PlatformSwitch />
         </Reveal>
       </div>
     </Section>

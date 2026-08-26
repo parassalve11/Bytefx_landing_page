@@ -2,12 +2,17 @@ import { cn } from "@/lib/utils";
 import { Reveal } from "@/components/ui/reveal";
 
 /**
- * Every section gets an eyebrow above the H2 — that plus the white/alt
- * alternation is the page's entire hierarchy system. No dividers needed.
+ * Section hierarchy is the H2 plus the white / `bg-alt` alternation — nothing
+ * above the heading. The kicker line every section used to carry ("Markets",
+ * "Funding", "Mobile"…) restated the heading directly underneath it, so it was
+ * a word of chrome on every screen and it is gone. Labels *inside* a card or a
+ * table still use the `eyebrow` class; that is a different job.
+ *
+ * `bg` picks the surface: white, `alt`, the arc wash, or the saturated blue
+ * band, which inverts its own header to white type.
  */
 export function Section({
   id,
-  eyebrow,
   title,
   lead,
   align = "left",
@@ -17,7 +22,6 @@ export function Section({
   headerClassName,
   children,
 }) {
-  // A saturated band inverts the whole header, so resolve it once here.
   const onDark = bg === "brand";
 
   return (
@@ -36,7 +40,7 @@ export function Section({
       )}
 
       <div className="container-x relative">
-        {(eyebrow || title || lead) && (
+        {(title || lead) && (
           <div
             className={cn(
               "mb-10 md:mb-14",
@@ -46,15 +50,10 @@ export function Section({
             )}
           >
             <div className={cn(align === "center" ? "" : "max-w-2xl")}>
-              {eyebrow && (
-                <p className={cn("eyebrow", onDark && "text-white/60")}>
-                  {eyebrow}
-                </p>
-              )}
               {title && (
                 <Reveal
                   as="h2"
-                  className={cn("h-section mt-3", onDark && "text-white")}
+                  className={cn("h-section", onDark && "text-white")}
                 >
                   {title}
                 </Reveal>
@@ -79,8 +78,4 @@ export function Section({
       </div>
     </section>
   );
-}
-
-export function Eyebrow({ children, className }) {
-  return <p className={cn("eyebrow", className)}>{children}</p>;
 }

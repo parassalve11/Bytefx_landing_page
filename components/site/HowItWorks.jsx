@@ -50,7 +50,6 @@ export function HowItWorks() {
     <Section
       id="how-it-works"
       bg="alt"
-      eyebrow="Getting started"
       title={
         <>
           Live in <span className="text-gradient-brand">four steps.</span>

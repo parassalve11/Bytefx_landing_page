@@ -29,7 +29,6 @@ import { cn } from "@/lib/utils";
 const MARKETS = [
   {
     id: "indices",
-    eyebrow: "Benchmarks",
     title: "Indices",
     count: "12+ global indices",
     description: "S&P 500, Nasdaq 100, Dow and FTSE — spot and futures.",
@@ -41,7 +40,6 @@ const MARKETS = [
   },
   {
     id: "crypto",
-    eyebrow: "Digital assets",
     title: "Crypto",
     count: "25+ crypto CFDs",
     description: "Bitcoin, Ethereum, Solana and Tether, around the clock.",
@@ -53,7 +51,6 @@ const MARKETS = [
   },
   {
     id: "stocks",
-    eyebrow: "Equities",
     title: "Stocks",
     count: "500+ share CFDs",
     description: "Long or short on the largest US, UK and European names.",
@@ -68,7 +65,6 @@ const MARKETS = [
   },
   {
     id: "commodities",
-    eyebrow: "Metals & energy",
     title: "Metals & Energy",
     count: "XAU, XAG, WTI & Brent",
     description: "Gold, silver, crude and natural gas at institutional pricing.",
@@ -174,10 +170,7 @@ function MarketTile({ market }) {
         className="min-h-[340px] p-6"
       >
         <div className="relative z-10 max-w-[54%]">
-          <p className="text-[10.5px] font-semibold tracking-[0.11em] text-muted uppercase">
-            {market.eyebrow}
-          </p>
-          <h3 className="mt-2 text-[22px] leading-tight font-bold tracking-[-0.025em] text-ink">
+          <h3 className="text-[22px] leading-tight font-bold tracking-[-0.025em] text-ink">
             {market.title}
           </h3>
           <p className="tnum mt-1 text-[11.5px] font-semibold tracking-[0.035em] text-brand uppercase">
@@ -216,10 +209,7 @@ function ForexTile() {
         className="min-h-[340px] sm:flex-row sm:items-stretch"
       >
         <div className="relative z-10 flex flex-1 flex-col justify-center p-6 sm:py-8 sm:pr-0 sm:pl-8">
-          <p className="text-[10.5px] font-semibold tracking-[0.11em] text-muted uppercase">
-            Currencies
-          </p>
-          <h3 className="mt-2 text-[32px] leading-[1.04] font-bold tracking-[-0.03em] text-ink md:text-[40px]">
+          <h3 className="text-[32px] leading-[1.04] font-bold tracking-[-0.03em] text-ink md:text-[40px]">
             Forex
           </h3>
           <p className="tnum mt-2 text-[12px] font-semibold tracking-[0.035em] text-brand uppercase">
@@ -252,7 +242,6 @@ export function Markets() {
   return (
     <Section
       id="markets"
-      eyebrow="Markets"
       className="platinum-wash border-y border-line"
       title={
         <>
