@@ -136,8 +136,7 @@ export function Funding() {
         {/* ---------------------------------------------------------- */}
         <Reveal>
           <h2 className="h-section">
-            Fast and reliable{" "}
-            <span className="text-gradient-brand">payment methods.</span>
+            Fast and reliable payment methods.
           </h2>
           <p className="mt-5 max-w-lg text-[16.5px] leading-relaxed text-body">
             Six ways in and out of your account, all of them settled by

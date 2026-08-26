@@ -19,21 +19,21 @@ npm run build
 
 Brand values sampled from the live site, not guessed:
 
-| Token | Light | Dark | Use |
-|---|---|---|---|
-| `brand` | `#1356BE` | `#6AA4FF` | text, icons, hairlines, decorative bars |
-| `brand-solid` | `#1356BE` | `#2461C9` | **fills that carry white type** |
-| `go` | `#4CD201` | `#4CD201` | primary CTA fill |
-| `on-go` | `#01061A` | `#01061A` | type on green — never inverts |
-| `go-600` | `#3CA800` | `#77E63A` | green text on a `go-50` tint |
-| `ink` | `#01061A` | `#EAF0FA` | headings |
-| `body` / `muted` | `#47536B` / `#8794A8` | `#A3B1C7` / `#7385A0` | paragraphs / eyebrows |
-| `line` / `line-strong` | `#E3E9F2` / `#CBD5E5` | `#202A3D` / `#2E3B53` | hairlines |
-| `canvas` / `surface` | `#FFFFFF` / `#FFFFFF` | `#070C17` / `#111A2C` | page / anything on top of it |
-| `alt` / `sunken` | `#F7F9FC` / `#F1F4F9` | `#0B1120` / `#121B2C` | alternating bands / inset panels |
-| `shell` | `#01061A` | `#030711` | footer plinth and drawer scrims — dark in **both** themes |
-| `warn-50` / `warn-600` | `#FFF4E5` / `#B45309` | `#3A2A10` / `#F0B45F` | advisory notices |
-| `up` / `down` | `#16A34A` / `#DC2626` | `#2ECC71` / `#F26363` | market data only |
+| Token | Value | Use |
+|---|---|---|
+| `brand` | `#1356BE` | text, icons, hairlines, decorative bars |
+| `brand-solid` | `#1356BE` | **fills that carry white type** |
+| `go` | `#4CD201` | primary CTA fill |
+| `on-go` | `#01061A` | type on green |
+| `go-600` | `#3CA800` | green text on a `go-50` tint |
+| `ink` | `#01061A` | headings |
+| `body` / `muted` | `#47536B` / `#8794A8` | paragraphs / eyebrows |
+| `line` / `line-strong` | `#E3E9F2` / `#CBD5E5` | hairlines |
+| `canvas` / `surface` | `#FFFFFF` / `#FFFFFF` | page / anything on top of it |
+| `alt` / `sunken` | `#F7F9FC` / `#F1F4F9` | alternating bands / inset panels |
+| `shell` | `#01061A` | footer plinth, drawer scrims, the Thailand photo scrim |
+| `warn-50` / `warn-600` | `#FFF4E5` / `#B45309` | advisory notices |
+| `up` / `down` | `#16A34A` / `#DC2626` | market data only |
 
 Typeface is **Poppins** 300–700 via `next/font/google`.
 
@@ -48,9 +48,19 @@ Three rules that carry most of the look:
 2. **Sections alternate white / `bg-alt`,** broken by the two saturated bands.
    That alternation is the rhythm — no dividers. Adding a section means
    re-checking the run.
-3. **Never a blue→green gradient on text.** Blue and green have separate jobs.
-   `text-gradient-brand` is display headings only — at most one per section.
-   The metrics strip deliberately does *not* use it.
+3. **Headings are solid.** No gradient on text, and no two-tone accent phrase
+   — no coloured word inside a sentence at all. Reference is
+   [xtb.com](https://www.xtb.com/int), whose headings carry entirely on size,
+   weight and tight tracking. Size and weight are the hierarchy; colour goes
+   on CTAs, market data and icons.
+
+   This replaced a blue→green `text-gradient-brand` accent on eight headings
+   and a blue-word/green-word pair on three more. **The utilities were deleted
+   from `globals.css`, not just unused** — `text-gradient-brand`,
+   `text-brand-blue` and `text-brand-green` no longer exist, so the treatment
+   cannot creep back one span at a time. The old metrics strip always set its
+   figures in solid `ink`; the rest of the page now matches it rather than the
+   other way round.
 
 All numbers use `.tnum` (tabular figures) so prices never jitter.
 
@@ -61,9 +71,13 @@ landing page (the platforms section) to break the light run so the page is not
 one long scroll of white.
 
 Anything placed on it must use fixed-colour classes (`text-white`,
-`border-white/20`, `bg-white/8`, the white `pay-puck`) rather than theme
-tokens: the band does not invert with the theme, so `text-ink` and friends
-would invert out from under it.
+`border-white/20`, `bg-white/8`, the white `pay-puck`) rather than surface
+tokens — `text-ink` on a deep blue band is near-black on near-black.
+
+**Known rhythm bug:** `AccountTypes` and `MobileApp` are both `bg="alt"` and
+sit adjacent, so the alternation flattens across two full sections. A band
+between them was tried and removed (see Platforms below); if it is ever
+fixed, flipping one of the two to white is the cheaper move.
 
 A lime `band-go` was tried for the mobile section and removed — that section is
 back on `bg-alt`. Worth knowing if it is ever revisited: white on `#4CD201` is
@@ -71,38 +85,27 @@ back on `bg-alt`. Worth knowing if it is ever revisited: white on `#4CD201` is
 (`on-go`), and deepening the green enough to carry white stops it reading as
 the brand green at all.
 
-### Dark mode
+### Light only
 
-Light is the default and the OS setting is **not** consulted — this is a
-marketing site and the light palette is the brand's. Dark is opt-in via the
-navbar switch (`components/ui/theme-toggle.jsx`).
+**The site has no dark mode, and adding one back is a real piece of work
+rather than a flag.** The `data-theme` attribute, the pre-paint resolver
+script in `app/layout.jsx`, `@custom-variant dark`, the whole
+`:root[data-theme="dark"]` token block, twelve unlayered dark overrides for
+the treatments that bake in literal colours (`coin`, `band-brand`,
+`arc-wash`, `platinum-*`, `plate-well`, `pay-puck`, `::selection`) and
+`components/ui/theme-toggle.jsx` were all removed together. Restoring the
+toggle without restoring those overrides gives you a half-inverted page.
 
-The whole mechanism is one attribute: `data-theme="light" | "dark"` on
-`<html>`, written before first paint by the inline script in `app/layout.jsx`
-(the pattern from `next/dist/docs/01-app/02-guides/preventing-flash-before-hydration.md`).
-`@custom-variant dark` in `globals.css` keys off that attribute, so there is
-never a media query and a class disagreeing about the current theme. The
-toggle renders both icons and lets CSS pick the visible one — no client state,
-so no hydration mismatch and no flash of the wrong icon. All routes stay
-statically prerendered.
+What survives, and is worth keeping: every themed value is still a bare
+custom property on `:root` mapped onto Tailwind names through `@theme
+inline`. So `text-ink`, `bg-surface` and `border-line` remain the single
+source of truth for a colour, and a palette change is still a one-line edit.
+There is no `dark:` utility anywhere in the tree — the one that existed
+(`dark:brightness-[1.55]` on the stocks mark in `Markets.jsx`) went with it.
 
-Every themed value is a bare custom property on `:root` / `:root[data-theme="dark"]`,
-mapped onto Tailwind names through `@theme inline`. **Ordinary surface work
-therefore needs no `dark:` variant** — `text-ink`, `bg-surface`, `border-line`
-flip on their own. Three things do need care:
-
-- **Fills that carry white type** use `brand-solid`, not `brand`. `brand`
-  lightens in dark mode (good for text, wrong for a fill).
-- **Anything dark in both themes** — the footer, drawer scrims — uses `shell`,
-  not `ink`. `ink` inverts.
-- **Third-party marks with fixed colours** (Visa blue, Apple Pay black, the
-  navy bank glyph, the app QR code) sit on a white puck in both themes rather
-  than being recoloured. See `pay-puck` in `globals.css`.
-
-Treatments that bake in literal colours — `platinum-plate`, `band-brand`,
-`card-frame`, `coin`, `arc-wash` — get dark overrides in the unlayered block at
-the foot of `globals.css`, which beats the `@utility` output without any
-specificity games.
+`brand` and `brand-solid` are now the same hue. They are kept as two names
+because they mean two different things at the call site, and collapsing them
+would lose that.
 
 ## Layout
 
@@ -114,7 +117,7 @@ app/
 components/
   ui/                primitives: section, button, reveal, count-up,
                      accordion, tabs, navbar-menu, glowing-effect
-  site/              the 16 page sections
+  site/              the page sections
 lib/utils.js         cn()
 ```
 
@@ -179,33 +182,115 @@ IntersectionObserver, and never fetched at all under reduced motion, where the
 poster is the whole story.
 
 **Unused after this change** — `currency.png` (1.6 MB), `company_stocks.png`
-(1.3 MB) and `forex_video.mp4` (2.3 MB) are still in `public/assets` and still
-ship. Delete them once you are happy with the derived versions.
+(1.3 MB), `forex_video.mp4` (2.3 MB) and `mt5_logo.png` (2.1 MB, a marketing
+composite rather than a mark) are still in `public/assets` and still ship. Delete them once you are happy with the derived versions.
+
+## Trading conditions: the tinted carousel
+
+`components/site/Conditions.jsx`, directly under Markets. Replaces
+`MetricsStrip`, which is deleted.
+
+The strip rendered the same five numbers as hairline-separated columns. That
+was right when it sat directly under the hero and had to stay quiet; as a
+section in its own right it read as a footer that had drifted up the page.
+These are the five things somebody actually compares between brokers, so they
+now get room to be compared — and they sit under Markets rather than under the
+hero, because the numbers land better once the reader knows what is traded.
+
+**Reference** is XTB's "Choose your way to understand the market" carousel,
+saved at `ref/image.png`. Borrowed: the shape of the interaction, and the idea
+that the product art carries the card. **Not** borrowed: XTB's cards are
+uniform light grey. These carry five tints, because XTB's three items are
+variations on one theme (courses / news / analysis) while these five —
+leverage, spread, breadth, speed, support — are unrelated quantities, and the
+colour is what stops them blurring together.
+
+### Geometry — measured, not guessed
+
+`ref/image.png` was measured directly rather than eyeballed. The card is
+**711 × 314 in an 869-wide frame**:
+
+| Property | Reference | Here |
+| --- | --- | --- |
+| Card width | 82% of frame | `lg:w-[82%]` |
+| Card aspect | 2.26 : 1 | `lg:min-h-[460px]` |
+| Art width | ~44% of card | `lg:max-w-[400px]` |
+| Next card | peeks at the right edge | same, a consequence of 82% |
+
+The first attempt used `(100%-2rem)/2.4` — a 41% card with 240px art, **less
+than half the reference in both dimensions**, which is why it read as a tile
+rather than a panel. **If this is re-tuned, keep the card near 82% and the art
+above 360px.** The size is the design; shrink either and it stops being this
+section.
+
+### Fills are flat
+
+**No gradient, no sheen, no texture.** A gradient plate (`metric-plate`) and a
+milled sheen (`metric-sheen`) were both built here and removed: the renders
+are already high-gloss chrome and gold, and a gradient behind them reads as a
+second, disagreeing light source. The fills are plain hex values set inline
+per card. Keep them flat.
+
+**Tints agree with the render on them,** they are not assigned arbitrarily:
+
+| Card | Render | Tint |
+| --- | --- | --- |
+| Max leverage | Balance scale, blue-lit steel | Blue |
+| Spreads from | Precision caliper, brushed steel | Platinum |
+| Tradable instruments | Gold bars, FX panel, globe, Bitcoin | Gold |
+| Average execution | Stopwatch, orange motion streaks | Violet |
+| Dedicated support | Headset and shield, green-lit | Green |
+
+Violet is the one deliberate contrast — the stopwatch is lit orange, and
+violet is the only tint in the set that makes that read as a highlight rather
+than a clash.
+
+**The cursor** is the pill under the track. The active card is a bar rather
+than a dot, so it reads as a position along a run instead of five equal
+options. It advances every 5s (`DWELL_MS`) and pauses on hover, focus or
+touch. **Scroll-snap does the actual paging** — the track is a plain
+scrollable region that works with trackpad, swipe, scrollbar and keyboard
+whether or not the JS runs, and the cursor is a control over that rather than
+a replacement for it. Scroll position is the single source of truth for which
+card is active (via `IntersectionObserver`), so a manual swipe and an
+automatic advance update the cursor through the same path and cannot
+disagree. Auto-advance never runs under reduced motion.
+
+**Assets.** The five renders were supplied as 1254px PNGs totalling 8.35 MB.
+They are converted to 620px WebP (358 KB total, a 23× saving) and the
+component references the `.webp` files. **The source PNGs in
+`public/assets/2nd_section/` are now unused and still ship — delete them once
+the section is approved.** Re-run the conversion if a render is ever replaced;
+620px covers a 2× DPR at the ~240px they display at.
 
 ## Platforms: MT5, TradingView, Atlas AI
 
-`components/site/TradingPlatforms.jsx`, on the blue band, between the mobile
-section and funding.
+`PlatformSwitch`, **inside** `components/site/MobileApp.jsx` — not a section
+of its own, and it should stay that way.
 
-The organising idea is that the three are **not alternatives — they are three
-jobs on one balance**, so each card leads with the job (Execution / Analysis /
-Insight) and the row reads as a workflow rather than a menu of logins. That is
-what carries the section; there is no per-platform screenshot to lean on.
+The three are not alternatives, they are three front ends on one balance, and
+the mobile band is already making exactly that argument ("one account, every
+device"). Three logos do not need a section to repeat it. Picking one swaps
+the line underneath, so the whole thing stays two rows tall however many
+platforms are listed. Real tabs — click, arrow keys, Home/End — not hover,
+which would put the copy out of reach on touch.
 
-An earlier version put the three marks in a small row at the foot of the mobile
-section and it read as an afterthought — three logos bolted onto someone
-else's section. Weight is the whole difference here.
+**It sits directly under the device shot,** above the feature grid. The
+cluster shows the account on tablet, phone and laptop; this is the line that
+says which three front ends those are. Separating them put a features grid
+and two store badges between the claim and its evidence.
 
-All three sit on white app tiles (`pay-puck`). The marks are wildly different —
-a five-colour MT5 glyph, a near-black TradingView wordmark, a blue-green Atlas
-monogram — and white is the only ground all three read on equally, on the band
-or anywhere else.
+The marks are real product art in `public/assets/mobile-section/`
+(`meta-treader.png`, `treadingview.png`, `atlas.png`), each on a white
+`pay-puck` — TradingView's near-black wordmark has no other ground it reads
+on. Note the filenames are misspelled as delivered; they are referenced as-is
+rather than renamed, so fix them in one place if at all.
 
-**Overlap to resolve:** `components/site/Platforms.jsx` is an older, larger
-take on the same idea (a hand-built WebTrader mock on the same band). It is
-still **unmounted on every route** and is not what renders this section. Either
-fold its terminal mock into `TradingPlatforms` or delete it — right now the
-repo has two components for one section.
+**Do not rebuild this as a band section.** It was tried during this pass — a
+full `bg="brand"` section above the mobile band — and removed: it duplicated
+a component that already existed, with worse marks (lucide placeholders,
+because neither MetaTrader nor TradingView is in simple-icons and
+`mt5_logo.png` is a marketing composite rather than a cutout).
 
 ## The two Aceternity components
 
@@ -213,6 +298,109 @@ Both were shipped as TSX and are **converted to JSX and re-tuned for light mode*
 
 - `components/ui/navbar-menu.jsx` — the stock component is a floating dark pill; this is a full-width sticky header. `ProductItem`'s remote-image slot became an icon tile so the menu never depends on a CDN. The `layoutId="active"` shared-layout animation is preserved.
 - `components/ui/glowing-effect.jsx` — the stock conic gradient (pink/gold/olive/slate) is swapped for the brand hues. **Currently unused:** the Markets bento was its only host and that section now carries its own platinum treatment instead. Kept because it is the intended showpiece for whichever section claims one next.
+
+## ByteFX × Thailand
+
+`components/site/Thailand.jsx`, between funding and the final CTA. The page's
+one saturated, photographic moment.
+
+**It is an IB incentive campaign, not a market-entry section.** An Introducing
+Broker whose referred clients trade 500 lots earns five nights in Thailand.
+That makes it the last surviving piece of the Partnership section it replaced
+("Grow with ByteFX", deleted this pass) — which is why both CTAs point at
+`/partnership` and not `/signup`. The audience is brokers; sending them to the
+retail signup form would be the wrong door.
+
+The two numbers *are* the offer, so they are set as the section's largest
+non-heading type rather than buried in a paragraph. Everything else is
+scaffolding around them.
+
+**The lockup sits above the H2, breaking the section rule on purpose.** That
+rule exists because every section used to carry a kicker restating the heading
+underneath it — a word of chrome on every screen. This is not that: it is a
+campaign lockup carrying the brand mark, and the H2 below says something
+completely different. Do not reintroduce a text kicker elsewhere on the
+strength of this one.
+
+**The logo is the real `Logo.png`, on a white plate.** It sets "Byte" in brand
+blue (`#1357BD`), which on this scrim is about 1.6:1 and unreadable. Rather
+than recolour the mark, it sits on a `pay-puck` — the same treatment the
+funding section gives Visa, Apple Pay and the app QR code, and for the same
+reason: a fixed-colour mark gets the ground it was drawn for instead of being
+repainted to suit the surface. A knockout variant was built during this pass
+and deleted; the plate is the better answer and it is already the house
+pattern.
+
+**The terms are incomplete.** The qualifying period, which account types count
+toward the 500 lots, whether the five nights include flights, and the campaign
+end date are all unspecified. The disclaimer in the component is deliberately
+generic — do not ship it as the full terms.
+
+**The image is natural, not architectural** — Mu Ko Ang Thong National Marine
+Park. The prize is a holiday, so it should look like one; a Bangkok skyline
+was used first and rejected for reading as a business district.
+
+That swap also dropped a licence problem. The skyline shot was CC BY-**SA**,
+whose share-alike clause is a poor fit for a commercial site. This one is
+© Vyacheslav Argenberg, plain [CC BY
+4.0](https://creativecommons.org/licenses/by/4.0/) via Wikimedia Commons, so
+**attribution is the only condition** — but it is a condition, not a caption.
+Do not remove the credit line, and do not swap the image without replacing the
+credit to match.
+
+**It is a bright image**, unlike the dusk skyline it replaced — turquoise
+water across two thirds of the frame. White type therefore depends entirely on
+the scrim, which is heavier than it would need to be over a darker photograph.
+Check any replacement against the copy before swapping it in.
+
+The master is downscaled to 2200px / q72 progressive JPEG (312 KB) and served
+through `next/image` with `sizes="100vw"`; it is deliberately not `priority`,
+because it sits six sections down and must not compete with the hero for LCP.
+
+**Removed with it:** the `Partnership` and `Community` components are gone,
+and the four `"/#partnership"` anchors in `Navbar.jsx` (nav list, menu item,
+two `ProductItem`s) plus the one in `Footer.jsx` now point at `/partnership`.
+**That route does not exist yet** — and this section now sends traffic to it
+twice more, so it is the single most load-bearing gap on the page.
+
+## The hero
+
+Designed last, on purpose. Six competitor heroes were read first — Pepperstone,
+eToro, Deriv, IC Markets, Exness, OANDA. Five of the six sit on a stock
+photograph or a promo graphic; only IC Markets puts anything above the fold you
+could act on. So this one does the thing the category does not: **it shows the
+product.**
+
+Left is the claim and the CTAs, right is an execution ticket — XAU/USD, a
+two-sided quote, and a fill confirmation that lands at 19ms.
+
+Three sections below it dictated the shape:
+
+| Section | What it already owns | What the hero therefore cannot do |
+| --- | --- | --- |
+| `Conditions` | 1:2000, 0.1 pips, 150+, ~20ms, 24/6 | Restate the numbers — the ticket *demonstrates* the fill time instead |
+| `Ticker` | Live streaming quotes | Carry a second live price widget 900px above the first |
+| `FinalCta` | "Start trading in under five minutes", risk warning | Be a CTA block. Labels match deliberately — they bookend the page |
+
+The live site puts those five metrics *in* the hero; this rebuild moved them
+into their own strip, which is what freed the space for the ticket.
+
+**The fill animation is a third signature moment,** beyond the two the motion
+contract names. That is deliberate rather than an oversight: "orders fill in
+about 20ms" is the claim the positioning rests on and this is the only place on
+the page that shows it instead of asserting it. It fires once, never loops, and
+under reduced motion the ticket mounts straight to the filled state — the
+confirmation is information, the transition is decoration.
+
+The ticket's geometry is fixed constants, so server and client render
+identically and the confirmation row has a fixed 52px height: a card that
+jumped as the fill arrived would undercut the point it is making.
+
+**Open:** there is no regulator chip. ByteFX Capital Ltd's licence entity and
+number need the same compliance sign-off the Trust items are badged for. Add it
+to `CHIPS` in `Hero.jsx` once legal confirms — the row is built for four and
+currently carries three. The withdrawal-speed line was cut from the lead copy
+for the same reason.
 
 ## Motion contract
 
@@ -222,19 +410,35 @@ Both were shipped as TSX and are **converted to JSX and re-tuned for light mode*
 
 ## Before this goes live
 
-- The **hero is a placeholder** — designed last by intent (plan §11.6).
+- **`/partnership` does not exist**, and it is now the page's main conversion
+  target. Seven links point at it: four in `Navbar.jsx`, one in `Footer.jsx`,
+  and both CTAs in the Thailand IB campaign. Build the route before ship.
+- **The Thailand campaign terms are incomplete.** Qualifying period, eligible
+  account types, whether flights are included, and the end date are all
+  unspecified; the disclaimer in `Thailand.jsx` is a placeholder, not the
+  terms. See “ByteFX × Thailand”.
+- The hero ships without a **regulator trust chip** and without a
+  withdrawal-speed claim; both need compliance sign-off. See “The hero”.
 - Items badged **LEGAL REVIEW** in the Trust section, and the withdrawal
   windows in `Funding.jsx`, need compliance sign-off. The marketing reference
   for the funding section prints INSTANT on crypto/USDT withdrawals; the live
   site says ~1 hour. The conservative number ships — flip it only on sign-off.
+- **Delete `public/assets/2nd_section/image{1..5}.png`** (8.35 MB) once the
+  conditions carousel is approved — the component uses the `.webp` versions
+  and the PNGs ship for nothing.
 - WebTrader and phone screens are hand-built placeholders; swap for real product captures.
 - `components/site/Ticker.jsx` runs a simulated feed. Replace `useSimulatedFeed` with the real socket; the contract is `{ symbol, price, change }`.
-- Platform capability lines and availability chips in `TradingPlatforms.jsx`
-  are written from what each platform does generally, not from an integration
-  spec. Confirm the TradingView broker link and what Atlas AI actually ships.
+- Platform capability lines in `MobileApp.jsx`'s `PLATFORMS` are written from
+  what each platform does generally, not from an integration spec. Confirm the
+  TradingView broker link and what Atlas AI actually ships.
 - Mobile has been audited statically but not viewed on a device. Check 390 / 768 / 1024.
   The funding rail (hub + connector fan) is `lg:` and up only; below that the
   method list carries the section on its own.
-- Dark mode has been walked through every route in a browser, but only at
-  1440px. Re-check it at mobile widths on a real device.
+- **Nothing in this pass has been seen rendered.** The Chrome extension was
+  not connected, so the hero's execution ticket, the repositioned platform
+  switch and the Thailand section are all reasoned from the tokens rather than
+  looked at. Walk the page at 390 / 768 / 1440 before ship — in particular the
+  white type and the logo plate over the Ang Thong photo, which is the one
+  contrast question a screenshot would settle instantly — it is a bright
+  image and the scrim is doing all the work.
 - The Markets video has not been watched playing in a browser — the verification tab was backgrounded throughout, and Chrome will not decode media there. Wiring, poster, encode and first frame are all confirmed; **watch it loop once** before shipping.

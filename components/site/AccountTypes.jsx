@@ -254,9 +254,7 @@ export function AccountTypes() {
       align="center"
       title={
         <>
-          Just one click away to{" "}
-          <span className="text-brand-blue">Global</span>{" "}
-          <span className="text-brand-green">Markets</span>
+          Just one click away to Global Markets
         </>
       }
       lead="Choose from three account types designed to suit beginners through to professionals — transparent pricing, robust execution and tailored features."

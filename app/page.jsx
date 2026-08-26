@@ -1,12 +1,11 @@
 import { Hero } from "@/components/site/Hero";
-import { MetricsStrip } from "@/components/site/MetricsStrip";
 import { Ticker } from "@/components/site/Ticker";
 import { Markets } from "@/components/site/Markets";
+import { Conditions } from "@/components/site/Conditions";
 import { AccountTypes } from "@/components/site/AccountTypes";
 import { MobileApp } from "@/components/site/MobileApp";
 import { Funding } from "@/components/site/Funding";
-import { Partnership } from "@/components/site/Partnership";
-import { Community } from "@/components/site/Community";
+import { Thailand } from "@/components/site/Thailand";
 import { FinalCta } from "@/components/site/FinalCta";
 
 export default function Home() {
@@ -18,15 +17,17 @@ export default function Home() {
 
       {/* White / alt alternation below IS the page rhythm — keep it.
           Why ByteFX, Getting started, Trust and security and Support now
-          live on their own routes, reached from the navbar. */}
-      <MetricsStrip />
+          live on their own routes, reached from the navbar.
+
+          Conditions sits under Markets, not under the hero: the five numbers
+          land better once the reader knows what is being traded. */}
       <Ticker />
       <Markets />
+      <Conditions />
       <AccountTypes />
       <MobileApp />
       <Funding />
-      <Partnership />
-      <Community />
+      <Thailand />
       <FinalCta />
     </main>
   );

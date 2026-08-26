@@ -43,8 +43,7 @@ export function WhyByteFX() {
       id="why"
       title={
         <>
-          Conditions you can measure,{" "}
-          <span className="text-gradient-brand">not adjectives.</span>
+          Conditions you can measure, not adjectives.
         </>
       }
       lead="Execution speed, spread and leverage are the only things that change your P&L. Here is where we sit on all three."
@@ -52,7 +51,7 @@ export function WhyByteFX() {
       <RevealGroup className="grid gap-4 lg:grid-cols-3">
         {/* Anchor tile ------------------------------------------------ */}
         <RevealItem className="card-fade-green rounded-2xl border border-line p-7 shadow-sm md:p-9 lg:col-span-2">
-          <p className="tnum h-display text-gradient-brand">
+          <p className="tnum h-display text-ink">
             <CountUp value={20} prefix="~" suffix="ms" />
           </p>
           <p className="eyebrow mt-3">Average order execution</p>

@@ -53,7 +53,7 @@ export function Trust() {
       bg="alt"
       title={
         <>
-          Who you are <span className="text-brand-blue">sending money to.</span>
+          Who you are sending money to.
         </>
       }
       lead="The entity, the registration and the safeguards, stated plainly and in one place."

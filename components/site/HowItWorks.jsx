@@ -52,7 +52,7 @@ export function HowItWorks() {
       bg="alt"
       title={
         <>
-          Live in <span className="text-gradient-brand">four steps.</span>
+          Live in four steps.
         </>
       }
       lead="No paperwork queue, no waiting on a callback. Most accounts are funded and trading the same day."

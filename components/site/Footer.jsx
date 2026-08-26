@@ -17,7 +17,7 @@ const COLUMNS = [
     title: "Links",
     links: [
       { label: "Account Types", href: "/#accounts" },
-      { label: "Partnership", href: "/#partnership" },
+      { label: "Partnership", href: "/partnership" },
       { label: "Tools", href: "/tools" },
       { label: "Why ByteFX", href: "/company/why-bytefx" },
       { label: "Trust & Security", href: "/company/trust-security" },

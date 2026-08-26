@@ -60,7 +60,7 @@ const MARKETS = [
     alt: "Apple, NVIDIA, Tesla, Google and Meta company marks",
     // Wider than it is tall, so it gets its own width to stay optically the
     // same size as the four square marks.
-    markClassName: "w-[62%] max-w-[232px] bottom-7 dark:brightness-[1.55]",
+    markClassName: "w-[62%] max-w-[232px] bottom-7",
     delay: "-4.8s",
   },
   {
@@ -245,8 +245,7 @@ export function Markets() {
       className="platinum-wash border-y border-line"
       title={
         <>
-          One platform.{" "}
-          <span className="text-gradient-brand">Every major market.</span>
+          One platform. Every major market.
         </>
       }
       lead="Forex, indices, crypto, shares, metals and energy from a single MetaTrader 5 account—one balance, one margin pool, one login."

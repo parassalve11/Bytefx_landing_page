@@ -1,31 +1,26 @@
 @import "tailwindcss";
 
 /* ------------------------------------------------------------------
-   Dark mode is an explicit attribute on <html>, written before first
-   paint by the inline script in app/layout.jsx. That script resolves
-   the user's stored preference (or the OS setting) down to a single
-   value — "light" or "dark" — so the CSS below never has to mix a
-   media query with a class. One selector, one source of truth.
-   ------------------------------------------------------------------ */
-@custom-variant dark (&:where([data-theme="dark"], [data-theme="dark"] *));
-
-/* ------------------------------------------------------------------
    ByteFX design tokens.
    Brand hues sampled from bytefx.com: blue #1356BE, green #4CD201.
 
-   Every value that changes between themes is a plain custom property
-   declared here and re-declared on :root[data-theme="dark"]. The
-   @theme inline block below maps them onto Tailwind's colour names, so
-   `text-ink`, `bg-surface`, `border-line` and friends flip on their own
-   and no component needs a dark: variant for ordinary surface work.
+   The site is light-only. Every themed value is still a plain custom
+   property here rather than a literal, and the @theme inline block below
+   maps them onto Tailwind's colour names — so `text-ink`, `bg-surface`
+   and `border-line` stay the single source of truth for a colour and a
+   palette change is still a one-line edit.
+
+   There is no dark variant and no `dark:` utility. Do not add one back
+   without restoring the token overrides that were removed with it.
    ------------------------------------------------------------------ */
 :root {
   color-scheme: light;
   --container: 1240px;
 
   /* Brand — `brand` is the readable one (text, icons, hairlines);
-     `brand-solid` is the one that carries white text on a fill. They are
-     the same hue in light mode and deliberately diverge in dark. */
+     `brand-solid` is the one that carries white text on a fill. Same hue
+     now that the site is light-only; kept as two names because they mean
+     two different things at the call site. */
   --brand: #1356be;
   --brand-700: #0e419a;
   --brand-100: #d3e2fb;
@@ -34,7 +29,7 @@
   --brand-solid-hover: #0e419a;
 
   /* Green — the CTA colour. `on-go` never flips: text on lime is always
-     near-black, in both themes. */
+     near-black. */
   --go: #4cd201;
   --go-hover: #44bd01;
   --go-600: #3ca800;
@@ -63,8 +58,8 @@
   --warn-50: #fff4e5;
   --warn-600: #b45309;
 
-  /* The one surface that is dark in BOTH themes: the footer plinth and the
-     scrims that dim the page behind a drawer. */
+  /* The deliberately dark surface: the footer plinth and the scrims that
+     dim the page behind a drawer. */
   --shell: #01061a;
 
   /* Elevation — soft, never harsh */
@@ -74,57 +69,6 @@
   --sh-lg: 0 12px 40px rgba(1, 6, 26, 0.08);
   --sh-xl: 0 28px 70px rgba(1, 6, 26, 0.1);
   --sh-brand: 0 16px 44px rgba(19, 86, 190, 0.14);
-}
-
-/* ------------------------------------------------------------------
-   Dark: navy-tinted, not neutral black. The brand is a deep blue, so a
-   blue-black canvas keeps the palette feeling native rather than like a
-   light theme with the lights switched off. Elevation runs the other
-   way from light mode — surfaces get *lighter* as they rise.
-   ------------------------------------------------------------------ */
-:root[data-theme="dark"] {
-  color-scheme: dark;
-
-  --brand: #6aa4ff;
-  --brand-700: #8dbaff;
-  --brand-100: #1e3358;
-  --brand-50: #14213a;
-  --brand-solid: #2461c9;
-  --brand-solid-hover: #2f75e6;
-
-  --go: #4cd201;
-  --go-hover: #61e51a;
-  --go-600: #77e63a;
-  --go-50: #14300b;
-  --on-go: #01061a;
-
-  --ink: #eaf0fa;
-  --body: #a3b1c7;
-  --muted: #7385a0;
-  --line: #202a3d;
-  --line-strong: #2e3b53;
-  --alt: #0b1120;
-  --sunken: #121b2c;
-
-  --canvas: #070c17;
-  --surface: #111a2c;
-
-  --up: #2ecc71;
-  --down: #f26363;
-
-  --warn-50: #3a2a10;
-  --warn-600: #f0b45f;
-
-  --shell: #030711;
-
-  /* Black shadows read as nothing on a dark canvas unless they are much
-     heavier than their light-mode counterparts. */
-  --sh-xs: 0 1px 2px rgba(0, 0, 0, 0.5);
-  --sh-sm: 0 2px 10px rgba(0, 0, 0, 0.55);
-  --sh-md: 0 6px 20px rgba(0, 0, 0, 0.6);
-  --sh-lg: 0 16px 44px rgba(0, 0, 0, 0.65);
-  --sh-xl: 0 30px 76px rgba(0, 0, 0, 0.7);
-  --sh-brand: 0 18px 50px rgba(9, 34, 82, 0.7);
 }
 
 @theme inline {
@@ -270,33 +214,46 @@ summary:focus-visible,
    blue→green gradient accents, green pill CTAs, coin-disc asset marks,
    and cards that fade from white into a brand tint.
 
-   Anything below that bakes in a literal colour gets a dark override in
-   the block at the foot of this file — unlayered rules, so they beat
-   the @utility output regardless of specificity.
+   These bake in literal colours rather than tokens, which is fine now
+   that there is one theme — they used to carry a matching set of dark
+   overrides at the foot of this file.
    ------------------------------------------------------------------ */
 
-/* Two-tone accent phrase. The brand does blue word + green word — that
-   reads sharper than a gradient and stays legible at small sizes. */
-@utility text-brand-blue {
-  color: var(--brand);
-}
+/* Headings are SOLID. There is deliberately no `text-gradient-brand`,
+   `text-brand-blue` or `text-brand-green` utility any more — the two-tone
+   accent phrase and the blue→green gradient were removed from every heading
+   on the site, and the utilities were deleted with them so they cannot creep
+   back one span at a time. Set headings in `ink` (or white on a dark ground)
+   and let size and weight carry the hierarchy. Colour goes on CTAs, market
+   data and icons, not on words in a sentence. */
 
-@utility text-brand-green {
-  color: var(--go-600);
-}
-
-/* Reserved for display-size headings only (>= 30px), never body copy. */
-@utility text-gradient-brand {
+/* Card that fades surface → green tint (accounts, funding). */
+@utility card-fade-green {
   background-image: linear-gradient(
-    100deg,
-    var(--brand) 0%,
-    var(--gradient-mid, #1f8fd0) 45%,
-    var(--go-600) 100%
+    180deg,
+    var(--surface) 0%,
+    var(--surface) 52%,
+    var(--go-50) 100%
   );
-  -webkit-background-clip: text;
-  background-clip: text;
-  color: transparent;
 }
+
+/* Card that fades surface → brand blue with light copy at the foot
+   (market category cards on the original page). */
+@utility card-fade-blue {
+  background-image: linear-gradient(
+    180deg,
+    var(--surface) 0%,
+    var(--card-blue-mid, #f4f8ff) 34%,
+    var(--card-blue-far, #3f6fe0) 78%,
+    var(--brand-solid) 100%
+  );
+}
+
+/* Trading-condition cards carry a FLAT fill, set inline per card in
+   Conditions.jsx. No gradient, no sheen, no texture — the renders on them are
+   already high-gloss chrome and gold, and a gradient behind that reads as
+   two competing light sources. A gradient plate and a milled sheen were both
+   tried here and removed. Keep the fills flat. */
 
 /* Card that fades surface → green tint (accounts, funding). */
 @utility card-fade-green {
@@ -453,10 +410,7 @@ summary:focus-visible,
 /* The recessed well the Forex clip sits in.
    #ECEBE9 is not a decorative choice — it is the exact tone the clip was
    luma-keyed and re-composited onto (see the ffmpeg recipe in README), so the
-   well has to match it in BOTH themes or the video shows a seam. In dark mode
-   that makes Forex a light media panel on a dark card, which is why it gets a
-   frame below instead of a colour flip. Re-encode the clip against the dark
-   tone if it should ever go dark too. */
+   well has to match it exactly or the video shows a seam. */
 @utility plate-well {
   background: #ecebe9;
 }
@@ -542,130 +496,13 @@ summary:focus-visible,
 
 /* Each mark sits on its own white puck. Payment brands ship fixed colours —
    Visa blue, Apple Pay black, the navy bank glyph — and half of them vanish
-   on a dark canvas, so the puck stays white in both themes and the ring
+   on a dark ground, so the puck stays white everywhere and the ring
    around it is what changes. */
 @utility pay-puck {
   background: #ffffff;
   box-shadow:
     inset 0 0 0 1px rgba(1, 6, 26, 0.07),
     0 2px 8px rgba(1, 6, 26, 0.08);
-}
-
-/* ------------------------------------------------------------------
-   Dark overrides for the treatments that bake in literal colours.
-   Unlayered, so they win over the @utility output above without any
-   specificity games.
-   ------------------------------------------------------------------ */
-
-:root[data-theme="dark"] {
-  --gradient-mid: #58c2f0;
-  --card-blue-mid: #16233d;
-  --card-blue-far: #1c4ba0;
-  --frame-top: #0f1727;
-  --frame-bottom: rgba(15, 23, 39, 0);
-}
-
-:root[data-theme="dark"] .coin {
-  box-shadow:
-    inset 0 1.5px 1px rgba(255, 255, 255, 0.14),
-    inset 0 -2px 5px rgba(0, 0, 0, 0.5),
-    0 3px 10px rgba(0, 0, 0, 0.55);
-}
-
-:root[data-theme="dark"] .band-brand {
-  background:
-    radial-gradient(
-      120% 80% at 50% 0%,
-      rgba(76, 210, 1, 0.14) 0%,
-      rgba(76, 210, 1, 0) 55%
-    ),
-    linear-gradient(160deg, #0d2f6f 0%, #14458f 45%, #061a44 100%);
-}
-
-:root[data-theme="dark"] .arc-wash {
-  background:
-    radial-gradient(
-      60% 42% at 50% 0%,
-      rgba(106, 164, 255, 0.1) 0%,
-      rgba(106, 164, 255, 0) 70%
-    ),
-    radial-gradient(
-      42% 34% at 84% 12%,
-      rgba(76, 210, 1, 0.07) 0%,
-      rgba(76, 210, 1, 0) 72%
-    );
-}
-
-/* Gunmetal, not platinum. The market marks are specular chrome renders, so
-   they gain contrast on a dark plate rather than losing it — the one flat
-   mark (stocks) gets a brightness lift on the element instead. */
-:root[data-theme="dark"] .platinum-plate {
-  background:
-    radial-gradient(
-      120% 92% at 50% -6%,
-      rgba(255, 255, 255, 0.07) 0%,
-      rgba(255, 255, 255, 0) 60%
-    ),
-    radial-gradient(
-      76% 68% at 82% 100%,
-      rgba(0, 0, 0, 0.4) 0%,
-      rgba(0, 0, 0, 0) 70%
-    ),
-    linear-gradient(
-      150deg,
-      #222b3a 0%,
-      #182130 36%,
-      #202938 56%,
-      #10161f 100%
-    );
-}
-
-:root[data-theme="dark"] .platinum-grain {
-  background-image: repeating-linear-gradient(
-    114deg,
-    rgba(255, 255, 255, 0.07) 0px,
-    rgba(255, 255, 255, 0) 1.5px,
-    rgba(0, 0, 0, 0.06) 3px,
-    rgba(255, 255, 255, 0) 4.5px
-  );
-}
-
-:root[data-theme="dark"] .platinum-wash {
-  background:
-    radial-gradient(
-      62% 46% at 50% 0%,
-      rgba(255, 255, 255, 0.04) 0%,
-      rgba(255, 255, 255, 0) 72%
-    ),
-    linear-gradient(168deg, #0a1120 0%, #080e1a 54%, #060b15 100%);
-}
-
-:root[data-theme="dark"] .platinum-surface {
-  background:
-    radial-gradient(
-      70% 60% at 8% 4%,
-      rgba(255, 255, 255, 0.06) 0%,
-      rgba(255, 255, 255, 0) 68%
-    ),
-    linear-gradient(132deg, #1c2434 0%, #131a27 42%, #1a2231 66%, #0e141f 100%);
-}
-
-:root[data-theme="dark"] .plate-well {
-  box-shadow:
-    inset 0 0 0 1px rgba(255, 255, 255, 0.16),
-    0 10px 30px rgba(0, 0, 0, 0.55) !important;
-  filter: brightness(0.93);
-}
-
-:root[data-theme="dark"] .pay-puck {
-  box-shadow:
-    inset 0 0 0 1px rgba(255, 255, 255, 0.14),
-    0 2px 12px rgba(0, 0, 0, 0.55);
-}
-
-:root[data-theme="dark"] ::selection {
-  background: rgba(76, 210, 1, 0.3);
-  color: var(--ink);
 }
 
 /* Non-negotiable: reduced motion kills every reveal, counter, marquee. */

@@ -8,8 +8,7 @@ export function FinalCta() {
     <section className="border-y border-brand-100 bg-brand-50">
       <div className="container-x py-16 text-center md:py-24">
         <Reveal as="h2" className="h-section mx-auto max-w-3xl">
-          Start trading in{" "}
-          <span className="text-gradient-brand">under five minutes.</span>
+          Start trading in under five minutes.
         </Reveal>
         <Reveal
           as="p"

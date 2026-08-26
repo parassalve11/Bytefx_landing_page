@@ -29,7 +29,6 @@ import {
   ProductItem,
 } from "@/components/ui/navbar-menu";
 import { Button } from "@/components/ui/button";
-import { ThemeToggle } from "@/components/ui/theme-toggle";
 import { cn } from "@/lib/utils";
 
 const MARKETS = [
@@ -132,7 +131,7 @@ const MOBILE_NAV = [
   { label: "Trust & Security", href: "/company/trust-security" },
   { label: "Markets", href: "/#markets" },
   { label: "Account Types", href: "/#accounts" },
-  { label: "Partnership", href: "/#partnership" },
+  { label: "Partnership", href: "/partnership" },
   { label: "Tools", href: "/tools" },
   { label: "Getting started", href: "/getting-started" },
   { label: "Support", href: "/support" },
@@ -222,18 +221,18 @@ export function Navbar() {
             setActive={setActive}
             active={active}
             item="Partnership"
-            href="/#partnership"
+            href="/partnership"
           >
             <div className="w-64">
               <ProductItem
                 title="Introducing Broker"
-                href="/#partnership"
+                href="/partnership"
                 icon={<Users className="h-4 w-4" strokeWidth={2} />}
                 description="Commission per lot, paid daily."
               />
               <ProductItem
                 title="Affiliate"
-                href="/#partnership"
+                href="/partnership"
                 icon={<Globe className="h-4 w-4" strokeWidth={2} />}
                 description="CPA on every qualified referral."
                 accent="green"
@@ -276,7 +275,6 @@ export function Navbar() {
         </Menu>
 
         <div className="flex items-center gap-2 xl:gap-3">
-          <ThemeToggle />
           <button
             type="button"
             className="hidden items-center gap-1 rounded-full px-2 py-1.5 text-[13.5px] font-medium text-body transition-colors hover:text-ink xl:flex"
@@ -321,8 +319,7 @@ export function Navbar() {
                 height={27}
                 className="h-[26px] w-auto"
               />
-              <div className="flex items-center gap-2">
-                <ThemeToggle />
+              <div className="flex items-center">
                 <button
                   type="button"
                   onClick={() => setOpen(false)}

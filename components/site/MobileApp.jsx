@@ -207,9 +207,7 @@ export function MobileApp() {
       align="center"
       title={
         <>
-          Trade anywhere.{" "}
-          <span className="text-brand-blue">Settle everything</span>{" "}
-          <span className="text-brand-green">from your phone.</span>
+          Trade anywhere. Settle everything from your phone.
         </>
       }
       lead="The ByteFX app runs the same account as your desktop terminal — open positions, fund, withdraw and set alerts without opening a laptop."
@@ -235,6 +233,14 @@ export function MobileApp() {
             className="relative h-auto w-full"
           />
         </motion.div>
+
+        {/* Directly under the device shot: the cluster shows the account on
+            tablet, phone and laptop, and this is the line that says which
+            three front ends those are. Separating them put a features grid
+            and two store badges between the claim and its evidence. */}
+        <Reveal delay={0.04} className="mt-10">
+          <PlatformSwitch />
+        </Reveal>
 
         <Reveal
           delay={0.06}
@@ -286,10 +292,6 @@ export function MobileApp() {
               install
             </span>
           </div>
-        </Reveal>
-
-        <Reveal delay={0.14} className="mt-12">
-          <PlatformSwitch />
         </Reveal>
       </div>
     </Section>
