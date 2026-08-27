@@ -3,6 +3,7 @@ import { Ticker } from "@/components/site/Ticker";
 import { Markets } from "@/components/site/Markets";
 import { Conditions } from "@/components/site/Conditions";
 import { AccountTypes } from "@/components/site/AccountTypes";
+import { Competition } from "@/components/site/Competition";
 import { MobileApp } from "@/components/site/MobileApp";
 import { Funding } from "@/components/site/Funding";
 import { Thailand } from "@/components/site/Thailand";
@@ -25,6 +26,12 @@ export default function Home() {
       <Markets />
       <Conditions />
       <AccountTypes />
+
+      {/* Competition sits here, not next to Thailand: it breaks the
+          Account types / Mobile app `alt`-on-`alt` adjacency, and keeps the
+          page's two photographic bands well apart. */}
+      <Competition />
+
       <MobileApp />
       <Funding />
       <Thailand />

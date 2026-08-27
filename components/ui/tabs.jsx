@@ -4,8 +4,16 @@ import { useId, useRef } from "react";
 import { motion } from "motion/react";
 import { cn } from "@/lib/utils";
 
-/** ARIA tab list with an animated brand underline. Cross-fade only, no slide. */
-export function Tabs({ tabs, value, onChange, className }) {
+/**
+ * ARIA tab list with an animated brand underline. Cross-fade only, no slide.
+ *
+ * `label` names the list for screen readers and has no default on purpose —
+ * "Asset classes" used to be hard-coded here, which was wrong the moment a
+ * second tab list existed. The underline's `layoutId` is scoped to this
+ * instance for the same reason: a shared id makes the underline fly between
+ * two tab bars when both are mounted on one page.
+ */
+export function Tabs({ tabs, value, onChange, label, className }) {
   const baseId = useId();
   const refs = useRef([]);
 
@@ -26,7 +34,7 @@ export function Tabs({ tabs, value, onChange, className }) {
   return (
     <div
       role="tablist"
-      aria-label="Asset classes"
+      aria-label={label}
       onKeyDown={onKeyDown}
       className={cn(
         "-mx-5 flex gap-1 overflow-x-auto px-5 pb-px [scrollbar-width:none] [&::-webkit-scrollbar]:hidden",
@@ -56,7 +64,7 @@ export function Tabs({ tabs, value, onChange, className }) {
             {tab.label}
             {active && (
               <motion.span
-                layoutId="tab-underline"
+                layoutId={`${baseId}-underline`}
                 className="absolute inset-x-3 -bottom-px h-0.5 rounded-full bg-brand"
                 transition={{ duration: 0.25, ease: [0.22, 1, 0.36, 1] }}
               />

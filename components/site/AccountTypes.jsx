@@ -119,7 +119,7 @@ function AccountCard({ account }) {
     >
       {featured && (
         <span className="absolute top-1 left-1/2 z-10 -translate-x-1/2 rounded-full bg-brand-solid px-3 py-1 text-[11px] font-semibold tracking-[0.06em] whitespace-nowrap text-white uppercase shadow-sm">
-          Most popular
+          MOST CHOSEN
         </span>
       )}
 
