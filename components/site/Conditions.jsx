@@ -31,22 +31,12 @@ import { cn } from "@/lib/utils";
  * at ~82% and the art above 360px.** The size *is* the design; shrink either
  * and it stops being this section.
  *
- * ── Fills are FLAT ────────────────────────────────────────────────────────
+ * ── The platinum palette ──────────────────────────────────────────────────
  *
- * No gradient, no sheen, no texture. A gradient plate and a milled sheen were
- * both tried and removed: the renders are already high-gloss chrome and gold,
- * and a gradient behind them reads as a second, disagreeing light source.
- *
- * The tint agrees with the render standing on it rather than being assigned
- * arbitrarily — gold cluster on real metallic gold, steel caliper on
- * platinum, blue-lit scale on ByteFX blue, green headset on ByteFX green,
- * and the orange-lit stopwatch on a clear yellow. Light fills use dark copy
- * so each card keeps comfortable contrast.
- *
- * Unlike the reference, whose cards are all one grey, these five carry five
- * tints. XTB's three items are variations on one theme (courses / news /
- * analysis); leverage, spread, breadth, speed and support are five unrelated
- * quantities, and the colour is what stops them blurring together.
+ * Every card shares the same platinum surface so the artwork and numbers do
+ * the differentiating. A single highlight crosses a card when it becomes
+ * active or is hovered; it never loops, and it is removed under reduced
+ * motion.
  *
  * ── The cursor ────────────────────────────────────────────────────────────
  *
@@ -62,8 +52,6 @@ const CONDITIONS = [
     copy: "Control a position up to two thousand times your margin, on eligible instruments.",
     image: "/assets/2nd_section/image1.webp",
     alt: "A balance scale weighing stacked coins against a rising chart",
-    bg: "var(--brand)",
-    ink: "light",
   },
   {
     id: "spreads",
@@ -72,8 +60,6 @@ const CONDITIONS = [
     copy: "Variable pricing that tracks the underlying market instead of a fixed markup.",
     image: "/assets/2nd_section/image2.webp",
     alt: "A precision caliper measuring a narrow illuminated gap",
-    bg: "#E5E4E2",
-    ink: "dark",
   },
   {
     id: "instruments",
@@ -82,8 +68,6 @@ const CONDITIONS = [
     copy: "Forex, indices, crypto, shares, metals and energy — one balance, one margin pool.",
     image: "/assets/2nd_section/image3.webp",
     alt: "Gold bars, a currency panel, a candlestick chart, an oil barrel, a globe and a Bitcoin coin",
-    bg: "#D4AF37",
-    ink: "dark",
   },
   {
     id: "execution",
@@ -92,8 +76,6 @@ const CONDITIONS = [
     copy: "From the click to the confirmation, measured across our own bridge.",
     image: "/assets/2nd_section/image4.webp",
     alt: "A stopwatch trailing motion streaks",
-    bg: "#FFD600",
-    ink: "dark",
   },
   {
     id: "support",
@@ -102,8 +84,6 @@ const CONDITIONS = [
     copy: "A real person from the Sydney open to the New York close, every trading day.",
     image: "/assets/2nd_section/image5.webp",
     alt: "A support headset behind a shield with a message bubble",
-    bg: "var(--go)",
-    ink: "dark",
   },
 ];
 
@@ -200,17 +180,27 @@ export function Conditions() {
               key={c.id}
               aria-roledescription="slide"
               aria-label={`${i + 1} of ${CONDITIONS.length}: ${c.label} ${c.figure}`}
-              style={{ backgroundColor: c.bg }}
               className={cn(
-                "relative shrink-0 snap-start overflow-hidden rounded-[28px]",
+                "group/card condition-metal condition-platinum relative isolate shrink-0 snap-start overflow-hidden rounded-[28px]",
                 // 82% on desktop is the reference proportion, and it is what
                 // leaves the next card peeking at the right edge.
                 "w-[88vw] sm:w-[74vw] lg:w-[82%]"
               )}
             >
+              <span
+                aria-hidden="true"
+                className={cn(
+                  "pointer-events-none absolute inset-y-0 -left-[45%] z-0 w-[38%]",
+                  "skew-x-[-14deg] bg-gradient-to-r from-transparent via-white/45 to-transparent",
+                  "transition-transform duration-700 ease-out motion-reduce:hidden",
+                  i === active
+                    ? "translate-x-[430%] group-hover/card:translate-x-[215%]"
+                    : "group-hover/card:translate-x-[215%]"
+                )}
+              />
               <div
                 className={cn(
-                  "flex flex-col gap-8 p-8 sm:p-10",
+                  "relative z-10 flex flex-col gap-8 p-8 sm:p-10",
                   "lg:min-h-[460px] lg:flex-row lg:items-center lg:gap-12 lg:p-14"
                 )}
               >
@@ -218,7 +208,7 @@ export function Conditions() {
                   <p
                     className={cn(
                       "text-[12.5px] leading-none font-semibold tracking-[0.07em] uppercase",
-                      c.ink === "dark" ? "text-ink/60" : "text-white/60"
+                      "text-ink/70"
                     )}
                   >
                     {c.label}
@@ -226,7 +216,7 @@ export function Conditions() {
                   <p
                     className={cn(
                       "tnum mt-4 text-[clamp(44px,5.4vw,68px)] leading-[0.95] font-bold tracking-[-0.04em]",
-                      c.ink === "dark" ? "text-ink" : "text-white"
+                      "text-ink"
                     )}
                   >
                     {c.figure}
@@ -234,7 +224,7 @@ export function Conditions() {
                   <p
                     className={cn(
                       "mt-5 max-w-[30rem] text-[15.5px] leading-relaxed",
-                      c.ink === "dark" ? "text-ink/75" : "text-white/75"
+                      "text-ink/75"
                     )}
                   >
                     {c.copy}

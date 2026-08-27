@@ -31,7 +31,7 @@ Brand values sampled from the live site, not guessed:
 | `line` / `line-strong` | `#E3E9F2` / `#CBD5E5` | hairlines |
 | `canvas` / `surface` | `#FFFFFF` / `#FFFFFF` | page / anything on top of it |
 | `alt` / `sunken` | `#F7F9FC` / `#F1F4F9` | alternating bands / inset panels |
-| `shell` | `#01061A` | footer plinth, drawer scrims, the Thailand photo scrim |
+| `shell` | `#01061A` | drawer scrims and isolated dark panels |
 | `warn-50` / `warn-600` | `#FFF4E5` / `#B45309` | advisory notices |
 | `up` / `down` | `#16A34A` / `#DC2626` | market data only |
 
@@ -185,7 +185,7 @@ poster is the whole story.
 (1.3 MB), `forex_video.mp4` (2.3 MB) and `mt5_logo.png` (2.1 MB, a marketing
 composite rather than a mark) are still in `public/assets` and still ship. Delete them once you are happy with the derived versions.
 
-## Trading conditions: the tinted carousel
+## Trading conditions: the metallic carousel
 
 `components/site/Conditions.jsx`, directly under Markets. Replaces
 `MetricsStrip`, which is deleted.
@@ -199,11 +199,9 @@ hero, because the numbers land better once the reader knows what is traded.
 
 **Reference** is XTB's "Choose your way to understand the market" carousel,
 saved at `ref/image.png`. Borrowed: the shape of the interaction, and the idea
-that the product art carries the card. **Not** borrowed: XTB's cards are
-uniform light grey. These carry five tints, because XTB's three items are
-variations on one theme (courses / news / analysis) while these five —
-leverage, spread, breadth, speed, support — are unrelated quantities, and the
-colour is what stops them blurring together.
+that the product art carries the card. Like that reference, all five cards now
+share one quiet platinum surface; the numbers and metallic artwork provide the
+visual differences instead of unrelated background colours.
 
 ### Geometry — measured, not guessed
 
@@ -223,27 +221,16 @@ rather than a panel. **If this is re-tuned, keep the card near 82% and the art
 above 360px.** The size is the design; shrink either and it stops being this
 section.
 
-### Fills are flat
+### Platinum fills
 
-**No gradient, no sheen, no texture.** A gradient plate (`metric-plate`) and a
-milled sheen (`metric-sheen`) were both built here and removed: the renders
-are already high-gloss chrome and gold, and a gradient behind them reads as a
-second, disagreeing light source. The fills are plain hex values set inline
-per card. Keep them flat.
+Every card uses the same light platinum gradient from `globals.css`. Dark copy
+is shared across the run, including a stronger label tint for readable
+contrast.
 
-**Tints agree with the render on them,** they are not assigned arbitrarily:
-
-| Card | Render | Tint |
-| --- | --- | --- |
-| Max leverage | Balance scale, blue-lit steel | Blue |
-| Spreads from | Precision caliper, brushed steel | Platinum |
-| Tradable instruments | Gold bars, FX panel, globe, Bitcoin | Gold |
-| Average execution | Stopwatch, orange motion streaks | Violet |
-| Dedicated support | Headset and shield, green-lit | Green |
-
-Violet is the one deliberate contrast — the stopwatch is lit orange, and
-violet is the only tint in the set that makes that read as a highlight rather
-than a clash.
+A narrow highlight crosses a card once when it becomes active or when an
+inactive card is hovered. It does not loop, sits behind all content and artwork,
+and is removed entirely under reduced motion. The carousel remains the source
+of interaction; the sheen is only a quiet response to that state.
 
 **The cursor** is the pill under the track. The active card is a bar rather
 than a dot, so it reads as a position along a run instead of five equal

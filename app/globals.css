@@ -58,8 +58,8 @@
   --warn-50: #fff4e5;
   --warn-600: #b45309;
 
-  /* The deliberately dark surface: the footer plinth and the scrims that
-     dim the page behind a drawer. */
+  /* The deliberately dark neutral for scrims and isolated dark panels. The
+     footer now uses the light platinum surface instead. */
   --shell: #01061a;
 
   /* Elevation — soft, never harsh */
@@ -249,11 +249,36 @@ summary:focus-visible,
   );
 }
 
-/* Trading-condition cards carry a FLAT fill, set inline per card in
-   Conditions.jsx. No gradient, no sheen, no texture — the renders on them are
-   already high-gloss chrome and gold, and a gradient behind that reads as
-   two competing light sources. A gradient plate and a milled sheen were both
-   tried here and removed. Keep the fills flat. */
+/* Trading-condition cards share one restrained platinum surface, plus one
+   non-looping highlight supplied by Conditions.jsx. Keeping the stops light
+   lets every card share the same dark-copy treatment. */
+.condition-metal {
+  background-color: var(--metal-mid);
+  background-image:
+    radial-gradient(
+      110% 85% at 8% 0%,
+      rgba(255, 255, 255, 0.92) 0%,
+      rgba(255, 255, 255, 0) 52%
+    ),
+    linear-gradient(
+      135deg,
+      var(--metal-hi) 0%,
+      var(--metal-mid) 43%,
+      var(--metal-flash) 62%,
+      var(--metal-low) 100%
+    );
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.85),
+    inset 0 0 0 1px rgba(1, 6, 26, 0.07),
+    0 24px 54px -34px rgba(1, 6, 26, 0.38);
+}
+
+.condition-platinum {
+  --metal-hi: #fbfbfa;
+  --metal-mid: #e5e4e2;
+  --metal-flash: #f4f5f4;
+  --metal-low: #d9dcde;
+}
 
 /* Card that fades surface → green tint (accounts, funding). */
 @utility card-fade-green {

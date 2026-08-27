@@ -191,61 +191,9 @@ function ExecutionTicket() {
 
 export function Hero() {
   return (
-    <section className="arc-wash relative border-b border-line">
-      <div className="container-x grid items-center gap-12 py-16 md:py-24 lg:grid-cols-[minmax(0,1fr)_minmax(0,440px)] lg:gap-16">
-        {/* Copy */}
-        <div>
-          <Reveal as="h1" className="h-display max-w-[15ch] text-ink">
-            Trade 150+ markets on infrastructure built for speed.
-          </Reveal>
-
-          <Reveal
-            as="p"
-            delay={0.05}
-            className="mt-6 max-w-xl text-[17px] leading-relaxed text-balance-i text-body"
-          >
-            MetaTrader 5 on ByteFX servers, priced from raw spreads. One
-            account covers forex, metals, indices, crypto and share CFDs
-            &mdash; and opens with $20.
-          </Reveal>
-
-          <Reveal delay={0.1} className="mt-9 flex flex-wrap gap-3">
-            <Button href="/signup" size="lg" arrow>
-              Open live account
-            </Button>
-            <Button href="/demo" variant="ghost" size="lg">
-              Try demo
-            </Button>
-          </Reveal>
-
-          {/* Trust row. Above the fold on every competitor read; ByteFX had
-              none. Kept to what the site can already substantiate. */}
-          <Reveal
-            delay={0.15}
-            className="mt-8 flex flex-wrap items-center gap-x-2 gap-y-1.5"
-          >
-            {CHIPS.map((c, i) => (
-              <span
-                key={c}
-                className="flex items-center gap-2 text-[13px] font-medium text-body"
-              >
-                {c}
-                {i < CHIPS.length - 1 && (
-                  <span aria-hidden="true" className="text-line-strong">
-                    &middot;
-                  </span>
-                )}
-              </span>
-            ))}
-          </Reveal>
-        </div>
-
-        {/* Product. Below lg it drops under the copy rather than beside it —
-            a 440px ticket squeezed into a phone column reads as a graphic,
-            not as software. */}
-        <Reveal delay={0.1} y={16} className="w-full">
-          <ExecutionTicket />
-        </Reveal>
+    <section className="arc-wash relative border-b border-line h-[64vh] w-full flex ittems-center justify-center">
+      <div className= "text-xl font-medium text-gray-500">
+        Under Progress 
       </div>
     </section>
   );

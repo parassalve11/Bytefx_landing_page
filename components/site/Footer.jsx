@@ -14,7 +14,7 @@ const COLUMNS = [
     ],
   },
   {
-    title: "Links",
+    title: "Explore",
     links: [
       { label: "Account Types", href: "/#accounts" },
       { label: "Partnership", href: "/partnership" },
@@ -78,22 +78,31 @@ const SOCIALS = [
 
 export function Footer() {
   return (
-    <footer className="bg-shell text-white">
-      <div className="container-x py-14 md:py-16">
-        <div className="grid gap-10 md:grid-cols-2 lg:grid-cols-[1.4fr_1fr_1fr_1.6fr]">
+    <footer className="platinum-surface relative isolate overflow-hidden border-t border-line-strong/70 text-ink shadow-[inset_0_1px_0_rgba(255,255,255,0.9)]">
+      <div
+        aria-hidden="true"
+        className="platinum-grain pointer-events-none absolute inset-0 z-0 opacity-20 mix-blend-overlay"
+      />
+
+      <div className="container-x relative z-10 py-12 sm:py-14 lg:py-16">
+        <div className="grid gap-10 md:grid-cols-2 lg:grid-cols-[1.05fr_0.95fr_1.25fr] lg:gap-12">
           {/* Brand ------------------------------------------------- */}
-          <div>
+          <div className="md:col-span-2 lg:col-span-1">
             <Image
               src="/assets/Logo.png"
               alt="ByteFX"
-              width={132}
-              height={30}
-              className="h-[30px] w-auto brightness-0 invert"
+              width={145}
+              height={33}
+              className="h-[33px] w-auto"
             />
-            <p className="mt-4 max-w-xs text-[14.5px] text-[#9FAABD]">
+            <p className="mt-5 max-w-xs text-[17px] leading-relaxed font-medium text-ink">
               Discover your trading edge.
             </p>
-            <ul className="mt-6 flex gap-2.5">
+
+            <p className="mt-8 text-[11px] font-semibold tracking-[0.08em] text-ink/60 uppercase">
+              Connect with ByteFX
+            </p>
+            <ul className="mt-3 flex flex-wrap gap-2.5">
               {SOCIALS.map((s) => {
                 const Icon = s.icon;
                 return (
@@ -101,7 +110,7 @@ export function Footer() {
                     <a
                       href={s.href}
                       aria-label={s.label}
-                      className="flex h-9 w-9 items-center justify-center rounded-lg border border-white/12 text-[#9FAABD] transition-colors hover:border-white/30 hover:text-white"
+                      className="grid h-10 w-10 place-items-center rounded-xl border border-line-strong/70 bg-white/45 text-body shadow-xs transition-[transform,color,background-color,border-color,box-shadow] duration-200 hover:-translate-y-0.5 hover:border-brand/30 hover:bg-white/80 hover:text-brand hover:shadow-sm"
                     >
                       {s.brand ? (
                         <BrandGlyph name={s.brand} className="h-4 w-4" />
@@ -116,38 +125,52 @@ export function Footer() {
           </div>
 
           {/* Link columns ------------------------------------------ */}
-          {COLUMNS.map((col) => (
-            <nav key={col.title} aria-label={col.title}>
-              <h2 className="text-[11px] font-semibold tracking-[0.08em] text-white/50 uppercase">
-                {col.title}
-              </h2>
-              <ul className="mt-4 space-y-2.5">
-                {col.links.map((l) => (
-                  <li key={l.label}>
-                    <a
-                      href={l.href}
-                      className="text-[14.5px] text-[#C3CCDA] transition-colors hover:text-white"
-                    >
-                      {l.label}
-                    </a>
-                  </li>
-                ))}
-              </ul>
-            </nav>
-          ))}
+          <div className="grid grid-cols-2 gap-8">
+            {COLUMNS.map((col) => (
+              <nav key={col.title} aria-label={col.title}>
+                <h2 className="text-[11px] font-semibold tracking-[0.08em] text-ink/60 uppercase">
+                  {col.title}
+                </h2>
+                <ul className="mt-5 space-y-3">
+                  {col.links.map((l) => (
+                    <li key={l.label}>
+                      <a
+                        href={l.href}
+                        className="group/link inline-flex items-center gap-2 text-[14px] font-medium text-body transition-colors hover:text-brand"
+                      >
+                        <span
+                          aria-hidden="true"
+                          className="h-1 w-1 rounded-full bg-ink/20 transition-colors group-hover/link:bg-brand"
+                        />
+                        {l.label}
+                      </a>
+                    </li>
+                  ))}
+                </ul>
+              </nav>
+            ))}
+          </div>
 
           {/* Company ----------------------------------------------- */}
-          <div>
-            <h2 className="text-[11px] font-semibold tracking-[0.08em] text-white/50 uppercase">
-              Company
+          <div className="rounded-[24px] border border-white/70 bg-white/40 p-6 shadow-[inset_0_1px_0_rgba(255,255,255,0.9),0_18px_48px_-36px_rgba(1,6,26,0.34)] sm:p-7">
+            <h2 className="text-[11px] font-semibold tracking-[0.08em] text-ink/60 uppercase">
+              Company details
             </h2>
-            <dl className="mt-4 space-y-3">
+            <dl className="mt-5 space-y-4">
               {COMPANY.map((c) => (
-                <div key={c.label}>
-                  <dt className="text-[11.5px] text-white/45">{c.label}</dt>
-                  <dd className="text-[13.5px] leading-relaxed text-[#C3CCDA]">
+                <div
+                  key={c.label}
+                  className="border-b border-line-strong/60 pb-4 last:border-b-0 last:pb-0"
+                >
+                  <dt className="text-[11.5px] font-medium text-ink/60">
+                    {c.label}
+                  </dt>
+                  <dd className="mt-1 text-[13.5px] leading-relaxed text-body">
                     {c.href ? (
-                      <a href={c.href} className="transition-colors hover:text-white">
+                      <a
+                        href={c.href}
+                        className="font-medium text-brand underline-offset-4 transition-colors hover:text-brand-700 hover:underline"
+                      >
                         {c.value}
                       </a>
                     ) : (
@@ -161,28 +184,43 @@ export function Footer() {
         </div>
 
         {/* Legal --------------------------------------------------- */}
-        <div className="mt-12 space-y-4 border-t border-white/10 pt-8">
-          {LEGAL.map((l) => (
-            <p
-              key={l.title}
-              className="max-w-4xl text-[12.5px] leading-[1.6] text-[#9FAABD]"
-            >
-              <span className="font-semibold text-[#C3CCDA]">{l.title}:</span>{" "}
-              {l.body}
-            </p>
-          ))}
-        </div>
+        <section
+          aria-labelledby="footer-legal-title"
+          className="mt-12 border-y border-line-strong/70 py-7"
+        >
+          <h2
+            id="footer-legal-title"
+            className="text-[11px] font-semibold tracking-[0.08em] text-ink/60 uppercase"
+          >
+            Legal information
+          </h2>
+          <div className="mt-5 grid gap-6 lg:grid-cols-3 lg:gap-8">
+            {LEGAL.map((l) => (
+              <article key={l.title} className="border-l border-ink/10 pl-4">
+                <h3 className="text-[12.5px] font-semibold text-ink">
+                  {l.title}
+                </h3>
+                <p className="mt-2 text-[12px] leading-[1.65] text-body">
+                  {l.body}
+                </p>
+              </article>
+            ))}
+          </div>
+        </section>
 
-        <div className="mt-10 flex flex-col gap-4 border-t border-white/10 pt-6 md:flex-row md:items-center md:justify-between">
-          <p className="text-[12.5px] text-[#9FAABD]">
+        <div className="mt-7 flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
+          <p className="text-[12.5px] text-body">
             &copy; 2021-2026 ByteFX Capital Ltd. Built for the modern trader.
           </p>
-          <ul className="flex flex-wrap gap-x-5 gap-y-2">
+          <ul
+            className="flex flex-wrap gap-x-5 gap-y-2"
+            aria-label="Legal policies"
+          >
             {POLICIES.map((p) => (
               <li key={p.label}>
                 <a
                   href={p.href}
-                  className="text-[12.5px] text-[#9FAABD] transition-colors hover:text-white"
+                  className="text-[12.5px] font-medium text-body transition-colors hover:text-brand"
                 >
                   {p.label}
                 </a>
