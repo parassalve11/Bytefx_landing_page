@@ -12,18 +12,11 @@ import { cn } from "@/lib/utils";
 
 /**
  * The ByteFX Trading Championship — a monthly, real-account contest ranked on
- * percentage return, sitting between Account types and the mobile app.
+ * percentage return, presented with its leaderboard on `/competition`.
  *
  * It is deliberately two bands inside one `<section>` rather than two sections:
- * the photographic banner states the offer, the leaderboard underneath is the
- * proof. Splitting them would let the page rhythm drop a white band between the
- * claim and the evidence, which is exactly the join that must not break.
- *
- * **Placement.** Account types (`alt`) used to run straight into the mobile app
- * (`alt`), two tinted bands with no break. This lands between them as
- * photo + white, so it fixes that adjacency rather than adding to it. It also
- * sits five sections clear of Thailand, the page's other photographic moment —
- * do not move the two next to each other.
+ * the photographic banner states the offer, and the leaderboard immediately
+ * underneath is the proof. The root layout supplies the shared navbar/footer.
  *
  * **The artwork ships with a white frame baked in** (3.3% left/right, ~10%
  * top/bottom, plus rounded corners). `background.png` is the untouched original;
@@ -380,8 +373,8 @@ export function Competition() {
           alt=""
           aria-hidden="true"
           fill
+          priority
           sizes="100vw"
-          quality={78}
           className="-z-20 object-cover object-right"
         />
 
@@ -420,7 +413,7 @@ export function Competition() {
             </Reveal> */}
 
             <Reveal
-              as="h2"
+              as="h1"
               id="competition-heading"
               delay={0.05}
               className="h-section mt-5 text-white"
@@ -500,7 +493,7 @@ export function Competition() {
         <div className="container-x">
           <div className="mb-6 flex flex-col gap-4 md:mb-8 md:flex-row md:items-end md:justify-between">
             <div className="max-w-2xl">
-              <Reveal as="h3" className="h-section text-[24px] md:text-[30px]">
+              <Reveal as="h2" className="h-section text-[24px] md:text-[30px]">
                 This round&rsquo;s standings
               </Reveal>
               <Reveal

@@ -126,11 +126,12 @@ const SUPPORT = [
 /* Landing-page sections are addressed as /#id so they also resolve from sub-pages. */
 const MOBILE_NAV = [
   { label: "Home", href: "/" },
-  { label: "Company", href: "/company" },
+  { label: "About ByteFX", href: "/company/about" },
   { label: "Why ByteFX", href: "/company/why-bytefx" },
   { label: "Trust & Security", href: "/company/trust-security" },
   { label: "Markets", href: "/#markets" },
   { label: "Account Types", href: "/#accounts" },
+  { label: "Competition", href: "/competition" },
   { label: "Partnership", href: "/partnership" },
   { label: "Tools", href: "/tools" },
   { label: "Getting started", href: "/getting-started" },
@@ -172,19 +173,22 @@ export function Navbar() {
           <Image
             src="/assets/Logo.png"
             alt="ByteFX"
-            width={132}
-            height={30}
+            width={384}
+            height={82}
             priority
             className="h-[26px] w-auto md:h-[30px]"
           />
         </a>
 
-        {/* Seven top-level items need ~755px; below xl the row cannot hold them
-            alongside the logo and auth cluster, so the drawer takes over there. */}
+        {/* The logo is the home link. Seven top-level items need ~800px; below
+            xl the drawer takes over so the auth cluster never gets squeezed. */}
         <Menu setActive={setActive} className="hidden gap-7 xl:flex">
-          <MenuItem setActive={setActive} active={active} item="Home" href="/" />
-
-          <MenuItem setActive={setActive} active={active} item="Company" href="/company">
+          <MenuItem
+            setActive={setActive}
+            active={active}
+            item="Company"
+            href="/company/about"
+          >
             <div className="flex w-56 flex-col">
               <HoveredLink href="/company/about">About ByteFX</HoveredLink>
               <HoveredLink href="/company/why-bytefx">Why ByteFX</HoveredLink>
@@ -216,6 +220,13 @@ export function Navbar() {
               ))}
             </div>
           </MenuItem>
+
+          <MenuItem
+            setActive={setActive}
+            active={active}
+            item="Competition"
+            href="/competition"
+          />
 
           <MenuItem
             setActive={setActive}
@@ -315,8 +326,8 @@ export function Navbar() {
               <Image
                 src="/assets/Logo.png"
                 alt="ByteFX"
-                width={120}
-                height={27}
+                width={384}
+                height={82}
                 className="h-[26px] w-auto"
               />
               <div className="flex items-center">

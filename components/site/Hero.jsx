@@ -1,199 +1,178 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import Image from "next/image";
 import { motion, useReducedMotion } from "motion/react";
-import { Check, TrendingUp } from "lucide-react";
+import { Check } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { Reveal } from "@/components/ui/reveal";
-import { cn } from "@/lib/utils";
 
 /**
- * Hero — "product proof", per the competitor pass in README.
+ * Hero — one claim on a night sky.
  *
- * Six competitor heroes were read before this was designed (Pepperstone,
- * eToro, Deriv, IC Markets, Exness, OANDA). Five of the six put a stock
- * photograph or a promo graphic above the fold; only IC Markets shows
- * anything you could act on. So the differentiator here is the one thing
- * the category does not do: **show the product**.
+ * The band is deliberately empty apart from the copy. Everything the page
+ * has to prove is proved further down: `Ticker` streams live quotes
+ * directly below this, `Conditions` prints 1:2000, 0.1 pips, 150+, ~20ms
+ * and 24/6, and `FinalCta` closes with the risk warning. This section's
+ * only job is to state the claim and put two buttons under it, so nothing
+ * else is allowed in the frame.
  *
- * Three constraints the sections below impose, and the whole reason this
- * hero looks the way it does:
+ * ## The photograph
  *
- * 1. `Conditions` prints 1:2000, 0.1 pips, 150+, ~20ms and 24/6 further down
- *    the page. The hero must not restate them — the ticket *demonstrates*
- *    the fill time instead, which is the point. (That section used to sit
- *    directly under this one as `MetricsStrip`; it now follows Markets, but
- *    the constraint is unchanged — the numbers still belong to it.)
- * 2. `Ticker` now follows the hero directly, with live quotes, so a streaming
- *    price widget here would be the same idea twice in 900px. The ticket is
- *    static and fires once.
- * 3. `FinalCta` owns "Start trading in under five minutes" and the risk
- *    warning. The CTA labels deliberately match it — they bookend the page.
+ * `public/assets/hero/aurora.jpg` — an aurora over a treeline, by Federico
+ * Di Dio (@didiofederico_photographer) on Unsplash, free for commercial use
+ * under the Unsplash Licence, no attribution required. Master is downscaled
+ * to 2000px / q60 (440 KB); `next/image` serves the derivatives.
  *
- * The fill animation is a **third** signature moment, added to the two the
- * motion contract names (ticker flash, phone parallax). It is deliberate:
- * "orders fill in about 20ms" is the claim the whole positioning rests on,
- * and this is the only place on the page that shows it rather than saying
- * it. It runs once, never loops, and is fully skipped under reduced motion.
+ * It was picked over a dozen others for one reason: it is already the
+ * ByteFX palette. Deep blue-teal sky, emerald curtains — `#1356be` and
+ * `#4cd201` as weather. The upper half is dark and near-featureless, which
+ * is where the headline sits; the light rises from the horizon *below* the
+ * copy rather than across it.
  *
- * Copy is written to what the live site already claims. The regulator chip
- * is **not** included: ByteFX Capital Ltd's licence details need the same
- * compliance sign-off the Trust section items are badged for. Add it to
- * CHIPS once legal confirms the entity and number — the row is built for
- * four and currently carries three.
+ * **If you swap the photograph, check the scrim.** `hero-scrim` is tuned to
+ * this frame — a lighter or busier image needs more of it, and the white
+ * type has to clear AA at every breakpoint. Keep the aurora low: an image
+ * with bright detail through the middle band will fight the H1 no matter
+ * how much scrim goes over it.
+ *
+ * This is the only dark band on the site. Everything below is the white /
+ * `alt` alternation, and the hard edge at the foot of this section is the
+ * page's first and strongest contrast — do not soften it with a border.
+ *
+ * ## Motion
+ *
+ * Nothing here is a signature moment. The copy rises once on load, and the
+ * photograph drifts a few percent over 44s so the band is not completely
+ * static. Both are off under `prefers-reduced-motion`, enforced here and in
+ * `globals.css`.
+ *
+ * ## Open
+ *
+ * The regulator chip is **not** included: ByteFX Capital Ltd's licence
+ * details need the same compliance sign-off the Trust section items are
+ * badged for. Add it to `CHIPS` once legal confirms the entity and number —
+ * the row is built for four and currently carries three.
  */
-
-/* Fixed geometry — server and client render identically, so there is no
-   hydration mismatch and no layout shift under the ticket. */
-const SPARK = [
-  18, 22, 19, 26, 24, 31, 28, 34, 30, 27, 33, 39, 36, 42, 38, 45, 43, 50, 47,
-  55,
-];
-
-const BID = 2417.62;
-const ASK = 2417.84;
 
 const CHIPS = ["MetaTrader 5", "$20 minimum deposit", "24/6 support"];
 
-function Sparkline() {
-  const w = 260;
-  const h = 56;
-  const lo = Math.min(...SPARK);
-  const hi = Math.max(...SPARK);
-  const step = w / (SPARK.length - 1);
-  const y = (v) => h - ((v - lo) / (hi - lo)) * (h - 6) - 3;
-  const line = SPARK.map((v, i) => `${i * step},${y(v)}`).join(" ");
+const EASE = [0.22, 1, 0.36, 1];
 
-  return (
-    <svg
-      viewBox={`0 0 ${w} ${h}`}
-      preserveAspectRatio="none"
-      className="h-full w-full"
-      aria-hidden="true"
-    >
-      <defs>
-        <linearGradient id="hero-spark" x1="0" y1="0" x2="0" y2="1">
-          <stop offset="0%" stopColor="var(--up)" stopOpacity="0.22" />
-          <stop offset="100%" stopColor="var(--up)" stopOpacity="0" />
-        </linearGradient>
-      </defs>
-      <polygon points={`0,${h} ${line} ${w},${h}`} fill="url(#hero-spark)" />
-      <polyline
-        points={line}
-        fill="none"
-        stroke="var(--up)"
-        strokeWidth="1.6"
-        strokeLinecap="round"
-        strokeLinejoin="round"
-      />
-    </svg>
-  );
-}
-
-/**
- * The ticket. Static quote, one-shot fill.
- *
- * `stage` goes idle → sending → filled on a timer started after mount, so
- * the server-rendered markup is always the idle state and hydration is
- * clean. Under reduced motion it mounts straight to `filled`: the
- * confirmation is information, the transition is the decoration.
- */
-function ExecutionTicket() {
+/** Above-the-fold entry: plays on load, not on scroll. */
+function Rise({ delay = 0, y = 20, className, children, as = "div" }) {
   const reduced = useReducedMotion();
-  const [stage, setStage] = useState("idle");
+  const MotionTag = motion[as] ?? motion.div;
 
-  useEffect(() => {
-    if (reduced) {
-      setStage("filled");
-      return;
-    }
-    const a = setTimeout(() => setStage("sending"), 900);
-    const b = setTimeout(() => setStage("filled"), 1550);
-    return () => {
-      clearTimeout(a);
-      clearTimeout(b);
-    };
-  }, [reduced]);
+  if (reduced) {
+    const Tag = as;
+    return <Tag className={className}>{children}</Tag>;
+  }
 
   return (
-    <div className="overflow-hidden rounded-2xl border border-line bg-surface shadow-xl">
-      {/* Instrument header */}
-      <div className="flex items-center justify-between border-b border-line px-4 py-3">
-        <div>
-          <p className="text-[13.5px] font-semibold text-ink">XAU/USD</p>
-          <p className="eyebrow mt-1">Gold &middot; spot</p>
-        </div>
-        <span className="tnum inline-flex items-center gap-1 rounded-md bg-up/10 px-2 py-1 text-[11.5px] font-semibold text-up">
-          <TrendingUp className="h-3 w-3" strokeWidth={2.5} />
-          +0.62%
-        </span>
-      </div>
-
-      {/* Trend. Decorative — the numbers below carry the meaning. */}
-      <div className="h-[56px] px-4 pt-3">
-        <Sparkline />
-      </div>
-
-      {/* Two-sided quote */}
-      <div className="grid grid-cols-[1fr_auto_1fr] items-stretch gap-2 px-4 py-3">
-        <div className="rounded-lg border border-line bg-alt px-3 py-2.5">
-          <span className="eyebrow">Sell</span>
-          <span className="tnum mt-1 block text-[17px] leading-none font-bold text-down">
-            {BID.toFixed(2)}
-          </span>
-        </div>
-        <div className="flex flex-col items-center justify-center px-1">
-          <span className="eyebrow">Spread</span>
-          <span className="tnum mt-1 text-[13px] leading-none font-bold text-ink">
-            {(ASK - BID).toFixed(2)}
-          </span>
-        </div>
-        <div className="rounded-lg border border-brand-100 bg-brand-50 px-3 py-2.5">
-          <span className="eyebrow text-brand/70">Buy</span>
-          <span className="tnum mt-1 block text-[17px] leading-none font-bold text-up">
-            {ASK.toFixed(2)}
-          </span>
-        </div>
-      </div>
-
-      {/* The payoff. Fixed height so the confirmation swapping in never
-          shifts the card — that jump would undercut the point it makes. */}
-      <div className="flex h-[52px] items-center border-t border-line bg-alt px-4">
-        {stage === "filled" ? (
-          <motion.div
-            initial={reduced ? false : { opacity: 0, y: 6 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.35, ease: [0.22, 1, 0.36, 1] }}
-            className="flex w-full items-center justify-between gap-3"
-          >
-            <span className="inline-flex items-center gap-2 text-[13px] font-semibold text-ink">
-              <span className="grid h-5 w-5 place-items-center rounded-full bg-go-50">
-                <Check className="h-3 w-3 text-go-600" strokeWidth={3} />
-              </span>
-              Filled &middot; 0.10 lots
-            </span>
-            <span className="tnum text-[13px] font-bold text-go-600">19 ms</span>
-          </motion.div>
-        ) : (
-          <span
-            className={cn(
-              "text-[13px] font-medium text-muted transition-opacity duration-300",
-              stage === "sending" && "opacity-60"
-            )}
-          >
-            {stage === "sending" ? "Sending order…" : "Market order · 0.10 lots"}
-          </span>
-        )}
-      </div>
-    </div>
+    <MotionTag
+      className={className}
+      initial={{ opacity: 0, y }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.7, ease: EASE, delay }}
+    >
+      {children}
+    </MotionTag>
   );
 }
 
 export function Hero() {
   return (
-    <section className="arc-wash relative border-b border-line h-[64vh] w-full flex ittems-center justify-center">
-      <div className= "text-xl font-medium text-gray-500">
-        Under Progress 
+    /* The negative top margin pulls the band up behind the sticky navbar,
+       whose shell is a floating white pill on a transparent header. Without
+       it the photograph starts 84px down the page and the pill sits on a
+       strip of bare canvas — the one place on the site where the header is
+       meant to be floating over something. Keep the padding equal to the
+       margin: it is what puts the content back where it belongs. */
+    <section className="relative -mt-[84px] flex min-h-[620px] items-center overflow-hidden pt-[84px] text-white md:min-h-[88vh]">
+      <div className="pointer-events-none absolute inset-0" aria-hidden="true">
+        {/* Base colour under the photograph, so a slow or failed image load
+            leaves a night sky rather than a white flash under white type. */}
+        <div className="hero-sky absolute inset-0" />
+
+        {/* `priority` because this is the LCP element. The Thailand banner
+            further down is deliberately *not* priority for the same reason
+            — it must not compete with this for the first paint. */}
+        <Image
+          src="/assets/hero/aurora.jpg"
+          alt=""
+          fill
+          priority
+          sizes="100vw"
+          className="hero-drift object-cover object-[50%_60%]"
+        />
+
+        <div className="hero-scrim absolute inset-0" />
+
+        {/* The band has no bottom border; this is what stops the aurora
+            meeting the white Ticker underneath as a bright seam. */}
+        <div className="absolute inset-x-0 bottom-0 h-28 bg-gradient-to-t from-[#01040f] via-[#01040f]/55 to-transparent" />
+      </div>
+
+      <div className="container-x relative py-20 md:py-24">
+        <div className="mx-auto max-w-[860px] text-center">
+          <Rise
+            as="p"
+            className="text-[11px] font-semibold tracking-[0.22em] text-white/55 uppercase"
+          >
+            Forex · Metals · Indices · Crypto
+          </Rise>
+
+          {/* Weight, not colour, carries the emphasis: headings on this site
+              are solid by rule, and 300 against 700 in Poppins is a wider
+              contrast than any tint would have given anyway. */}
+          <Rise as="h1" delay={0.08} className="h-display mt-6 text-white">
+            <span className="block font-light text-white/90">Discover your</span>
+            <span className="block">trading edge</span>
+          </Rise>
+
+          <Rise
+            as="p"
+            delay={0.16}
+            className="text-balance-i mx-auto mt-6 max-w-[560px] text-[16.5px] leading-relaxed text-white/75"
+          >
+            One account for forex, metals, indices and crypto, on MetaTrader 5.
+            Open it in minutes and fund it instantly.
+          </Rise>
+
+          <Rise
+            delay={0.24}
+            className="mt-9 flex flex-col items-center justify-center gap-3 sm:flex-row"
+          >
+            <Button href="/signup" size="lg" arrow className="w-full sm:w-auto">
+              Open live account
+            </Button>
+            <Button
+              href="/demo"
+              variant="onDark"
+              size="lg"
+              className="w-full sm:w-auto"
+            >
+              Try demo
+            </Button>
+          </Rise>
+
+          {/* Three chips, room for four. The fourth is the regulator — it
+              ships when compliance confirms the entity and licence number,
+              not before. */}
+          <Rise
+            delay={0.3}
+            className="mt-8 flex flex-wrap items-center justify-center gap-x-5 gap-y-2"
+          >
+            {CHIPS.map((chip) => (
+              <span
+                key={chip}
+                className="inline-flex items-center gap-1.5 text-[13px] font-medium text-white/70"
+              >
+                <Check className="h-3.5 w-3.5 text-[#a8f55b]" strokeWidth={3} />
+                {chip}
+              </span>
+            ))}
+          </Rise>
+        </div>
       </div>
     </section>
   );

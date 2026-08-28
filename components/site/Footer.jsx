@@ -17,13 +17,14 @@ const COLUMNS = [
     title: "Explore",
     links: [
       { label: "Account Types", href: "/#accounts" },
+      { label: "Competition", href: "/competition" },
       { label: "Partnership", href: "/partnership" },
       { label: "Tools", href: "/tools" },
+      { label: "About ByteFX", href: "/company/about" },
       { label: "Why ByteFX", href: "/company/why-bytefx" },
       { label: "Trust & Security", href: "/company/trust-security" },
       { label: "Getting Started", href: "/getting-started" },
       { label: "Support", href: "/support" },
-      { label: "Company", href: "/company" },
     ],
   },
 ];
@@ -91,8 +92,8 @@ export function Footer() {
             <Image
               src="/assets/Logo.png"
               alt="ByteFX"
-              width={145}
-              height={33}
+              width={384}
+              height={82}
               className="h-[33px] w-auto"
             />
             <p className="mt-5 max-w-xs text-[17px] leading-relaxed font-medium text-ink">

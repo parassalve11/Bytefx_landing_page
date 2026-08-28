@@ -530,6 +530,74 @@ summary:focus-visible,
     0 2px 8px rgba(1, 6, 26, 0.08);
 }
 
+
+/* ------------------------------------------------------------------
+   Hero — the night band.
+
+   The one dark band on the site, and the only place a photograph runs
+   full-bleed behind type. Everything here exists to keep white copy
+   legible over `public/assets/hero/aurora.jpg` — read the note in
+   `Hero.jsx` before swapping that image out.
+   ------------------------------------------------------------------ */
+
+/* Base colour under the photograph. A slow or failed image load leaves a
+   night sky rather than a white flash under white type. Tuned to the
+   photo's own darks so the join is invisible while it decodes. */
+@utility hero-sky {
+  background:
+    radial-gradient(
+      110% 62% at 50% 100%,
+      rgba(19, 86, 190, 0.28) 0%,
+      rgba(19, 86, 190, 0) 62%
+    ),
+    linear-gradient(178deg, #01040f 0%, #04101f 44%, #06202f 100%);
+}
+
+/* The scrim, in two parts, because one gradient cannot do both jobs.
+
+   The radial pulls the middle of the frame down so the H1 and the lead
+   clear contrast over whatever the curtains are doing behind them. The
+   linear darkens top and bottom: the top so the navbar's white pill has
+   something to sit on, the bottom so the band can meet the white Ticker
+   without a bright seam.
+
+   These numbers are tuned to this photograph. A lighter or busier frame
+   needs more; do not assume they carry over. */
+@utility hero-scrim {
+  background:
+    radial-gradient(
+      62% 54% at 50% 46%,
+      rgba(1, 4, 15, 0.5) 0%,
+      rgba(1, 4, 15, 0.22) 54%,
+      rgba(1, 4, 15, 0) 84%
+    ),
+    linear-gradient(
+      180deg,
+      rgba(1, 4, 15, 0.52) 0%,
+      rgba(1, 4, 15, 0.06) 30%,
+      rgba(1, 4, 15, 0.1) 66%,
+      rgba(1, 4, 15, 0.58) 100%
+    );
+}
+
+/* The photograph drifts so the band is not completely static. 44s, and it
+   never travels more than a few percent — slow and small enough that it
+   registers as depth rather than as an animation, and it never moves far
+   enough to pull the treeline off the bottom edge. */
+@keyframes hero-drift {
+  0% {
+    transform: scale(1.03) translate3d(-0.6%, 0.4%, 0);
+  }
+  100% {
+    transform: scale(1.07) translate3d(0.6%, -0.5%, 0);
+  }
+}
+
+.hero-drift {
+  animation: hero-drift 44s ease-in-out infinite alternate;
+  will-change: transform;
+}
+
 /* Non-negotiable: reduced motion kills every reveal, counter, marquee. */
 @media (prefers-reduced-motion: reduce) {
   html {
@@ -551,6 +619,11 @@ summary:focus-visible,
   }
 
   .marquee-track {
+    animation: none !important;
+    transform: none !important;
+  }
+
+  .hero-drift {
     animation: none !important;
     transform: none !important;
   }
