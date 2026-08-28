@@ -11,7 +11,10 @@ import {
 } from "motion/react";
 import { ArrowRight } from "lucide-react";
 
-const VIDEO_SRC = "/assets/about/generated_video (2).mp4";
+const VIDEO_SRC = "/assets/about/crypto-rain-scroll.webm";
+const VIDEO_POSTER_SRC = "/assets/about/crypto-rain-poster.png";
+const FRAME_DURATION = 1 / 24;
+const FIRST_FRAME_TIME = FRAME_DURATION / 2;
 const STORY_LENGTH = 4;
 
 const STORY_BEATS = [
@@ -120,14 +123,21 @@ export function AboutExperience() {
       seekFrameRef.current = null;
       const video = videoRef.current;
 
-      if (!video || !durationRef.current || video.seeking) return;
+      if (
+        !video ||
+        !durationRef.current ||
+        video.readyState < 1 ||
+        video.seeking
+      ) {
+        return;
+      }
 
       const nextTime = Math.min(
-        Math.max(targetTimeRef.current, 0.01),
-        Math.max(durationRef.current - 0.04, 0.01)
+        Math.max(targetTimeRef.current, FIRST_FRAME_TIME),
+        Math.max(durationRef.current - FRAME_DURATION, FIRST_FRAME_TIME)
       );
 
-      if (Math.abs(video.currentTime - nextTime) > 0.018) {
+      if (Math.abs(video.currentTime - nextTime) > FRAME_DURATION / 5) {
         video.currentTime = nextTime;
       }
     });
@@ -135,7 +145,8 @@ export function AboutExperience() {
 
   useMotionValueEvent(progress, "change", (latest) => {
     if (reducedMotion || !durationRef.current) return;
-    targetTimeRef.current = latest * durationRef.current;
+    targetTimeRef.current =
+      latest * Math.max(durationRef.current - FRAME_DURATION, 0);
     scheduleSeek();
   });
 
@@ -143,24 +154,62 @@ export function AboutExperience() {
     const video = videoRef.current;
     if (!video) return undefined;
 
+    let hasRevealedFrame = false;
+    let revealFrameId = null;
+    let revealFallbackId = null;
+
+    const revealOnPresentedFrame = () => {
+      if (
+        hasRevealedFrame ||
+        revealFrameId !== null ||
+        revealFallbackId !== null
+      ) {
+        return;
+      }
+
+      if (typeof video.requestVideoFrameCallback === "function") {
+        revealFrameId = video.requestVideoFrameCallback(() => {
+          hasRevealedFrame = true;
+          revealFrameId = null;
+          setVideoReady(true);
+        });
+        return;
+      }
+
+      revealFallbackId = window.requestAnimationFrame(() => {
+        hasRevealedFrame = true;
+        revealFallbackId = null;
+        setVideoReady(true);
+      });
+    };
+
     const primeVideo = () => {
       durationRef.current = Number.isFinite(video.duration) ? video.duration : 0;
       video.pause();
 
       const initialProgress = reducedMotion ? 0.56 : progress.get();
-      targetTimeRef.current = initialProgress * durationRef.current;
+      targetTimeRef.current =
+        initialProgress * Math.max(durationRef.current - FRAME_DURATION, 0);
       scheduleSeek();
     };
 
-    const handleLoadedData = () => setVideoReady(true);
+    const handleLoadedData = () => {
+      revealOnPresentedFrame();
+      scheduleSeek();
+    };
     const handleSeeked = () => {
-      if (Math.abs(video.currentTime - targetTimeRef.current) > 0.025) {
+      revealOnPresentedFrame();
+
+      if (
+        Math.abs(video.currentTime - targetTimeRef.current) >
+        FRAME_DURATION / 2
+      ) {
         scheduleSeek();
       }
     };
 
     if (video.readyState >= 1) primeVideo();
-    if (video.readyState >= 2) setVideoReady(true);
+    if (video.readyState >= 2) revealOnPresentedFrame();
 
     video.addEventListener("loadedmetadata", primeVideo);
     video.addEventListener("loadeddata", handleLoadedData);
@@ -170,6 +219,15 @@ export function AboutExperience() {
       video.removeEventListener("loadedmetadata", primeVideo);
       video.removeEventListener("loadeddata", handleLoadedData);
       video.removeEventListener("seeked", handleSeeked);
+      if (
+        revealFrameId !== null &&
+        typeof video.cancelVideoFrameCallback === "function"
+      ) {
+        video.cancelVideoFrameCallback(revealFrameId);
+      }
+      if (revealFallbackId !== null) {
+        window.cancelAnimationFrame(revealFallbackId);
+      }
       if (seekFrameRef.current !== null) {
         window.cancelAnimationFrame(seekFrameRef.current);
         seekFrameRef.current = null;
@@ -184,19 +242,35 @@ export function AboutExperience() {
         className="relative h-[430svh] motion-reduce:h-auto"
       >
         <div className="sticky top-0 h-svh min-h-[640px] overflow-hidden bg-[#e5e4e2] motion-reduce:relative motion-reduce:h-auto motion-reduce:min-h-svh">
+          <motion.img
+            src={VIDEO_POSTER_SRC}
+            alt=""
+            aria-hidden="true"
+            draggable="false"
+            fetchPriority="high"
+            decoding="sync"
+            style={{ scale: videoScale }}
+            className={`pointer-events-none absolute inset-0 h-full w-full object-cover object-center transition-opacity duration-300 select-none motion-reduce:!transform-none md:object-contain ${
+              videoReady ? "opacity-0" : "opacity-100"
+            }`}
+          />
+
           <motion.video
             ref={videoRef}
             muted
             playsInline
             preload="auto"
+            poster={VIDEO_POSTER_SRC}
+            disablePictureInPicture
+            disableRemotePlayback
             aria-hidden="true"
             tabIndex={-1}
             style={{ scale: videoScale }}
-            className={`absolute inset-0 h-full w-full object-cover object-center transition-opacity duration-700 motion-reduce:!transform-none md:object-contain ${
+            className={`absolute inset-0 h-full w-full object-cover object-center transition-opacity duration-300 motion-reduce:!transform-none md:object-contain ${
               videoReady ? "opacity-100" : "opacity-0"
             }`}
           >
-            <source src={VIDEO_SRC} type="video/mp4" />
+            <source src={VIDEO_SRC} type="video/webm" />
           </motion.video>
 
           <div
