@@ -1,0 +1,76 @@
+.orbit-container {
+  position: relative;
+  margin-right: auto;
+  margin-left: auto;
+}
+
+.orbit-scaling-container {
+  position: relative;
+  width: 100%;
+  height: 100%;
+}
+
+.orbit-scaling-container--responsive {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform-origin: center;
+}
+
+.orbit-rotation-wrapper {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  transform-origin: center;
+}
+
+.orbit-path-svg {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+}
+
+.orbit-item {
+  position: absolute;
+  user-select: none;
+  will-change: offset-distance, transform;
+}
+
+.orbit-item > div {
+  width: 100%;
+  height: 100%;
+}
+
+.orbit-center-content {
+  position: absolute;
+  z-index: 10;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.orbit-image {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+}
+
+.hero-crypto-orbit .orbit-item {
+  display: grid;
+  place-items: center;
+  padding: 18px;
+  overflow: hidden;
+  border: 1px solid rgba(255, 255, 255, 0.48);
+  border-radius: 999px;
+  background: rgba(250, 252, 255, 0.92);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.9),
+    0 12px 38px rgba(1, 6, 26, 0.34),
+    0 0 0 7px rgba(255, 255, 255, 0.05);
+  backdrop-filter: blur(12px);
+}
+
+.hero-crypto-orbit .orbit-image {
+  filter: drop-shadow(0 2px 4px rgba(1, 6, 26, 0.2));
+}
