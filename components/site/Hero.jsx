@@ -1,7 +1,7 @@
 "use client";
 
-import { motion, useReducedMotion } from "motion/react";
-import { Check } from "lucide-react";
+import Image from "next/image";
+import { Headphones, WalletCards } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { InstrumentIcon } from "@/components/ui/asset-icon";
 import OrbitImages from "@/components/ui/OrbitImages";
@@ -39,13 +39,13 @@ import OrbitImages from "@/components/ui/OrbitImages";
  * ## The orbit
  *
  * React Bits' `OrbitImages`, orbiting the site's own `InstrumentIcon` coin
- * discs rather than files — eight instruments drawn from the four asset
- * classes named in the eyebrow, so the ring is the product line rather than
- * abstract decoration. Two rings counter-rotating at different radii read as depth;
- * one ring reads as a carousel.
+ * discs rather than files. The outer ring carries the five company marks from
+ * the stocks market and the inner ring carries four other traded markets. Two
+ * counter-rotating rings read as depth rather than a carousel.
  *
- * It is `aria-hidden` inside the component and `pointer-events-none` here:
- * it sits behind the copy, and nothing in it is reachable or announced.
+ * It is `aria-hidden` inside the component and sits behind the copy, so none
+ * of it is reachable or announced. Fine pointers get a small hover response;
+ * there are deliberately no links on continuously moving targets.
  * Under `prefers-reduced-motion` the component parks the discs where they
  * are instead of hiding them, so the composition still holds.
  *
@@ -55,48 +55,31 @@ import OrbitImages from "@/components/ui/OrbitImages";
  * orbit turns slowly; both are off under `prefers-reduced-motion`, enforced
  * here and in `globals.css`.
  *
- * ## Open
- *
- * The regulator chip is **not** included: ByteFX Capital Ltd's licence
- * details need the same compliance sign-off the Trust section items are
- * badged for. Add it to `CHIPS` once legal confirms the entity and number —
- * the row is built for four and currently carries three.
+ * The proof row uses the same genuine MetaTrader mark as `MobileApp`; the
+ * other two facts have their own pictograms instead of three repeated checks.
+ * All three sit on restrained glass surfaces so they stay legible over the
+ * moving orbit without turning into another CTA row.
  */
-
-const CHIPS = ["MetaTrader 5", "$20 minimum deposit", "24/6 support"];
 
 /**
- * Eight instruments covering every asset class named in the eyebrow — three
- * majors, both metals, both crypto and one index — so the ring says the same
- * thing the line does.
- * Every symbol here resolves to a real mark in `InstrumentIcon`; anything it
- * does not know falls back to a wordmark disc, which is why these are picked
- * from its table rather than at random.
+ * Every symbol resolves to a real mark in `InstrumentIcon`. Stocks lead on the
+ * larger ring because they are the visual requested for this hero; the smaller
+ * ring keeps the wider product range visible without an explanatory eyebrow.
  */
-const OUTER_RING = ["EUR/USD", "XAU/USD", "BTC/USD", "GBP/USD", "NAS100"];
-const INNER_RING = ["USD/JPY", "ETH/USD", "XAG/USD"];
-
-const EASE = [0.22, 1, 0.36, 1];
+const STOCK_RING = ["AAPL", "NVDA", "TSLA", "GOOGL", "META"];
+const MARKET_RING = ["EUR/USD", "XAU/USD", "BTC/USD", "NAS100"];
 
 /** Above-the-fold entry: plays on load, not on scroll. */
 function Rise({ delay = 0, y = 20, className, children, as = "div" }) {
-  const reduced = useReducedMotion();
-  const MotionTag = motion[as] ?? motion.div;
-
-  if (reduced) {
-    const Tag = as;
-    return <Tag className={className}>{children}</Tag>;
-  }
+  const Tag = as;
 
   return (
-    <MotionTag
-      className={className}
-      initial={{ opacity: 0, y }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.7, ease: EASE, delay }}
+    <Tag
+      className={`hero-rise ${className ?? ""}`}
+      style={{ "--hero-rise-delay": `${delay}s`, "--hero-rise-y": `${y}px` }}
     >
       {children}
-    </MotionTag>
+    </Tag>
   );
 }
 
@@ -109,8 +92,62 @@ function Rise({ delay = 0, y = 20, className, children, as = "div" }) {
  */
 function ring(symbols, size) {
   return symbols.map((symbol) => (
-    <InstrumentIcon key={symbol} symbol={symbol} size={size} />
+    <span
+      key={symbol}
+      className="hero-orbit-token"
+      data-symbol={symbol.replace("/USD", "")}
+    >
+      <InstrumentIcon symbol={symbol} size={size} />
+    </span>
   ));
+}
+
+function ProofPuck({ children }) {
+  return (
+    <span
+      className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-white shadow-[inset_0_0_0_1px_rgba(1,6,26,0.08),0_5px_16px_rgba(1,6,26,0.18)]"
+      aria-hidden="true"
+    >
+      {children}
+    </span>
+  );
+}
+
+function ProofBadge({ icon, value, label }) {
+  return (
+    <span className="hero-proof inline-flex min-h-14 items-center gap-2.5 rounded-2xl py-2 pr-4 pl-2.5 text-left">
+      <ProofPuck>
+        {icon === "mt5" ? (
+          <Image
+            src="/assets/mobile-section/meta-treader.png"
+            alt=""
+            width={1254}
+            height={1254}
+            sizes="40px"
+            className="h-8 w-8 object-contain"
+          />
+        ) : icon === "deposit" ? (
+          <WalletCards
+            className="h-[19px] w-[19px] text-brand"
+            strokeWidth={2}
+          />
+        ) : (
+          <Headphones
+            className="h-[19px] w-[19px] text-brand"
+            strokeWidth={2}
+          />
+        )}
+      </ProofPuck>
+      <span className="leading-none">
+        <span className="block text-[13px] font-semibold whitespace-nowrap text-white">
+          {value}
+        </span>
+        <span className="mt-1 block text-[10.5px] font-medium whitespace-nowrap text-white/60">
+          {label}
+        </span>
+      </span>
+    </span>
+  );
 }
 
 export function Hero() {
@@ -138,7 +175,7 @@ export function Hero() {
         <div className="absolute top-1/2 left-1/2 w-[min(1500px,168vw)] -translate-x-1/2 -translate-y-1/2">
           <OrbitImages
             className="hero-orbit"
-            items={ring(OUTER_RING, "lg")}
+            items={ring(STOCK_RING, "lg")}
             shape="ellipse"
             radiusX={620}
             radiusY={272}
@@ -150,7 +187,7 @@ export function Hero() {
           <div className="absolute inset-0">
             <OrbitImages
               className="hero-orbit"
-              items={ring(INNER_RING, "md")}
+              items={ring(MARKET_RING, "md")}
               shape="ellipse"
               radiusX={470}
               radiusY={205}
@@ -169,17 +206,10 @@ export function Hero() {
 
       <div className="container-x relative py-20 md:py-24">
         <div className="mx-auto max-w-[860px] text-center">
-          <Rise
-            as="p"
-            className="text-[11px] font-semibold tracking-[0.22em] text-white/60 uppercase"
-          >
-            Forex · Metals · Indices · Crypto
-          </Rise>
-
           {/* Weight, not colour, carries the emphasis: headings on this site
               are solid by rule, and 300 against 700 in Poppins is a wider
               contrast than any tint would have given anyway. */}
-          <Rise as="h1" delay={0.08} className="h-display mt-6 text-white">
+          <Rise as="h1" delay={0.08} className="h-display text-white">
             <span className="block font-light text-white/90">Discover your</span>
             <span className="block">trading edge</span>
           </Rise>
@@ -210,22 +240,25 @@ export function Hero() {
             </Button>
           </Rise>
 
-          {/* Three chips, room for four. The fourth is the regulator — it
-              ships when compliance confirms the entity and licence number,
-              not before. */}
           <Rise
             delay={0.3}
-            className="mt-8 flex flex-wrap items-center justify-center gap-x-5 gap-y-2"
+            className="mx-auto mt-8 flex max-w-[640px] flex-wrap items-center justify-center gap-2.5"
           >
-            {CHIPS.map((chip) => (
-              <span
-                key={chip}
-                className="inline-flex items-center gap-1.5 text-[13px] font-medium text-white/75"
-              >
-                <Check className="h-3.5 w-3.5 text-[#a8f55b]" strokeWidth={3} />
-                {chip}
-              </span>
-            ))}
+            <ProofBadge
+              icon="mt5"
+              value="MetaTrader 5"
+              label="Trading platform"
+            />
+            <ProofBadge
+              icon="deposit"
+              value="$20 minimum"
+              label="Opening deposit"
+            />
+            <ProofBadge
+              icon="support"
+              value="24/6 support"
+              label="Help when markets move"
+            />
           </Rise>
         </div>
       </div>
