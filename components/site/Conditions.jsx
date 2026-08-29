@@ -4,7 +4,6 @@ import Image from "next/image";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { useReducedMotion } from "motion/react";
 import { Section } from "@/components/ui/section";
-import { RevealGroup, RevealItem } from "@/components/ui/reveal";
 import { cn } from "@/lib/utils";
 
 /**
@@ -90,43 +89,6 @@ const CONDITIONS = [
 
 /** How long a card holds before the cursor advances. */
 const DWELL_MS = 2000;
-
-/**
- * The four things the five numbers above do not say. They are deliberately
- * not figures — the carousel owns the figures — so the grid reads as the
- * terms attached to them rather than as a second scoreboard.
- *
- * Every line here is already made elsewhere on the site (`WhyByteFX`, and
- * the "one balance, one margin pool" line on the instruments card above).
- * Nothing new is claimed here; if a line is ever added, it needs the same
- * compliance sign-off as the Trust section items.
- */
-const TERMS = [
-  {
-    id: "deposit-fee",
-    index: "01",
-    title: "No internal deposit fee",
-    copy: "ByteFX charges nothing to fund your account, on any method.",
-  },
-  {
-    id: "nbp",
-    index: "02",
-    title: "Negative balance protection",
-    copy: "Your account cannot be driven below zero by a gap or a spike.",
-  },
-  {
-    id: "segregated",
-    index: "03",
-    title: "Segregated client funds",
-    copy: "Client money is held separately from company operating capital.",
-  },
-  {
-    id: "one-balance",
-    index: "04",
-    title: "One balance, every market",
-    copy: "Forex, metals, indices, shares and crypto share a single margin pool.",
-  },
-];
 
 export function Conditions() {
   const trackRef = useRef(null);
@@ -341,68 +303,6 @@ export function Conditions() {
         </div>
       </div>
 
-      {/* The terms the figures sit on. A four-up grid on a single hairline
-          frame rather than four cards: cards would have competed with the
-          carousel directly above, and this has to read as the small print
-          promoted to the same size as the headline — which is the whole
-          reason it is set bold. */}
-      <RevealGroup className="mt-16 md:mt-20">
-        <RevealItem>
-          <p className="eyebrow">What the numbers sit on</p>
-        </RevealItem>
-
-        <div
-          className={cn(
-            "mt-6 grid overflow-hidden rounded-[20px] border border-line bg-surface",
-            "shadow-[var(--sh-sm)] sm:grid-cols-2 xl:grid-cols-4"
-          )}
-        >
-          {TERMS.map((t) => (
-            <RevealItem
-              key={t.id}
-              className={cn(
-                "group/term relative p-7 lg:p-8",
-                // Hairlines are drawn as borders on the cells and clipped by
-                // the parent's overflow, so the frame stays one rectangle at
-                // every breakpoint instead of needing a divider per column.
-                "border-line not-last:border-b sm:not-last:border-b-0",
-                "sm:[&:nth-child(-n+2)]:border-b sm:[&:nth-child(odd)]:border-r",
-                "xl:border-b-0! xl:not-last:border-r",
-                "transition-colors duration-300 hover:bg-alt"
-              )}
-            >
-              <span
-                aria-hidden="true"
-                className="tnum text-[12px] leading-none font-semibold tracking-[0.08em] text-brand"
-              >
-                {t.index}
-              </span>
-
-              {/* The bold line is the point of the grid. It is set at the
-                  weight and size of a sub-heading on purpose — these are the
-                  terms, not a caption under them. */}
-              <p className="mt-5 text-[19px] leading-[1.25] font-bold tracking-[-0.025em] text-balance-i text-ink">
-                {t.title}
-              </p>
-              <p className="mt-2.5 text-[14.5px] leading-relaxed text-body">
-                {t.copy}
-              </p>
-
-              {/* Sits under the bold line and grows on hover — the same
-                  emerald the CTAs use, so the grid picks up the page's one
-                  accent instead of introducing another. */}
-              <span
-                aria-hidden="true"
-                className={cn(
-                  "mt-6 block h-[3px] w-8 rounded-full bg-go/70",
-                  "origin-left transition-transform duration-300 ease-[cubic-bezier(0.22,1,0.36,1)]",
-                  "group-hover/term:scale-x-[2.25] motion-reduce:transition-none"
-                )}
-              />
-            </RevealItem>
-          ))}
-        </div>
-      </RevealGroup>
     </Section>
   );
 }
