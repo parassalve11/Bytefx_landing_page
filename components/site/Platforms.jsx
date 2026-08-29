@@ -23,10 +23,10 @@ const PLATFORMS = [
 ];
 
 const DOWNLOADS = [
-  { label: "Windows", icon: MonitorSmartphone, href: "/download/windows" },
-  { label: "macOS", icon: Apple, href: "/download/macos" },
-  { label: "iOS", icon: Smartphone, href: "/download/ios" },
-  { label: "Android", icon: Smartphone, href: "/download/android" },
+  { label: "Windows", icon: MonitorSmartphone, href: "/download#windows" },
+  { label: "macOS", icon: Apple, href: "/download#macos" },
+  { label: "iOS", icon: Smartphone, href: "/download#ios" },
+  { label: "Android", icon: Smartphone, href: "/download#android" },
   { label: "Web", icon: Globe, href: "https://trade.bytefx.com" },
 ];
 

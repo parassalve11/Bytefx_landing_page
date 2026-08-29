@@ -73,8 +73,14 @@ export function Faq() {
             Still stuck? Our team is on chat and email 24 hours a day, six days
             a week.
           </Reveal>
-          <Button href="/help" variant="ghost" size="md" arrow className="mt-6">
-            Visit the help centre
+          <Button
+            href="/company/contact"
+            variant="ghost"
+            size="md"
+            arrow
+            className="mt-6"
+          >
+            Contact the team
           </Button>
         </div>
 

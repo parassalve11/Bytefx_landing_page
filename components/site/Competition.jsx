@@ -472,7 +472,7 @@ export function Competition() {
             </Reveal>
 
             <Reveal delay={0.25} className="mt-8 flex flex-wrap gap-3">
-              <Button href="/competition/enter" size="lg" arrow>
+              <Button href="/signup?type=competition" size="lg" arrow>
                 Enter this round
               </Button>
               <Button

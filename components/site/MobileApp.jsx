@@ -262,13 +262,13 @@ export function MobileApp() {
             icon={Apple}
             top="Download on the"
             bottom="App Store"
-            href="/download/ios"
+            href="/download#ios"
           />
           <StoreBadge
             icon={Play}
             top="Get it on"
             bottom="Google Play"
-            href="/download/android"
+            href="/download#android"
           />
           <div className="flex items-center gap-3 rounded-xl border border-line bg-surface p-2.5 pr-4">
             {/* The code is near-black modules on transparency and it stays

@@ -1,60 +1,10 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useRef, useState } from "react";
 import { TrendingDown, TrendingUp } from "lucide-react";
 import { InstrumentIcon } from "@/components/ui/asset-icon";
+import { TICKER_SEED, useQuoteFeed } from "@/lib/quotes";
 import { cn } from "@/lib/utils";
-
-/**
- * Seed quotes. These render identically on server and client so there is no
- * hydration mismatch and no layout shift; ticking only starts after mount.
- *
- * Swap `useSimulatedFeed` for the real quote socket when it is available —
- * the contract is { symbol, price, change }. On a stale feed keep the last
- * price at 60% opacity; never render 0.00.
- */
-const SEED = [
-  { symbol: "EUR/USD", price: 1.0874, decimals: 4, change: 0.14 },
-  { symbol: "XAU/USD", price: 2417.84, decimals: 2, change: 0.62 },
-  { symbol: "BTC/USD", price: 76916.0, decimals: 0, change: -0.23 },
-  { symbol: "GBP/USD", price: 1.2731, decimals: 4, change: -0.08 },
-  { symbol: "US30", price: 41562.4, decimals: 1, change: 0.31 },
-  { symbol: "NAS100", price: 21149.6, decimals: 1, change: 0.48 },
-  { symbol: "USD/JPY", price: 154.219, decimals: 3, change: -0.17 },
-  { symbol: "ETH/USD", price: 2913.55, decimals: 2, change: 1.06 },
-  { symbol: "WTI", price: 71.42, decimals: 2, change: -0.44 },
-  { symbol: "SPX500", price: 5734.9, decimals: 1, change: 0.19 },
-];
-
-function useSimulatedFeed() {
-  const [quotes, setQuotes] = useState(SEED);
-  const [flash, setFlash] = useState({});
-
-  useEffect(() => {
-    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
-
-    const id = setInterval(() => {
-      const i = Math.floor(Math.random() * SEED.length);
-      setQuotes((prev) =>
-        prev.map((q, qi) => {
-          if (qi !== i) return q;
-          const drift = (Math.random() - 0.5) * (q.price * 0.0006);
-          const next = q.price + drift;
-          return {
-            ...q,
-            price: next,
-            change: +(q.change + drift / q.price * 100).toFixed(2),
-          };
-        })
-      );
-      setFlash({ index: i, dir: Math.random() > 0.5 ? "up" : "down", at: Date.now() });
-    }, 1800);
-
-    return () => clearInterval(id);
-  }, []);
-
-  return { quotes, flash };
-}
 
 function Quote({ q, flashing }) {
   const up = q.change >= 0;
@@ -90,8 +40,13 @@ function Quote({ q, flashing }) {
   );
 }
 
+/**
+ * The seed and the random walk moved to `lib/quotes.js` when the market pages
+ * needed the same feed. The socket that replaces it replaces it for both —
+ * see the TODO there, not here.
+ */
 export function Ticker() {
-  const { quotes, flash } = useSimulatedFeed();
+  const { quotes, flash } = useQuoteFeed(TICKER_SEED);
   const [paused, setPaused] = useState(false);
   const liveRef = useRef(null);
 

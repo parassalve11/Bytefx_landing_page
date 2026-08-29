@@ -44,9 +44,16 @@ const GREETING =
 
 /**
  * Every answer below is a restatement of something the site already claims.
- * `match` is checked against the lower-cased question; `prompt` is what the
- * suggestion chip shows. Order matters — the first match wins, so put the
- * narrow topics above the broad ones.
+ * `prompt` is what the suggestion chip shows. Order matters — the first match
+ * wins, so put the narrow topics above the broad ones.
+ *
+ * `match` entries are matched as **word prefixes**, not as bare substrings.
+ * That is not a nicety: with `includes`, "what is your refund policy" matched
+ * `fund` and got answered, confidently and wrongly, with the deposit-methods
+ * line. A prefix boundary still matches the inflections that matter — `fund`
+ * catches "funding" and "funds", `trade` catches "trader" and "trading" —
+ * while "refund", "drawdown" and "apply" fall through to the fallback, which
+ * is where a question this table cannot answer belongs.
  */
 const KNOWLEDGE = [
   {
@@ -66,7 +73,7 @@ const KNOWLEDGE = [
   {
     id: "spreads",
     prompt: "How tight are the spreads?",
-    match: ["spread", "pip", "commission", "cost", "fee"],
+    match: ["spread", "pip", "commission", "cost"],
     answer:
       "From 0.0 pips on Raw, 1.0 pips on Pro and 1.9 pips on Standard. Standard and Pro carry zero commission; Raw is $8 round turn. Spreads are variable on Standard and Pro and raw on Raw.",
   },
@@ -80,14 +87,24 @@ const KNOWLEDGE = [
   {
     id: "funding",
     prompt: "How do I fund and withdraw?",
-    match: ["fund", "deposit method", "withdraw", "payment", "card", "wire", "usdt", "crypto deposit"],
+    match: [
+      "fund",
+      "fee",
+      "deposit method",
+      "withdraw",
+      "payment",
+      "card",
+      "wire",
+      "usdt",
+      "crypto deposit",
+    ],
     answer:
       "Card, bank wire, USDT and crypto, all of it from the app or the client area. ByteFX takes no fee of its own on deposits. Providers and banks apply their own fees and cut-off times, so a wire will not clear as fast as a card.",
   },
   {
     id: "platforms",
     prompt: "Which platforms do you support?",
-    match: ["platform", "metatrader", "mt5", "tradingview", "terminal", "app"],
+    match: ["platform", "metatrader", "mt5", "tradingview", "terminal", "mobile app"],
     answer:
       "MetaTrader 5 and TradingView — the same account opens in both, and in the ByteFX mobile app. A position you open on your phone shows up in MT5 immediately; there is no separate balance anywhere.",
   },
@@ -124,9 +141,23 @@ const KNOWLEDGE = [
 const FALLBACK =
   "I don't have a reliable answer to that one — I'd rather say so than guess. The support team can pick this up properly at /support, 24/6.";
 
+/**
+ * A phrase, anchored to the start of a word. `\b` is only applied where the
+ * phrase actually begins with a word character, so entries like "$20" and
+ * "1:2000" still compile.
+ */
+function prefixMatcher(phrase) {
+  const escaped = phrase.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+  return new RegExp(`${/^\w/.test(phrase) ? "\\b" : ""}${escaped}`, "i");
+}
+
+const MATCHERS = KNOWLEDGE.map((k) => ({
+  answer: k.answer,
+  tests: k.match.map(prefixMatcher),
+}));
+
 function answerFor(question) {
-  const q = question.toLowerCase();
-  const hit = KNOWLEDGE.find((k) => k.match.some((m) => q.includes(m)));
+  const hit = MATCHERS.find((k) => k.tests.some((re) => re.test(question)));
   return hit ? hit.answer : FALLBACK;
 }
 

@@ -487,6 +487,15 @@ corner is a guess. The panel header uses `hero-tools`, the same gradient as
 the hero band and the tools card, so it reads as part of the site rather than
 a bolted-on third-party bubble.
 
+**Matching is by word prefix, not substring.** This is the one piece of
+`AtlasChat` that is easy to get wrong and was in fact got wrong first time: a
+plain `includes` check answered "what is your refund policy" with the
+deposit-methods line, because "refund" contains "fund". `prefixMatcher`
+anchors each phrase to the start of a word, so `fund` still catches "funding"
+and "funds" while "refund" falls through to the fallback — which is where a
+question this table cannot answer belongs. Keep that property when you add
+entries, and prefer stems (`trade`, `spread`, `fee`) over whole words.
+
 **It is a scripted assistant, not a model.** There is no Atlas endpoint yet.
 `KNOWLEDGE` is a lookup table over facts already printed elsewhere on this
 site — the account specs in `AccountTypes`, the numbers in `Conditions`, the
@@ -542,12 +551,19 @@ words that the answers are scripted and are not financial advice.
 - Mobile has been audited statically but not viewed on a device. Check 390 / 768 / 1024.
   The funding rail (hub + connector fan) is `lg:` and up only; below that the
   method list carries the section on its own.
-- **Nothing in this pass has been seen rendered.** The Chrome extension has
-  not connected in any session so far. The production build compiles, the dev
-  server serves, and the emitted HTML and compiled CSS have been read back and
-  checked — but no frame has been looked at. Walk the page at 390 / 768 / 1440
-  before ship. Three things a screenshot would settle in seconds: the white H1
-  against the orbit discs passing behind it; the white type and logo plate
-  over the Ang Thong photo; and the Atlas launcher against the footer at the
-  very bottom of the page.
+- **Seen rendered at ~1440 only.** The hero band, the orbit, the terms grid,
+  the two-tab platform switcher and the Atlas panel have all been looked at in
+  a browser and behave. Confirmed live: the carousel advances on 2s and wraps
+  forwards from the last card to the first (forced to index 4, the next
+  reading was index 1, i.e. 4 → 0 → 1), and Atlas returns the fallback for
+  "what is your refund policy" rather than the funding answer.
+- **Mobile has still not been viewed.** The verification browser was running
+  at ~33% page zoom, so a 390px window still laid out as desktop and the
+  narrow breakpoints could not be exercised. Check 390 / 768 before ship — in
+  particular the hero orbit against the copy column, where the ellipse is
+  sized off `min(1500px, 168vw)` and has only been reasoned about below
+  `sm`, and the Atlas panel, which is `w-[min(370px,calc(100vw-2rem))]`.
+- Still unverified by eye: the white type and logo plate over the Ang Thong
+  photo, and the Atlas launcher against the footer at the very bottom of the
+  page.
 - The Markets video has not been watched playing in a browser — the verification tab was backgrounded throughout, and Chrome will not decode media there. Wiring, poster, encode and first frame are all confirmed; **watch it loop once** before shipping.
