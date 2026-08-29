@@ -11,7 +11,7 @@ import { TradingShowcase } from "@/components/site/TradingShowcase";
 export default function Home() {
   return (
     <main>
-      {/* <Hero /> */}
+      <Hero />
       <Ticker />
       <Markets />
       <Conditions />

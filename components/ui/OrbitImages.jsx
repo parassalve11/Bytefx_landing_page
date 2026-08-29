@@ -116,8 +116,20 @@ function OrbitItem({
   );
 }
 
+/**
+ * React Bits `OrbitImages`, with two local changes:
+ *
+ * 1. `"use client"` + `useReducedMotion` — the site's motion contract says
+ *    every loop stops under `prefers-reduced-motion`, and an orbit that never
+ *    stops is exactly the kind of thing that rule exists for.
+ * 2. An optional `items` prop. Upstream only orbits `<img>` URLs; the hero
+ *    orbits the site's own `InstrumentIcon` coin discs, which are components,
+ *    not files. `items` takes precedence when both are passed, and `images`
+ *    behaves exactly as it does upstream when it is not.
+ */
 export default function OrbitImages({
   images = [],
+  items: itemNodes,
   altPrefix = "Orbiting image",
   shape = "ellipse",
   customPath,
@@ -260,15 +272,18 @@ export default function OrbitImages({
       : typeof width === "number"
         ? width
         : "auto";
-  const items = images.map((src, index) => (
-    <img
-      key={src}
-      src={src}
-      alt={`${altPrefix} ${index + 1}`}
-      draggable={false}
-      className="orbit-image"
-    />
-  ));
+  const items =
+    itemNodes && itemNodes.length > 0
+      ? itemNodes
+      : images.map((src, index) => (
+          <img
+            key={src}
+            src={src}
+            alt={`${altPrefix} ${index + 1}`}
+            draggable={false}
+            className="orbit-image"
+          />
+        ));
 
   return (
     <div
@@ -319,7 +334,7 @@ export default function OrbitImages({
 
           {items.map((item, index) => (
             <OrbitItem
-              key={images[index]}
+              key={index}
               item={item}
               index={index}
               totalItems={items.length}

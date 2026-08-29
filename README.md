@@ -234,14 +234,24 @@ of interaction; the sheen is only a quiet response to that state.
 
 **The cursor** is the pill under the track. The active card is a bar rather
 than a dot, so it reads as a position along a run instead of five equal
-options. It advances every 5s (`DWELL_MS`) and pauses on hover, focus or
+options. It advances every 2s (`DWELL_MS`) and pauses on hover, focus or
 touch. **Scroll-snap does the actual paging** — the track is a plain
 scrollable region that works with trackpad, swipe, scrollbar and keyboard
 whether or not the JS runs, and the cursor is a control over that rather than
-a replacement for it. Scroll position is the single source of truth for which
-card is active (via `IntersectionObserver`), so a manual swipe and an
-automatic advance update the cursor through the same path and cannot
-disagree. Auto-advance never runs under reduced motion.
+a replacement for it. Scroll position is the source of truth for which card is
+*shown* (via `IntersectionObserver`), so a manual swipe and an automatic
+advance update the cursor through the same path and cannot disagree.
+Auto-advance never runs under reduced motion.
+
+**Why the run has a second piece of state.** At the original 5s dwell the
+timer could simply read the observed index and add one. At 2s it cannot: the
+smooth scroll is usually still in flight when the next tick fires, and the
+last-to-first wrap scrolls back across cards 3, 2 and 1, so the observer
+reports each of them in turn and a `+1` on the observed index would reverse
+the run mid-wrap. `targetRef` holds where the run is heading and `settledRef`
+records whether the scroller has arrived; the timer advances the target, and
+the observer only re-seats the target once it has caught up — which is what a
+genuine user swipe does. The order is therefore always 0→1→2→3→4→0.
 
 **Assets.** The five renders were supplied as 1254px PNGs totalling 8.35 MB.
 They are converted to 620px WebP (358 KB total, a 23× saving) and the
@@ -250,22 +260,50 @@ component references the `.webp` files. **The source PNGs in
 the section is approved.** Re-run the conversion if a render is ever replaced;
 620px covers a 2× DPR at the ~240px they display at.
 
-## Platforms: MT5, TradingView, Atlas AI
+### The terms grid underneath
+
+Four hairline-framed cells below the carousel (`TERMS`), each a **bold**
+one-line statement with a supporting sentence and a green rule that extends on
+hover: no internal deposit fee, negative balance protection, segregated client
+funds, one balance across every market.
+
+The carousel prints the numbers — 1:2000, 0.1 pips, 150+, ~20ms, 24/6. The
+grid prints the terms those numbers sit inside, which is the other half of the
+same question and reads badly as a sixth card. It is a grid rather than more
+cards precisely because these are flat statements with no artwork and no
+sequence: nothing here needs to be paged through.
+
+**Nothing in it is a new claim.** All four lines already appear on the site —
+three in `WhyByteFX.jsx` (which is not rendered on the landing page, so there
+is no on-page repetition) and one in the instruments card copy. Do not add a
+fifth line here that is not substantiated somewhere else first.
+
+It reflows 1 → 2 → 4 columns, and the cell borders are switched per breakpoint
+(`sm:[&:nth-child(-n+2)]:border-b`, `sm:[&:nth-child(odd)]:border-r`,
+`xl:border-b-0!`) so the frame stays a single hairline lattice at every width
+rather than leaving a stray edge.
+
+## Platforms: MT5 and TradingView
 
 `PlatformSwitch`, **inside** `components/site/MobileApp.jsx` — not a section
 of its own, and it should stay that way.
 
-The three are not alternatives, they are three front ends on one balance, and
-the mobile band is already making exactly that argument ("one account, every
-device"). Three logos do not need a section to repeat it. Picking one swaps
-the line underneath, so the whole thing stays two rows tall however many
-platforms are listed. Real tabs — click, arrow keys, Home/End — not hover,
-which would put the copy out of reach on touch.
+The two are not alternatives, they are two front ends on one balance, and the
+mobile band is already making exactly that argument ("one account, every
+device"). Two logos do not need a section to repeat it. Picking one swaps the
+line underneath, so the whole thing stays two rows tall however many platforms
+are listed. Real tabs — click, arrow keys, Home/End — not hover, which would
+put the copy out of reach on touch.
 
 **It sits directly under the device shot,** above the feature grid. The
 cluster shows the account on tablet, phone and laptop; this is the line that
-says which three front ends those are. Separating them put a features grid
-and two store badges between the claim and its evidence.
+says which front ends those are. Separating them put a features grid and two
+store badges between the claim and its evidence.
+
+**Atlas AI was a third tab here and has been removed.** The switcher's whole
+claim is "the same account opens in all of these", and Atlas is not a place
+you open an account — it is an assistant. It now lives in its own launcher;
+see "Atlas AI" below. Do not put it back.
 
 The marks are real product art in `public/assets/mobile-section/`
 (`meta-treader.png`, `treadingview.png`, `atlas.png`), each on a white
@@ -352,42 +390,117 @@ twice more, so it is the single most load-bearing gap on the page.
 
 ## The hero
 
-Designed last, on purpose. Six competitor heroes were read first — Pepperstone,
-eToro, Deriv, IC Markets, Exness, OANDA. Five of the six sit on a stock
-photograph or a promo graphic; only IC Markets puts anything above the fold you
-could act on. So this one does the thing the category does not: **it shows the
-product.**
+The band is one claim, two buttons and three chips on a blue field, with a
+slow orbit of instrument discs behind it. Nothing else is allowed in the
+frame: `Ticker` streams live quotes directly beneath it, `Conditions` prints
+1:2000, 0.1 pips, 150+, ~20ms and 24/6, and `FinalCta` closes with the risk
+warning — so the hero's only job is to state the claim and get out of the way.
 
-Left is the claim and the CTAs, right is an execution ticket — XAU/USD, a
-two-sided quote, and a fill confirmation that lands at 19ms.
-
-Three sections below it dictated the shape:
+Three sections below it dictate the shape:
 
 | Section | What it already owns | What the hero therefore cannot do |
 | --- | --- | --- |
-| `Conditions` | 1:2000, 0.1 pips, 150+, ~20ms, 24/6 | Restate the numbers — the ticket *demonstrates* the fill time instead |
+| `Conditions` | 1:2000, 0.1 pips, 150+, ~20ms, 24/6 | Restate the numbers |
 | `Ticker` | Live streaming quotes | Carry a second live price widget 900px above the first |
 | `FinalCta` | "Start trading in under five minutes", risk warning | Be a CTA block. Labels match deliberately — they bookend the page |
 
-The live site puts those five metrics *in* the hero; this rebuild moved them
-into their own strip, which is what freed the space for the ticket.
+### The background
 
-**The fill animation is a third signature moment,** beyond the two the motion
-contract names. That is deliberate rather than an oversight: "orders fill in
-about 20ms" is the claim the positioning rests on and this is the only place on
-the page that shows it instead of asserting it. It fires once, never loops, and
-under reduced motion the ticket mounts straight to the filled state — the
-confirmation is information, the transition is decoration.
+The same treatment as the **"ByteFX Enhanced Trading Tools" card** in
+`TradingShowcase`: `linear-gradient(150deg, #2f66d1, #0c2c78)` under a 42px
+white grid at 16%. The stops and the grid pitch are the card's own, lifted
+into `globals.css` as `hero-tools` / `hero-tools-grid` so the two surfaces
+cannot drift apart — **change one and you change both.** Over them sit
+`hero-scrim` (contrast for the white type) and `hero-bloom` (one green light
+low in the frame, so the CTA is not the only green pixel on a screen of blue).
 
-The ticket's geometry is fixed constants, so server and client render
-identically and the confirmation row has a fixed 52px height: a card that
-jumped as the fill arrived would undercut the point it is making.
+The grid is masked to an ellipse rather than the card's horizontal fade.
+Full-bleed, a horizontally-masked grid cuts off hard against the navbar at the
+top and against the white `Ticker` at the foot.
+
+`hero-scrim` is two gradients because one cannot do both jobs: a centre radial
+that pulls the middle of the frame down so the H1 clears contrast over the
+lighter end of the gradient and over any disc passing behind it, and a linear
+that darkens top and bottom — the top so the navbar's white pill has something
+to sit on, the bottom so the band meets the white `Ticker` without a bright
+seam. It is tinted `#04123a`, not near-black; a neutral scrim greys the blue
+out and the band stops matching the tools card.
+
+**This replaced a full-bleed aurora photograph** (`public/assets/hero/aurora.jpg`,
+still in the repo and now unused — delete it once this is approved). The
+photograph was a licensed stock frame with nothing to do with the product, it
+cost ~440 KB on the LCP element, and it needed a heavy scrim to keep the H1
+legible. The gradient costs nothing and is on-brand by construction.
+
+This is still the only dark band on the site. Everything below is the white /
+`alt` alternation, and the hard edge at the foot of this section is the page's
+first and strongest contrast — do not soften it with a border.
+
+### The orbit
+
+React Bits' `OrbitImages` (`components/ui/OrbitImages.jsx`), with two local
+changes:
+
+1. `"use client"` and `useReducedMotion` — the motion contract says every loop
+   stops under `prefers-reduced-motion`, and an orbit that never stops is
+   exactly what that rule exists for. It parks the discs where they are rather
+   than hiding them, so the composition still holds.
+2. An optional `items` prop. Upstream only orbits `<img>` URLs; the hero
+   orbits the site's own `InstrumentIcon` coin discs, which are components,
+   not files. `images` behaves exactly as upstream when `items` is absent.
+
+Two counter-rotating ellipses at different radii — one ring reads as a
+carousel, two read as depth. Eight instruments covering every asset class the
+eyebrow names: three majors, both metals, both crypto and one index. The ring
+is the product line, not abstract decoration.
+
+It sits **between the grid and the scrim**, so the scrim's centre radial dims
+whichever disc is passing behind the headline and leaves the ones out at the
+edges bright. That is the whole reason the copy stays readable with objects
+moving under it. The layer is `aria-hidden` in the component and
+`pointer-events-none` here: nothing in it is reachable or announced.
+
+`InstrumentIcon` is sized by its `size` prop, not by CSS — `PairCoin` builds a
+fixed pair of overlapping flag discs and ignores width utilities entirely — so
+the rings pick a named size (`lg` is ~56px, `md` is ~44px) and `itemSize` is
+set to leave a margin around it. The glass ring behind each disc is
+`.hero-orbit` in `OrbitImages.css`; it goes *behind* the coin rather than
+around it, because the coin already carries its own gradient, rim light and
+drop shadow.
 
 **Open:** there is no regulator chip. ByteFX Capital Ltd's licence entity and
-number need the same compliance sign-off the Trust items are badged for. Add it
-to `CHIPS` in `Hero.jsx` once legal confirms — the row is built for four and
-currently carries three. The withdrawal-speed line was cut from the lead copy
-for the same reason.
+number need the same compliance sign-off the Trust items are badged for. Add
+it to `CHIPS` in `Hero.jsx` once legal confirms — the row is built for four
+and currently carries three. The withdrawal-speed line was cut from the lead
+copy for the same reason.
+
+## Atlas AI
+
+`components/site/AtlasChat.jsx`, mounted in `app/layout.jsx` so it is on every
+page. A launcher pinned to the **bottom-left** of the viewport that opens a
+chat panel above itself.
+
+Bottom-left on purpose: bottom-right is where scroll and cookie furniture
+goes, and on mobile the right thumb rest is already the busiest corner. It
+carries its label ("Ask Atlas AI") on desktop — an unlabelled circle in a
+corner is a guess. The panel header uses `hero-tools`, the same gradient as
+the hero band and the tools card, so it reads as part of the site rather than
+a bolted-on third-party bubble.
+
+**It is a scripted assistant, not a model.** There is no Atlas endpoint yet.
+`KNOWLEDGE` is a lookup table over facts already printed elsewhere on this
+site — the account specs in `AccountTypes`, the numbers in `Conditions`, the
+funding line in `Funding`, the platforms in `MobileApp`. It invents nothing,
+and when a question does not match it says so and hands off to `/support`
+rather than guessing. Nothing is persisted and nothing leaves the browser.
+
+The header badge reads **"Scripted demo"** and must keep reading it until this
+is wired to a real model. When the endpoint lands: replace `answerFor()` with
+the request, keep `KNOWLEDGE` as the seeded suggestions, drop the badge.
+
+Escape closes it, the input takes focus on open, the transcript is a
+`role="log"` with `aria-live="polite"`, and the panel footer says in plain
+words that the answers are scripted and are not financial advice.
 
 ## Motion contract
 
@@ -417,15 +530,24 @@ for the same reason.
 - `components/site/Ticker.jsx` runs a simulated feed. Replace `useSimulatedFeed` with the real socket; the contract is `{ symbol, price, change }`.
 - Platform capability lines in `MobileApp.jsx`'s `PLATFORMS` are written from
   what each platform does generally, not from an integration spec. Confirm the
-  TradingView broker link and what Atlas AI actually ships.
+  TradingView broker link.
+- **Atlas AI answers are a scripted lookup table**, not a model, and the panel
+  says so on its header badge and in its footer. Wire `answerFor()` to the
+  real endpoint and drop the badge before anyone treats it as support. Have
+  compliance read `KNOWLEDGE` first — it restates account, spread, leverage
+  and funding terms in a conversational voice, which is a different review
+  surface from the same facts in a spec table.
+- **Delete `public/assets/hero/aurora.jpg`** (440 KB) once the new hero band
+  is approved — nothing references it any more.
 - Mobile has been audited statically but not viewed on a device. Check 390 / 768 / 1024.
   The funding rail (hub + connector fan) is `lg:` and up only; below that the
   method list carries the section on its own.
-- **Nothing in this pass has been seen rendered.** The Chrome extension was
-  not connected, so the hero's execution ticket, the repositioned platform
-  switch and the Thailand section are all reasoned from the tokens rather than
-  looked at. Walk the page at 390 / 768 / 1440 before ship — in particular the
-  white type and the logo plate over the Ang Thong photo, which is the one
-  contrast question a screenshot would settle instantly — it is a bright
-  image and the scrim is doing all the work.
+- **Nothing in this pass has been seen rendered.** The Chrome extension has
+  not connected in any session so far. The production build compiles, the dev
+  server serves, and the emitted HTML and compiled CSS have been read back and
+  checked — but no frame has been looked at. Walk the page at 390 / 768 / 1440
+  before ship. Three things a screenshot would settle in seconds: the white H1
+  against the orbit discs passing behind it; the white type and logo plate
+  over the Ang Thong photo; and the Atlas launcher against the footer at the
+  very bottom of the page.
 - The Markets video has not been watched playing in a browser — the verification tab was backgrounded throughout, and Chrome will not decode media there. Wiring, poster, encode and first frame are all confirmed; **watch it loop once** before shipping.

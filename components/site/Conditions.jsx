@@ -4,6 +4,7 @@ import Image from "next/image";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { useReducedMotion } from "motion/react";
 import { Section } from "@/components/ui/section";
+import { RevealGroup, RevealItem } from "@/components/ui/reveal";
 import { cn } from "@/lib/utils";
 
 /**
@@ -88,7 +89,44 @@ const CONDITIONS = [
 ];
 
 /** How long a card holds before the cursor advances. */
-const DWELL_MS = 5000;
+const DWELL_MS = 2000;
+
+/**
+ * The four things the five numbers above do not say. They are deliberately
+ * not figures — the carousel owns the figures — so the grid reads as the
+ * terms attached to them rather than as a second scoreboard.
+ *
+ * Every line here is already made elsewhere on the site (`WhyByteFX`, and
+ * the "one balance, one margin pool" line on the instruments card above).
+ * Nothing new is claimed here; if a line is ever added, it needs the same
+ * compliance sign-off as the Trust section items.
+ */
+const TERMS = [
+  {
+    id: "deposit-fee",
+    index: "01",
+    title: "No internal deposit fee",
+    copy: "ByteFX charges nothing to fund your account, on any method.",
+  },
+  {
+    id: "nbp",
+    index: "02",
+    title: "Negative balance protection",
+    copy: "Your account cannot be driven below zero by a gap or a spike.",
+  },
+  {
+    id: "segregated",
+    index: "03",
+    title: "Segregated client funds",
+    copy: "Client money is held separately from company operating capital.",
+  },
+  {
+    id: "one-balance",
+    index: "04",
+    title: "One balance, every market",
+    copy: "Forex, metals, indices, shares and crypto share a single margin pool.",
+  },
+];
 
 export function Conditions() {
   const trackRef = useRef(null);
@@ -96,12 +134,28 @@ export function Conditions() {
   const [active, setActive] = useState(0);
   const [paused, setPaused] = useState(false);
 
+  /**
+   * Where the run is *heading*, which is not the same thing as `active`.
+   *
+   * At a 2s dwell a smooth scroll is often still in flight when the next
+   * tick fires, and the wrap from the last card back to the first crosses
+   * every card in between — so the observer reports 3, 2, 1 on the way home.
+   * If the timer advanced from whatever the observer last saw, the run would
+   * reverse itself mid-wrap. It advances from this instead, so the sequence
+   * is always 0→1→2→3→4→0 regardless of what the scroller is doing.
+   */
+  const targetRef = useRef(0);
+  /** True once the scroller has actually arrived at `targetRef`. */
+  const settledRef = useRef(true);
+
   const goTo = useCallback(
     (i, smooth = true) => {
       const track = trackRef.current;
       if (!track) return;
       const card = track.children[i];
       if (!card) return;
+      targetRef.current = i;
+      settledRef.current = false;
       track.scrollTo({
         left: card.offsetLeft - track.offsetLeft,
         behavior: smooth && !reduced ? "smooth" : "auto",
@@ -110,9 +164,11 @@ export function Conditions() {
     [reduced]
   );
 
-  // Scroll position is the source of truth for which card is active, so a
-  // manual swipe and an automatic advance update the cursor through the same
-  // path and can never disagree.
+  // Scroll position is the source of truth for which card is *shown*, so a
+  // manual swipe and an automatic advance move the cursor through the same
+  // path and can never disagree. A card seen while the run is already
+  // settled can only have come from the reader, so it also becomes the new
+  // point the timer counts on from.
   useEffect(() => {
     const track = trackRef.current;
     if (!track) return;
@@ -122,7 +178,10 @@ export function Conditions() {
         for (const entry of entries) {
           if (!entry.isIntersecting) continue;
           const i = Array.prototype.indexOf.call(track.children, entry.target);
-          if (i >= 0) setActive(i);
+          if (i < 0) continue;
+          setActive(i);
+          if (i === targetRef.current) settledRef.current = true;
+          else if (settledRef.current) targetRef.current = i;
         }
       },
       { root: track, threshold: 0.55 }
@@ -132,16 +191,15 @@ export function Conditions() {
     return () => observer.disconnect();
   }, []);
 
-  // Auto-advance. Never runs under reduced motion — a carousel that moves on
-  // its own is exactly what that setting is asking us not to do.
+  // Auto-advance, wrapping past the last card back to the first. Never runs
+  // under reduced motion — a carousel that moves on its own is exactly what
+  // that setting is asking us not to do.
   useEffect(() => {
     if (reduced || paused) return;
     const id = setInterval(() => {
-      setActive((i) => {
-        const next = (i + 1) % CONDITIONS.length;
-        goTo(next);
-        return next;
-      });
+      const next = (targetRef.current + 1) % CONDITIONS.length;
+      goTo(next);
+      setActive(next);
     }, DWELL_MS);
     return () => clearInterval(id);
   }, [reduced, paused, goTo]);
@@ -282,6 +340,69 @@ export function Conditions() {
           </div>
         </div>
       </div>
+
+      {/* The terms the figures sit on. A four-up grid on a single hairline
+          frame rather than four cards: cards would have competed with the
+          carousel directly above, and this has to read as the small print
+          promoted to the same size as the headline — which is the whole
+          reason it is set bold. */}
+      <RevealGroup className="mt-16 md:mt-20">
+        <RevealItem>
+          <p className="eyebrow">What the numbers sit on</p>
+        </RevealItem>
+
+        <div
+          className={cn(
+            "mt-6 grid overflow-hidden rounded-[20px] border border-line bg-surface",
+            "shadow-[var(--sh-sm)] sm:grid-cols-2 xl:grid-cols-4"
+          )}
+        >
+          {TERMS.map((t) => (
+            <RevealItem
+              key={t.id}
+              className={cn(
+                "group/term relative p-7 lg:p-8",
+                // Hairlines are drawn as borders on the cells and clipped by
+                // the parent's overflow, so the frame stays one rectangle at
+                // every breakpoint instead of needing a divider per column.
+                "border-line not-last:border-b sm:not-last:border-b-0",
+                "sm:[&:nth-child(-n+2)]:border-b sm:[&:nth-child(odd)]:border-r",
+                "xl:border-b-0! xl:not-last:border-r",
+                "transition-colors duration-300 hover:bg-alt"
+              )}
+            >
+              <span
+                aria-hidden="true"
+                className="tnum text-[12px] leading-none font-semibold tracking-[0.08em] text-brand"
+              >
+                {t.index}
+              </span>
+
+              {/* The bold line is the point of the grid. It is set at the
+                  weight and size of a sub-heading on purpose — these are the
+                  terms, not a caption under them. */}
+              <p className="mt-5 text-[19px] leading-[1.25] font-bold tracking-[-0.025em] text-balance-i text-ink">
+                {t.title}
+              </p>
+              <p className="mt-2.5 text-[14.5px] leading-relaxed text-body">
+                {t.copy}
+              </p>
+
+              {/* Sits under the bold line and grows on hover — the same
+                  emerald the CTAs use, so the grid picks up the page's one
+                  accent instead of introducing another. */}
+              <span
+                aria-hidden="true"
+                className={cn(
+                  "mt-6 block h-[3px] w-8 rounded-full bg-go/70",
+                  "origin-left transition-transform duration-300 ease-[cubic-bezier(0.22,1,0.36,1)]",
+                  "group-hover/term:scale-x-[2.25] motion-reduce:transition-none"
+                )}
+              />
+            </RevealItem>
+          ))}
+        </div>
+      </RevealGroup>
     </Section>
   );
 }

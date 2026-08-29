@@ -3,6 +3,7 @@ import "./globals.css";
 import { AnnouncementBar } from "@/components/site/AnnouncementBar";
 import { Navbar } from "@/components/site/Navbar";
 import { Footer } from "@/components/site/Footer";
+import { AtlasChat } from "@/components/site/AtlasChat";
 
 const poppins = Poppins({
   subsets: ["latin"],
@@ -34,9 +35,13 @@ export const viewport = {
 };
 
 /**
- * Chrome lives here, not in the pages: the announcement bar, the sticky navbar
- * and the footer are identical on the landing page and every sub-page, and the
- * navbar's scroll/menu state survives client-side navigation this way.
+ * Chrome lives here, not in the pages: the announcement bar, the sticky navbar,
+ * the footer and the Atlas assistant are identical on the landing page and
+ * every sub-page, and the navbar's scroll/menu state survives client-side
+ * navigation this way.
+ *
+ * `AtlasChat` renders last so its fixed launcher is the final thing in the
+ * stacking context — it has to sit over the footer as well as the page.
  */
 export default function RootLayout({ children }) {
   return (
@@ -46,6 +51,7 @@ export default function RootLayout({ children }) {
         <Navbar />
         {children}
         <Footer />
+        <AtlasChat />
       </body>
     </html>
   );

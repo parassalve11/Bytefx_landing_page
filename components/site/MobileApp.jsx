@@ -32,9 +32,14 @@ const FEATURES = [
 ];
 
 /**
- * TODO [PRODUCT]: these three lines describe what each platform does
+ * TODO [PRODUCT]: these two lines describe what each platform does
  * generally, not a ByteFX integration spec. Confirm the TradingView broker
- * link and whatever Atlas AI actually ships before launch.
+ * link before launch.
+ *
+ * Atlas AI used to sit here as a third tab. It is not a place you open the
+ * account, so it never belonged in a switcher whose whole claim is "the same
+ * account opens in all of these" — it now lives in the assistant launcher
+ * (`components/site/AtlasChat.jsx`), reachable from every page.
  */
 const PLATFORMS = [
   {
@@ -50,13 +55,6 @@ const PLATFORMS = [
     copy: "Chart where you already chart. Orders and open positions stay linked to your account.",
     icon: "/assets/mobile-section/treadingview.png",
     markClass: "h-[26px] w-[26px]",
-  },
-  {
-    id: "atlas",
-    name: "Atlas AI",
-    copy: "Reads your trade history and scores it, so you can see what is actually costing you.",
-    icon: "/assets/mobile-section/atlas.png",
-    markClass: "h-6 w-6",
   },
 ];
 
@@ -76,11 +74,11 @@ function StoreBadge({ icon: Icon, top, bottom, href }) {
 }
 
 /**
- * The three platforms the same account opens in, as one small switcher rather
- * than a section: this band is already the "one account, every device"
- * argument, and three logos do not need a section of their own to make the
- * same point. Picking one swaps the line underneath it, so the whole thing
- * stays two rows tall no matter how many platforms are listed.
+ * The platforms the same account opens in, as one small switcher rather than a
+ * section: this band is already the "one account, every device" argument, and
+ * two logos do not need a section of their own to make the same point. Picking
+ * one swaps the line underneath it, so the whole thing stays two rows tall no
+ * matter how many platforms are listed.
  *
  * Real tabs — click, arrow keys, Home/End — not hover-only, which would put
  * the copy out of reach on touch. Each mark sits on a white puck for the same
@@ -111,7 +109,7 @@ function PlatformSwitch() {
   return (
     <div className="text-center">
       <p className="text-[13.5px] text-muted">
-        The same account opens in all three.
+        The same account opens in both.
       </p>
 
       <div
@@ -236,8 +234,8 @@ export function MobileApp() {
 
         {/* Directly under the device shot: the cluster shows the account on
             tablet, phone and laptop, and this is the line that says which
-            three front ends those are. Separating them put a features grid
-            and two store badges between the claim and its evidence. */}
+            front ends those are. Separating them put a features grid and two
+            store badges between the claim and its evidence. */}
         <Reveal delay={0.04} className="mt-10">
           <PlatformSwitch />
         </Reveal>
