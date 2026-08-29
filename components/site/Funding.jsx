@@ -63,7 +63,7 @@ function PaymentMethodsVisual() {
         whileHover={reduced ? undefined : { y: -4, scale: 1.012 }}
         transition={{ duration: 0.35, ease: [0.22, 1, 0.36, 1] }}
         style={{ rotateX, rotateY, transformStyle: "preserve-3d" }}
-        className="group relative aspect-square overflow-hidden rounded-lg border border-white/70 bg-[#e5e4e2] shadow-[0_24px_70px_rgba(27,32,35,0.18)] will-change-transform motion-reduce:!transform-none"
+        className="group relative aspect-square overflow-hidden rounded-lg hadow-[0_24px_70px_rgba(27,32,35,0.18)] will-change-transform motion-reduce:!transform-none"
       >
         <Image
           src="/assets/payment_methods/image.png"

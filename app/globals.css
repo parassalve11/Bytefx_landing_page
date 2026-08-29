@@ -616,9 +616,7 @@ summary:focus-visible,
   );
 }
 
-/* Compact proof surfaces below the hero CTAs. They deliberately use a little
-   less contrast than the buttons, so the action hierarchy stays obvious while
-   the orbit passes behind them. */
+/* Compact proof surfaces below the hero CTAs. */
 @utility hero-proof {
   border: 1px solid rgba(255, 255, 255, 0.14);
   background: linear-gradient(
@@ -632,8 +630,6 @@ summary:focus-visible,
   backdrop-filter: blur(10px);
 }
 
-/* CSS owns the one-shot copy entrance so the hero is never left at
-   `opacity: 0` waiting for React to hydrate. */
 @keyframes hero-rise-in {
   from {
     opacity: 0;

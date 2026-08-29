@@ -3,109 +3,70 @@
 import Image from "next/image";
 import { Headphones, WalletCards } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { InstrumentIcon } from "@/components/ui/asset-icon";
-import OrbitImages from "@/components/ui/OrbitImages";
 
 /**
- * Hero — one claim on the blue band.
+ * Hero
  *
- * The band is deliberately empty apart from the copy and the orbit.
- * Everything the page has to prove is proved further down: `Ticker` streams
- * live quotes directly below this, `Conditions` prints 1:2000, 0.1 pips,
- * 150+, ~20ms and 24/6, and `FinalCta` closes with the risk warning. This
- * section's only job is to state the claim and put two buttons under it.
+ * Platinum/light version of the ByteFX hero.
  *
- * ## The background
- *
- * The same treatment as the "ByteFX Enhanced Trading Tools" card in
- * `TradingShowcase` — `linear-gradient(150deg, #2f66d1, #0c2c78)` under a
- * 42px white grid at 16% — lifted into `globals.css` as `hero-tools` /
- * `hero-tools-grid` so the two surfaces cannot drift apart. Over it sit
- * `hero-scrim` (contrast for the white type) and `hero-bloom` (one green
- * light low in the frame, so the CTA is not the only green pixel).
- *
- * This replaced a full-bleed aurora photograph. The photograph was a
- * licensed stock frame with nothing to do with the product, it was ~440 KB
- * on the LCP element, and it needed a heavy scrim to keep the H1 legible.
- * The gradient costs nothing, is on-brand by construction, and leaves the
- * frame clear for the orbit.
- *
- * This is still the only dark band on the site. Everything below is the
- * white / `alt` alternation, and the hard edge at the foot of this section
- * is the page's first and strongest contrast — do not soften it with a
- * border. The bottom of `hero-scrim` is what stops the blue meeting the
- * white `Ticker` as a bright seam.
- *
- * ## The orbit
- *
- * React Bits' `OrbitImages`, orbiting the site's own `InstrumentIcon` coin
- * discs rather than files. The outer ring carries the five company marks from
- * the stocks market and the inner ring carries four other traded markets. Two
- * counter-rotating rings read as depth rather than a carousel.
- *
- * It is `aria-hidden` inside the component and sits behind the copy, so none
- * of it is reachable or announced. Fine pointers get a small hover response;
- * there are deliberately no links on continuously moving targets.
- * Under `prefers-reduced-motion` the component parks the discs where they
- * are instead of hiding them, so the composition still holds.
- *
- * ## Motion
- *
- * Nothing here is a signature moment. The copy rises once on load and the
- * orbit turns slowly; both are off under `prefers-reduced-motion`, enforced
- * here and in `globals.css`.
- *
- * The proof row uses the same genuine MetaTrader mark as `MobileApp`; the
- * other two facts have their own pictograms instead of three repeated checks.
- * All three sit on restrained glass surfaces so they stay legible over the
- * moving orbit without turning into another CTA row.
+ * Important:
+ * - Existing hero content is unchanged.
+ * - Existing CTA structure is unchanged.
+ * - Existing proof badges are unchanged in content.
+ * - Old blue/grid/orbit background has been removed.
+ * - Gold coin artwork comes directly from:
+ *   /public/assets/hero/left-side.png
+ * - Coin artwork stays on the right side of the hero.
  */
 
-/**
- * Every symbol resolves to a real mark in `InstrumentIcon`. Stocks lead on the
- * larger ring because they are the visual requested for this hero; the smaller
- * ring keeps the wider product range visible without an explanatory eyebrow.
- */
-const STOCK_RING = ["AAPL", "NVDA", "TSLA", "GOOGL", "META"];
-const MARKET_RING = ["EUR/USD", "XAU/USD", "BTC/USD", "NAS100"];
 
-/** Above-the-fold entry: plays on load, not on scroll. */
-function Rise({ delay = 0, y = 20, className, children, as = "div" }) {
+/* -------------------------------------------------------------------------- */
+/* Hero entrance animation wrapper                                             */
+/* -------------------------------------------------------------------------- */
+
+function Rise({
+  delay = 0,
+  y = 20,
+  className,
+  children,
+  as = "div",
+}) {
   const Tag = as;
 
   return (
     <Tag
       className={`hero-rise ${className ?? ""}`}
-      style={{ "--hero-rise-delay": `${delay}s`, "--hero-rise-y": `${y}px` }}
+      style={{
+        "--hero-rise-delay": `${delay}s`,
+        "--hero-rise-y": `${y}px`,
+      }}
     >
       {children}
     </Tag>
   );
 }
 
-/**
- * `InstrumentIcon` is sized by its `size` prop, not by CSS: `PairCoin` builds
- * a fixed pair of overlapping flag discs and ignores width utilities entirely.
- * So the ring picks a named size and the orbit's `itemSize` is set to leave a
- * margin around it — `lg` and `md` are both ~56px and ~44px across, whichever
- * branch of `InstrumentIcon` a symbol lands in.
- */
-function ring(symbols, size) {
-  return symbols.map((symbol) => (
-    <span
-      key={symbol}
-      className="hero-orbit-token"
-      data-symbol={symbol.replace("/USD", "")}
-    >
-      <InstrumentIcon symbol={symbol} size={size} />
-    </span>
-  ));
-}
+
+/* -------------------------------------------------------------------------- */
+/* Proof badge icon container                                                  */
+/* -------------------------------------------------------------------------- */
 
 function ProofPuck({ children }) {
   return (
     <span
-      className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-white shadow-[inset_0_0_0_1px_rgba(1,6,26,0.08),0_5px_16px_rgba(1,6,26,0.18)]"
+      className="
+        flex
+        h-10
+        w-10
+        shrink-0
+        items-center
+        justify-center
+        rounded-xl
+        border
+        border-black/[0.045]
+        bg-white
+        shadow-[0_5px_16px_rgba(15,23,42,0.08)]
+      "
       aria-hidden="true"
     >
       {children}
@@ -113,9 +74,31 @@ function ProofPuck({ children }) {
   );
 }
 
+
+/* -------------------------------------------------------------------------- */
+/* Proof badge                                                                 */
+/* -------------------------------------------------------------------------- */
+
 function ProofBadge({ icon, value, label }) {
   return (
-    <span className="hero-proof inline-flex min-h-14 items-center gap-2.5 rounded-2xl py-2 pr-4 pl-2.5 text-left">
+    <span
+      className="
+        inline-flex
+        min-h-14
+        items-center
+        gap-2.5
+        rounded-2xl
+        border
+        border-black/[0.045]
+        bg-white/65
+        py-2
+        pr-4
+        pl-2.5
+        text-left
+        shadow-[0_8px_28px_rgba(15,23,42,0.055)]
+        backdrop-blur-xl
+      "
+    >
       <ProofPuck>
         {icon === "mt5" ? (
           <Image
@@ -138,11 +121,30 @@ function ProofBadge({ icon, value, label }) {
           />
         )}
       </ProofPuck>
+
       <span className="leading-none">
-        <span className="block text-[13px] font-semibold whitespace-nowrap text-white">
+        <span
+          className="
+            block
+            whitespace-nowrap
+            text-[13px]
+            font-semibold
+            text-[#344054]
+          "
+        >
           {value}
         </span>
-        <span className="mt-1 block text-[10.5px] font-medium whitespace-nowrap text-white/60">
+
+        <span
+          className="
+            mt-1
+            block
+            whitespace-nowrap
+            text-[10.5px]
+            font-medium
+            text-[#667085]
+          "
+        >
           {label}
         </span>
       </span>
@@ -150,110 +152,321 @@ function ProofBadge({ icon, value, label }) {
   );
 }
 
+
+/* -------------------------------------------------------------------------- */
+/* Hero                                                                        */
+/* -------------------------------------------------------------------------- */
+
 export function Hero() {
   return (
-    /* The negative top margin pulls the band up behind the sticky navbar,
-       whose shell is a floating white pill on a transparent header. Without
-       it the band starts 84px down the page and the pill sits on a strip of
-       bare canvas — the one place on the site where the header is meant to
-       be floating over something. Keep the padding equal to the margin: it
-       is what puts the content back where it belongs. */
-    <section className="relative -mt-[84px] flex min-h-[640px] items-center overflow-hidden pt-[84px] text-white md:min-h-[88vh]">
-      <div className="pointer-events-none absolute inset-0" aria-hidden="true">
-        <div className="hero-tools absolute inset-0" />
-        <div className="hero-tools-grid absolute inset-0" />
+    <section
+      className="
+        relative
+        -mt-[84px]
+        flex
+        min-h-[640px]
+        items-center
+        overflow-hidden
+        pt-[84px]
+        md:min-h-[88vh]
+      "
+    >
+      {/* ------------------------------------------------------------------ */}
+      {/* Platinum background                                                */}
+      {/* ------------------------------------------------------------------ */}
 
-        {/* The orbit sits between the grid and the scrim, so the scrim's
-            centre radial dims the discs that pass behind the headline and
-            leaves the ones out at the edges bright. That is the whole reason
-            the copy stays readable with objects moving under it.
+      <div
+        className="pointer-events-none absolute inset-0"
+        aria-hidden="true"
+      >
+        {/* Main platinum surface */}
+        <div
+          className="
+            absolute
+            inset-0
+            bg-[radial-gradient(circle_at_48%_42%,#ffffff_0%,#fbfbfb_26%,#f5f6f7_57%,#e9ebee_100%)]
+          "
+        />
 
-            Sized off the viewport width and floored, so the ellipse still
-            clears the copy column on a phone instead of collapsing into it.
-            `baseWidth` is the component's design space, not a pixel size —
-            `responsive` scales the whole thing to the box below. */}
-        <div className="absolute top-1/2 left-1/2 w-[min(1500px,168vw)] -translate-x-1/2 -translate-y-1/2">
-          <OrbitImages
-            className="hero-orbit"
-            items={ring(STOCK_RING, "lg")}
-            shape="ellipse"
-            radiusX={620}
-            radiusY={272}
-            rotation={-8}
-            duration={46}
-            itemSize={84}
-            responsive
+        {/* Main white center light */}
+        <div
+          className="
+            absolute
+            inset-0
+            bg-[radial-gradient(ellipse_at_46%_48%,rgba(255,255,255,1)_0%,rgba(255,255,255,0.72)_28%,rgba(255,255,255,0.12)_60%,transparent_78%)]
+          "
+        />
+
+        {/* Soft left platinum depth */}
+        <div
+          className="
+            absolute
+            inset-y-0
+            left-0
+            w-[35%]
+            bg-[radial-gradient(circle_at_left_center,rgba(218,222,227,0.42),transparent_68%)]
+          "
+        />
+
+        {/* Soft right depth behind coins */}
+        <div
+          className="
+            absolute
+            inset-y-0
+            right-0
+            w-[34%]
+            bg-[radial-gradient(circle_at_right_center,rgba(219,222,226,0.46),transparent_68%)]
+          "
+        />
+
+        {/* Subtle lower platinum tone */}
+        <div
+          className="
+            absolute
+            inset-x-0
+            bottom-0
+            h-[38%]
+            bg-gradient-to-t
+            from-[#e7e9ec]/55
+            via-[#f1f2f4]/20
+            to-transparent
+          "
+        />
+
+        {/* Extremely subtle top highlight */}
+        <div
+          className="
+            absolute
+            inset-x-0
+            top-0
+            h-[30%]
+            bg-gradient-to-b
+            from-white/50
+            to-transparent
+          "
+        />
+
+
+        {/* --------------------------------------------------------------- */}
+        {/* Gold coin asset                                                 */}
+        {/* --------------------------------------------------------------- */}
+
+        <div
+          className="
+            absolute
+            z-[3]
+
+            right-[-55px]
+            top-[51%]
+
+            w-[clamp(430px,32vw,620px)]
+
+            -translate-y-1/2
+
+            select-none
+
+            xl:right-[-45px]
+
+            lg:right-[-95px]
+            lg:w-[500px]
+
+            md:right-[-135px]
+            md:w-[440px]
+
+            max-md:right-[-165px]
+            max-md:w-[390px]
+            max-md:opacity-70
+
+            max-sm:right-[-180px]
+            max-sm:w-[330px]
+            max-sm:opacity-30
+          "
+        >
+          {/* Very soft shadow behind gold stack */}
+          <div
+            className="
+              absolute
+              left-[15%]
+              top-[10%]
+              h-[80%]
+              w-[65%]
+              rounded-full
+              bg-black/[0.055]
+              blur-[70px]
+            "
           />
-          <div className="absolute inset-0">
-            <OrbitImages
-              className="hero-orbit"
-              items={ring(MARKET_RING, "md")}
-              shape="ellipse"
-              radiusX={470}
-              radiusY={205}
-              rotation={-8}
-              duration={34}
-              direction="reverse"
-              itemSize={66}
-              responsive
-            />
-          </div>
-        </div>
 
-        <div className="hero-scrim absolute inset-0" />
-        <div className="hero-bloom absolute inset-0" />
+          <Image
+            src="/assets/hero/left-side.png"
+            alt=""
+            width={1024}
+            height={1536}
+            priority
+            sizes="
+              (max-width: 640px) 330px,
+              (max-width: 768px) 390px,
+              (max-width: 1024px) 440px,
+              (max-width: 1280px) 500px,
+              620px
+            "
+            className="
+              relative
+              h-auto
+              w-full
+              object-contain
+              drop-shadow-[0_20px_30px_rgba(91,61,5,0.12)]
+            "
+          />
+        </div>
       </div>
 
-      <div className="container-x relative py-20 md:py-24">
+
+      {/* ------------------------------------------------------------------ */}
+      {/* Hero content                                                       */}
+      {/* ------------------------------------------------------------------ */}
+
+      <div
+        className="
+          container-x
+          relative
+          z-10
+          py-20
+          md:py-24
+        "
+      >
         <div className="mx-auto max-w-[860px] text-center">
-          {/* Weight, not colour, carries the emphasis: headings on this site
-              are solid by rule, and 300 against 700 in Poppins is a wider
-              contrast than any tint would have given anyway. */}
-          <Rise as="h1" delay={0.08} className="h-display text-white">
-            <span className="block font-light text-white/90">Discover your</span>
-            <span className="block">trading edge</span>
+
+
+          {/* -------------------------------------------------------------- */}
+          {/* Heading                                                        */}
+          {/* -------------------------------------------------------------- */}
+
+          <Rise
+            as="h1"
+            delay={0.08}
+            className="h-display"
+          >
+            <span
+              className="
+                block
+                font-light
+                text-[#3b4554]
+              "
+            >
+              Discover your
+            </span>
+
+            <span
+              className="
+                block
+                text-[#1458b8]
+              "
+            >
+              trading edge
+            </span>
           </Rise>
+
+
+          {/* -------------------------------------------------------------- */}
+          {/* Description                                                    */}
+          {/* -------------------------------------------------------------- */}
 
           <Rise
             as="p"
             delay={0.16}
-            className="text-balance-i mx-auto mt-6 max-w-[560px] text-[16.5px] leading-relaxed text-white/80"
+            className="
+              text-balance-i
+              mx-auto
+              mt-6
+              max-w-[560px]
+              text-[16.5px]
+              leading-relaxed
+              text-[#465365]
+            "
           >
             One account for forex, metals, indices and crypto, on MetaTrader 5.
             Open it in minutes and fund it instantly.
           </Rise>
 
+
+          {/* -------------------------------------------------------------- */}
+          {/* CTA buttons                                                    */}
+          {/* -------------------------------------------------------------- */}
+
           <Rise
             delay={0.24}
-            className="mt-9 flex flex-col items-center justify-center gap-3 sm:flex-row"
+            className="
+              mt-9
+              flex
+              flex-col
+              items-center
+              justify-center
+              gap-3
+              sm:flex-row
+            "
           >
-            <Button href="/signup" size="lg" arrow className="w-full sm:w-auto">
+            <Button
+              href="/signup"
+              size="lg"
+              arrow
+              className="w-full sm:w-auto"
+            >
               Open live account
             </Button>
+
             <Button
               href="/demo"
-              variant="onDark"
               size="lg"
-              className="w-full sm:w-auto"
+              className="
+                w-full
+                border
+                border-black/[0.055]
+                bg-white/70
+                text-[#344054]
+                shadow-[0_8px_25px_rgba(15,23,42,0.055)]
+                backdrop-blur-xl
+                transition-all
+                duration-300
+                hover:border-black/[0.08]
+                hover:bg-white
+                hover:shadow-[0_10px_30px_rgba(15,23,42,0.08)]
+                sm:w-auto
+              "
             >
               Try demo
             </Button>
           </Rise>
 
+
+          {/* -------------------------------------------------------------- */}
+          {/* Proof badges                                                   */}
+          {/* -------------------------------------------------------------- */}
+
           <Rise
             delay={0.3}
-            className="mx-auto mt-8 flex max-w-[640px] flex-wrap items-center justify-center gap-2.5"
+            className="
+              mx-auto
+              mt-8
+              flex
+              max-w-[640px]
+              flex-wrap
+              items-center
+              justify-center
+              gap-2.5
+            "
           >
             <ProofBadge
               icon="mt5"
               value="MetaTrader 5"
               label="Trading platform"
             />
+
             <ProofBadge
               icon="deposit"
               value="$20 minimum"
               label="Opening deposit"
             />
+
             <ProofBadge
               icon="support"
               value="24/6 support"

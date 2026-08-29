@@ -1,5 +1,5 @@
 import Image from "next/image";
-import { ArrowRight, TrendingUp } from "lucide-react";
+import { ArrowRight } from "lucide-react";
 import traderAsset from "@/public/assets/show_case/ChatGPT Image Aug 28, 2026, 02_19_03 PM.png";
 import toolsAsset from "@/public/assets/show_case/ChatGPT Image Aug 28, 2026, 02_21_02 PM.png";
 import competitionAsset from "@/public/assets/show_case/ChatGPT Image Aug 28, 2026, 02_30_08 PM (1).png";
@@ -71,14 +71,9 @@ function MainCard() {
       <CandleChart />
 
       <div className={styles.mainCopy}>
-        <h3 className={styles.mainTitle}>
-          Trade with
-          <br />
-          Better Conditions
-        </h3>
+        <h3 className={styles.mainTitle}>Trade with Better Conditions</h3>
         <p className={styles.mainLead}>
-          Tight spreads, fast execution, and
-          <br className={styles.desktopBreak} /> ultra-low trading costs.
+          Tighter spreads, faster execution, and lower costs on every trade.
         </p>
         <ActionLink href="/getting-started" large>
           Start Trading with ByteFX
@@ -103,15 +98,10 @@ function ToolsCard() {
   return (
     <article className={`${styles.card} ${styles.toolsCard}`}>
       <div className={styles.featureCopy}>
-        <h3>
-          ByteFX Enhanced
-          <br />
-          Trading Tools
-        </h3>
+        <h3>ByteFX Enhanced Trading Tools</h3>
         <p>
-          Powerful platforms and tools
-          <br className={styles.desktopBreak} /> designed to give you an edge
-          <br className={styles.desktopBreak} /> in every market.
+          Powerful platforms and market tools designed to keep you ahead of
+          every move.
         </p>
         <ActionLink href="#platforms" light>
           Explore Tools
@@ -131,9 +121,9 @@ function ToolsCard() {
         unoptimized
         className={styles.toolsImage}
       />
-      <span className={styles.trendBadge} aria-hidden="true">
+      {/* <span className={styles.trendBadge} aria-hidden="true">
         <TrendingUp strokeWidth={1.8} />
-      </span>
+      </span> */}
     </article>
   );
 }
@@ -142,15 +132,10 @@ function CompetitionCard() {
   return (
     <article className={`${styles.card} ${styles.promoCard} ${styles.competitionCard}`}>
       <div className={styles.promoCopy}>
-        <h3>
-          Compete.
-          <br />
-          Trade. Win.
-        </h3>
+        <h3>Compete. Trade. Win.</h3>
         <p>
-          Join exciting competitions
-          <br className={styles.desktopBreak} /> and win your share of
-          <br className={styles.desktopBreak} /> amazing cash prizes.
+          Join live trading competitions and compete for your share of exciting
+          cash prizes.
         </p>
         <ActionLink href="/competition" light>
           Join Competition
@@ -174,14 +159,10 @@ function CopyCard() {
   return (
     <article className={`${styles.card} ${styles.promoCard} ${styles.copyCard}`}>
       <div className={styles.promoCopy}>
-        <h3>
-          ByteFX Copy Top Traders
-          <br />
-          Earn Together
-        </h3>
+        <h3>Copy Top Traders. Grow Together.</h3>
         <p>
-          Follow proven strategies, copy top
-          <br className={styles.desktopBreak} /> traders, and earn consistent returns.
+          Follow proven strategies and mirror experienced traders while staying
+          in control.
         </p>
       </div>
       {/* Source file is actually 1122x1402 (0.8 ratio, PORTRAIT) — was

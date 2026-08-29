@@ -1,0 +1,103 @@
+.rawCard {
+  isolation: isolate;
+}
+
+.rawContent {
+  height: 100%;
+  pointer-events: none;
+  user-select: none;
+  opacity: 0.46;
+  filter: blur(3px);
+  transition:
+    opacity 240ms ease,
+    filter 240ms ease;
+}
+
+.rawOverlay {
+  position: absolute;
+  z-index: 20;
+  inset: 10px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid rgba(203, 213, 229, 0.78);
+  border-radius: 18px;
+  background: rgba(247, 249, 252, 0.78);
+  padding: 32px;
+  text-align: center;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.78);
+  transition:
+    opacity 240ms ease,
+    transform 240ms cubic-bezier(0.22, 1, 0.36, 1),
+    background-color 240ms ease;
+}
+
+.rawOverlay h3 {
+  max-width: 300px;
+  margin: 12px 0 0;
+  color: var(--ink);
+  font-size: clamp(25px, 3vw, 32px);
+  font-weight: 700;
+  letter-spacing: -0.025em;
+  line-height: 1.08;
+  text-wrap: balance;
+}
+
+.rawOverlay p {
+  max-width: 300px;
+  margin: 12px 0 0;
+  color: var(--body);
+  font-size: 14.5px;
+  line-height: 1.6;
+  text-wrap: balance;
+}
+
+.rawEyebrow {
+  color: var(--brand);
+  font-size: 10.5px;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+}
+
+/* Hover can be the reveal only when the device actually has a precise hover
+   pointer. Touch users see the contact action immediately; keyboard users
+   reveal it as soon as its link receives focus. */
+@media (hover: hover) and (pointer: fine) {
+  .rawOverlay {
+    pointer-events: none;
+    opacity: 0;
+    transform: translateY(8px);
+    background: rgba(247, 249, 252, 0.58);
+  }
+
+  .rawCard:hover .rawContent,
+  .rawCard:focus-within .rawContent {
+    opacity: 0.36;
+    filter: blur(4px);
+  }
+
+  .rawCard:hover .rawOverlay,
+  .rawCard:focus-within .rawOverlay {
+    pointer-events: auto;
+    opacity: 1;
+    transform: translateY(0);
+    background: rgba(247, 249, 252, 0.86);
+  }
+}
+
+@media (max-width: 1023px) {
+  .rawOverlay {
+    pointer-events: auto;
+    opacity: 1;
+    transform: none;
+    background: rgba(247, 249, 252, 0.86);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .rawContent,
+  .rawOverlay {
+    transition: none;
+  }
+}
