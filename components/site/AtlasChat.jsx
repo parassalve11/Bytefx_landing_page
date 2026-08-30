@@ -237,11 +237,15 @@ export function AtlasChat() {
   }, [messages, reduced]);
 
   return (
-    /* Bottom-left, above everything. `z-60` clears the sticky navbar (z-50)
+    /* Bottom-right, above everything. `z-60` clears the sticky navbar (z-50)
        so the panel is never half-hidden behind the header on a short
        viewport. `pointer-events-none` on the shell, restored on the children,
-       keeps the column from swallowing clicks on the page beneath it. */
-    <div className="pointer-events-none fixed bottom-4 left-4 z-60 flex flex-col items-start gap-3 sm:bottom-6 sm:left-6">
+       keeps the column from swallowing clicks on the page beneath it.
+
+       The column is right-aligned, so the panel and the launcher share their
+       right edge and the panel grows leftwards — which is also why it scales
+       out of its bottom-right corner rather than its bottom-left. */
+    <div className="pointer-events-none fixed right-4 bottom-4 z-60 flex flex-col items-end gap-3 sm:right-6 sm:bottom-6">
       <AnimatePresence>
         {open && (
           <motion.div
@@ -253,7 +257,7 @@ export function AtlasChat() {
             animate={{ opacity: 1, y: 0, scale: 1 }}
             exit={reduced ? { opacity: 0 } : { opacity: 0, y: 12, scale: 0.98 }}
             transition={{ duration: 0.26, ease: EASE }}
-            style={{ transformOrigin: "bottom left" }}
+            style={{ transformOrigin: "bottom right" }}
             className={cn(
               "pointer-events-auto flex w-[min(370px,calc(100vw-2rem))] flex-col",
               "max-h-[min(560px,calc(100dvh-8rem))] overflow-hidden rounded-[20px]",
@@ -405,7 +409,7 @@ export function AtlasChat() {
         </span>
         {!open && (
           <span className="hidden text-[13.5px] font-semibold whitespace-nowrap text-ink sm:inline">
-            Ask Atlas AI
+            Ask Atlas 
           </span>
         )}
       </button>

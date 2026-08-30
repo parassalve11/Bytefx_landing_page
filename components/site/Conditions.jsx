@@ -221,40 +221,41 @@ export function Conditions() {
               <div
                 className={cn(
                   "relative z-10 flex flex-col gap-8 p-8 sm:p-10",
-                  "lg:min-h-[460px] lg:flex-row lg:items-center lg:gap-12 lg:p-14"
+                  "lg:min-h-[440px] lg:flex-row lg:items-stretch lg:gap-12 lg:p-14"
                 )}
               >
-                <div className="lg:w-[46%] lg:shrink-0">
-                  <p
-                    className={cn(
-                      "text-[12.5px] leading-none font-semibold tracking-[0.07em] uppercase",
-                      "text-ink/70"
-                    )}
-                  >
-                    {c.label}
-                  </p>
-                  <p
-                    className={cn(
-                      "tnum mt-4 text-[clamp(44px,5.4vw,68px)] leading-[0.95] font-bold tracking-[-0.04em]",
-                      "text-ink"
-                    )}
-                  >
-                    {c.figure}
-                  </p>
-                  <p
-                    className={cn(
-                      "mt-5 max-w-[30rem] text-[15.5px] leading-relaxed",
-                      "text-ink/75"
-                    )}
-                  >
-                    {c.copy}
-                  </p>
+                <div className="flex flex-col lg:w-[46%] lg:shrink-0">
+                  {/* The index is the same number the cursor below is
+                      counting, printed on the card so a reader who lands
+                      mid-run knows where in the five they are without
+                      looking away from it. */}
+                  <div className="flex items-center gap-3">
+                    <span className="tnum text-[12.5px] leading-none font-bold tracking-[0.06em] text-brand">
+                      {String(i + 1).padStart(2, "0")}
+                    </span>
+                    <span aria-hidden="true" className="h-px w-6 bg-ink/20" />
+                    <span className="text-[12.5px] leading-none font-semibold tracking-[0.07em] text-ink/70 uppercase">
+                      {c.label}
+                    </span>
+                  </div>
+
+                  {/* Centred in whatever the index row leaves, so the number sits
+                      on the card’s optical middle rather than in its bottom
+                      corner. */}
+                  <div className="my-auto pt-10 lg:pt-8">
+                    <p className="tnum text-[clamp(44px,5.4vw,68px)] leading-[0.95] font-bold tracking-[-0.04em] text-ink">
+                      {c.figure}
+                    </p>
+                    <p className="mt-5 max-w-[30rem] text-[15.5px] leading-relaxed text-ink/75">
+                      {c.copy}
+                    </p>
+                  </div>
                 </div>
 
                 {/* The render is the card's whole visual argument, so it gets
                     the larger half of the space. Below 360px it stops reading
                     as product art and starts reading as an icon. */}
-                <div className="mx-auto w-[64%] max-w-[300px] lg:mx-0 lg:w-auto lg:max-w-none lg:flex-1">
+                <div className="mx-auto flex w-[64%] max-w-[300px] items-center lg:mx-0 lg:w-auto lg:max-w-none lg:flex-1">
                   <Image
                     src={c.image}
                     alt={c.alt}
@@ -269,13 +270,23 @@ export function Conditions() {
           ))}
         </div>
 
-        {/* The cursor. The active card is a bar rather than a dot so the
-            control reads as a position along a run, not as five equal
-            options — which is what it is. */}
+        {/* The cursor, in numbers.
+ 
+            Five dots said "five equal options". These are five *steps*, taken
+            in order, and the number is what makes that legible: the one you
+            are on is inked and carries the dwell meter, the ones behind it
+            stay solid because you have seen them, the ones ahead are light.
+            The pair at the right prints the same thing as a fraction, which
+            is the form a reader can take in without counting.
+ 
+            The meter is keyed on `active`, so it remounts and restarts on
+            every advance; `paused` freezes it in place with the run rather
+            than resetting it, so hovering holds the card *and* its clock. */}
         <div className="mt-10 flex justify-center">
-          <div className="inline-flex items-center gap-2 rounded-full border border-line bg-surface px-3 py-2 shadow-sm">
+          <div className="inline-flex items-center gap-1 rounded-full border border-line bg-surface px-2.5 py-2 shadow-sm">
             {CONDITIONS.map((c, i) => {
               const on = i === active;
+              const seen = i < active;
               return (
                 <button
                   key={c.id}
@@ -286,19 +297,52 @@ export function Conditions() {
                     setActive(i);
                     goTo(i);
                   }}
-                  className="group grid h-5 place-items-center px-0.5"
+                  className="group relative rounded-full px-2.5 py-1 outline-none focus-visible:ring-2 focus-visible:ring-brand"
                 >
                   <span
                     className={cn(
-                      "block h-1.5 rounded-full transition-all duration-300 ease-[cubic-bezier(0.22,1,0.36,1)]",
+                      "tnum block text-[13px] leading-none font-bold tabular-nums transition-colors duration-300",
                       on
-                        ? "w-8 bg-ink"
-                        : "w-1.5 bg-line-strong group-hover:bg-muted"
+                        ? "text-ink"
+                        : seen
+                          ? "text-muted group-hover:text-ink"
+                          : "text-line-strong group-hover:text-muted"
                     )}
-                  />
+                  >
+                    {String(i + 1).padStart(2, "0")}
+                  </span>
+
+                  {/* The dwell meter. Only under the active number, and only
+                      when the run is actually running. */}
+                  <span
+                    aria-hidden="true"
+                    className="pointer-events-none absolute inset-x-1.5 bottom-0 block h-[2px] overflow-hidden rounded-full"
+                  >
+                    {on && !reduced && (
+                      <span
+                        key={active}
+                        style={{
+                          "--dwell": `${DWELL_MS}ms`,
+                          animationPlayState: paused ? "paused" : "running",
+                        }}
+                        className="dwell-fill block h-full w-full rounded-full bg-brand"
+                      />
+                    )}
+                  </span>
                 </button>
               );
             })}
+
+            <span
+              aria-hidden="true"
+              className="mx-1 h-4 w-px shrink-0 bg-line"
+            />
+
+            <span className="tnum pr-1.5 pl-1 text-[12px] leading-none font-semibold tabular-nums text-muted">
+              <span className="text-ink">{String(active + 1).padStart(2, "0")}</span>
+              {" / "}
+              {String(CONDITIONS.length).padStart(2, "0")}
+            </span>
           </div>
         </div>
       </div>

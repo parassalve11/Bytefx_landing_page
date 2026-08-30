@@ -419,25 +419,99 @@ summary:focus-visible,
   );
 }
 
-/* The section keeps only a whisper of the same cool cast. A full platinum
-   band here would be a slab of mid-grey in a page whose whole hierarchy is
-   the white/alt alternation. */
+/* The Markets section ground.
+
+   The market cards are now near-white (see `market-plate`), so the section
+   behind them has to be a shade *cooler and darker* than the cards or the
+   whole bento dissolves into the page. It is still only a wash — a few
+   percent of blue-grey, not a slab — because the page hierarchy is the
+   white / `bg-alt` alternation and a mid-grey band would break it. */
 @utility platinum-wash {
   background:
     radial-gradient(
-      62% 46% at 50% 0%,
-      rgba(255, 255, 255, 0.96) 0%,
-      rgba(255, 255, 255, 0) 72%
+      68% 48% at 50% 0%,
+      rgba(255, 255, 255, 0.9) 0%,
+      rgba(255, 255, 255, 0) 74%
     ),
-    linear-gradient(168deg, #fdfdfd 0%, #f6f7f8 54%, #f0f2f3 100%);
+    linear-gradient(168deg, #f6f8fc 0%, #eef2f8 52%, #e7edf6 100%);
 }
 
-/* The recessed well the Forex clip sits in.
-   #ECEBE9 is not a decorative choice — it is the exact tone the clip was
-   luma-keyed and re-composited onto (see the ffmpeg recipe in README), so the
-   well has to match it exactly or the video shows a seam. */
-@utility plate-well {
-  background: #ecebe9;
+/* The Forex card, and the clip that sits in it.
+
+   The clip is opaque: the coins are baked onto #EDEBE9, the tone they were
+   luma-keyed onto (recipe in README), and neither H.264 nor this VP8 cut
+   carries alpha. It used to sit in a visible recessed box, which read as a
+   grey panel bolted into the card.
+
+   The fix is to stop hiding the tone and start *ending the card on it*. From
+   `sm` up — where the clip takes the card's right column — the plate washes
+   that exact tone across its right half, so the clip's own background is
+   indistinguishable from the card under it: no box, no well, no seam, and the
+   coins read as floating free the way the four still marks do. The wash has to
+   be at full strength before the clip's left edge and hold it to the card's
+   right edge, or the seam comes back at whichever end falls short.
+
+   Below `sm` the card stacks and the clip spans its full width, so a
+   horizontal wash would put the tone under the copy as well. There the clip's
+   own panel carries the tone instead (`bg-[#edebe9] sm:bg-transparent` in
+   Markets.jsx) and the plate stays plain.
+
+   Deliberately a plain class rather than an `@utility`: it needs a media
+   query of its own, and an unlayered rule also beats `market-plate` in the
+   cascade regardless of which is written first. */
+.forex-plate {
+  background: linear-gradient(
+    158deg,
+    #ffffff 0%,
+    #fdfeff 38%,
+    #f4f7fc 74%,
+    #eaf0f8 100%
+  );
+}
+
+@media (min-width: 40rem) {
+  .forex-plate {
+    background:
+      linear-gradient(
+        to right,
+        rgba(237, 235, 233, 0) 24%,
+        rgba(237, 235, 233, 0.5) 38%,
+        #edebe9 48%,
+        #edebe9 100%
+      ),
+      linear-gradient(
+        158deg,
+        #ffffff 0%,
+        #fdfeff 38%,
+        #f4f7fc 74%,
+        #eaf0f8 100%
+      );
+  }
+}
+
+/* The market card surface.
+
+   The supplied marks changed: they used to be dark steel cutouts, which need
+   a metal ground under them or they read as stickers — hence the old brushed
+   platinum plate. The new set is saturated (gold bars, a green NVIDIA chip,
+   blue orbit trails), and colour of that strength on grey goes muddy. So the
+   card is now near-white with a cool bottom edge, and the only tint is a
+   whisper of brand blue pooled in the bottom-right corner, under the mark,
+   which picks up the blue rim-light the artwork already carries. */
+@utility market-plate {
+  background:
+    radial-gradient(
+      88% 76% at 88% 104%,
+      rgba(19, 86, 190, 0.09) 0%,
+      rgba(19, 86, 190, 0) 68%
+    ),
+    linear-gradient(
+      158deg,
+      #ffffff 0%,
+      #fdfeff 38%,
+      #f4f7fc 74%,
+      #eaf0f8 100%
+    );
 }
 
 /* Glowing-effect mask host (Aceternity) */
@@ -508,6 +582,48 @@ summary:focus-visible,
 .metal-float {
   animation: metal-float 7s var(--float-delay, 0s) ease-in-out infinite;
   will-change: transform;
+}
+
+/* The payment composite, used as the Funding band's backdrop.
+
+   It is a rectangular render on transparency, so dropped straight onto the
+   band it ends on four straight edges. This feathers all of them — hardest on
+   the left, where it runs under the headline column and has to be gone before
+   it gets there. */
+.pay-backdrop {
+  --pay-backdrop-mask: radial-gradient(
+    72% 78% at 62% 46%,
+    #000 0%,
+    #000 42%,
+    rgba(0, 0, 0, 0.55) 72%,
+    transparent 100%
+  );
+  mask-image: var(--pay-backdrop-mask);
+  -webkit-mask-image: var(--pay-backdrop-mask);
+}
+
+/* Conditions — the dwell meter.
+
+   The run advances on a timer, so the cursor has to show time passing or the
+   next card arrives unannounced. One bar under the active number, filling
+   across the dwell, is the whole mechanism — it restarts by remounting on the
+   active index rather than by resetting a transform, and it pauses with the
+   run when the reader is hovering or has focus inside the track.
+
+   Not rendered at all under reduced motion, where the run does not advance by
+   itself and a filling bar would be measuring nothing. */
+@keyframes dwell-fill {
+  from {
+    transform: scaleX(0);
+  }
+  to {
+    transform: scaleX(1);
+  }
+}
+
+.dwell-fill {
+  transform-origin: left center;
+  animation: dwell-fill var(--dwell, 2000ms) linear forwards;
 }
 
 /* Funding — the payment rail ---------------------------------------- */

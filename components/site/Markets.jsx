@@ -2,112 +2,206 @@
 
 import Image from "next/image";
 import { useEffect, useRef } from "react";
-import { ArrowUpRight } from "lucide-react";
+import {
+  ArrowUpRight,
+  BarChart3,
+  Bitcoin,
+  CandlestickChart,
+  Droplet,
+  Send,
+} from "lucide-react";
 import { Section } from "@/components/ui/section";
 import { Button } from "@/components/ui/button";
 import { Reveal, RevealGroup, RevealItem } from "@/components/ui/reveal";
 import { cn } from "@/lib/utils";
 
 /**
- * The bento is 6 columns wide at xl:
+ * The bento is 12 columns wide at xl:
  *
- *   [ Forex ................ 4 ][ Indices .. 2 ]
- *   [ Crypto .. 2 ][ Stocks .. 2 ][ Metals .. 2 ]
+ *   [ Forex .................... 7 ][ Indices ........ 5 ]
+ *   [ Crypto ... 4 ][ Stocks ... 4 ][ Metals & Energy 4 ]
  *
  * Forex leads because it is the house product and the only tile carrying
- * motion. The other five are equal weight — breadth is the message here, so
- * nothing else gets to shout.
+ * motion; Indices takes the rest of the top row because its artwork is the
+ * one landscape mark in the set and needs the width. The bottom three are
+ * equal thirds — breadth is the message down there, so nothing gets to shout.
  *
- * The platinum lives on the TILE, not on the section and not in a separate
- * well behind the artwork. The marks are dark steel cut out on transparency:
- * they need a metal surface to sit on or they read as stickers, and a card is
- * the right size for that surface. Flooding the whole section instead would
- * drop a slab of mid-grey into a page whose entire hierarchy is the white/alt
- * alternation — so the section keeps only a whisper of the same cool cast.
+ * Every tile reads top-to-bottom in the same order: the count, the market,
+ * a short blue rule, one sentence, then the CTA pinned to the bottom-left.
+ * The artwork bleeds off the bottom-right corner behind all of it, which is
+ * what lets the marks run large without ever colliding with the type — the
+ * copy column is capped in width and the artwork starts where it ends.
+ *
+ * The card surface is near-white (`market-plate`). The old brushed-platinum
+ * plate existed because the previous marks were dark steel cutouts that
+ * needed a metal ground; this set is saturated, and saturation on grey goes
+ * muddy. See the note on `market-plate` in globals.css.
  */
 
 const MARKETS = [
   {
     id: "indices",
     title: "Indices",
-    count: "12+ global indices",
+    count: "12+",
+    countLabel: "Global indices",
+    icon: BarChart3,
     description: "S&P 500, Nasdaq 100, Dow and FTSE — spot and futures.",
+    cta: "Explore Indices",
+    // The rising bar this mark is mounted on runs the full width of the
+    // artwork and lands in the bottom-LEFT corner — right where a labelled
+    // pill would go. The reference solves that by dropping the label on this
+    // one card and leaving the bare arrow, and so does this.
+    compactCta: true,
     image: "/assets/indices.png",
-    width: 1254,
-    height: 1254,
+    width: 1448,
+    height: 1086,
     alt: "S&P 500, Nasdaq 100, Dow Jones and FTSE 100 index medallions",
+    // The one landscape mark in the set, so it gets the top row's width.
+    span: "xl:col-span-5",
+    minHeight: "min-h-[380px] md:min-h-[400px]",
+    copyWidth: "max-w-[62%] sm:max-w-[56%]",
+    markClassName: "-right-[2%] -bottom-[3%] w-[72%] max-w-[420px]",
     delay: "0s",
   },
   {
     id: "crypto",
     title: "Crypto",
-    count: "25+ crypto CFDs",
+    count: "25+",
+    countLabel: "Crypto CFDs",
+    icon: Bitcoin,
     description: "Bitcoin, Ethereum, Solana and Tether, around the clock.",
+    cta: "Explore Crypto",
     image: "/assets/CrypoCurrency.png",
     width: 1254,
     height: 1254,
     alt: "Bitcoin, Ethereum, Solana and Tether coins",
+    span: "xl:col-span-4",
+    minHeight: "min-h-[368px]",
+    copyWidth: "max-w-[54%]",
+    markClassName: "-right-[9%] -bottom-[11%] w-[62%] max-w-[262px]",
     delay: "-2.4s",
   },
   {
     id: "stocks",
     title: "Stocks",
-    count: "500+ share CFDs",
+    count: "500+",
+    countLabel: "Share CFDs",
+    icon: CandlestickChart,
     description: "Long or short on the largest US, UK and European names.",
+    cta: "Explore Stocks",
     image: "/assets/stocks_metal.png",
-    width: 830,
-    height: 582,
+    width: 1254,
+    height: 1254,
     alt: "Apple, NVIDIA, Tesla, Google and Meta company marks",
-    // Wider than it is tall, so it gets its own width to stay optically the
-    // same size as the four square marks.
-    markClassName: "w-[62%] max-w-[232px] bottom-7",
+    span: "xl:col-span-4",
+    minHeight: "min-h-[368px]",
+    copyWidth: "max-w-[52%]",
+    markClassName: "-right-[10%] -bottom-[10%] w-[64%] max-w-[270px]",
     delay: "-4.8s",
   },
   {
     id: "commodities",
     title: "Metals & Energy",
-    count: "XAU, XAG, WTI & Brent",
+    count: "XAU, XAG",
+    countLabel: "WTI & Brent",
+    icon: Droplet,
     description: "Gold, silver, crude and natural gas at institutional pricing.",
+    cta: "Explore Commodities",
     image: "/assets/gold_and_sliver.png",
     width: 1254,
     height: 1254,
-    alt: "Gold bar, silver bar and crude oil medallions",
+    alt: "Gold bar, silver bar and a crude oil droplet",
+    span: "xl:col-span-4",
+    minHeight: "min-h-[368px]",
+    // "Metals & Energy" is the longest title in the set and wraps to two
+    // lines, so its copy column is the narrowest.
+    copyWidth: "max-w-[50%]",
+    markClassName: "-right-[11%] -bottom-[12%] w-[66%] max-w-[278px]",
     delay: "-1.2s",
   },
 ];
 
 /**
- * One tile. The platinum surface, the hairline and the lift all live here so
- * every tile is milled the same way. Hover is the lift and the shadow only —
- * the plate no longer takes a specular sweep across it, which read as glare
- * on a card that already carries a gradient, a grain and a floating mark.
+ * One tile. The surface, the hairline and the lift all live here so every
+ * tile is milled the same way. Hover is the lift and the shadow only — the
+ * plate takes no specular sweep, which read as glare on a card that already
+ * carries a gradient and a floating mark.
  */
-function Tile({ href, label, className, children }) {
+function Tile({ href, label, plate = "market-plate", className, children }) {
   return (
     <a
       href={href}
       aria-label={label}
       className={cn(
-        "market-tile platinum-plate group/tile relative isolate flex h-full flex-col overflow-hidden rounded-[1.6rem] shadow-[inset_0_1px_0_rgba(255,255,255,0.95),inset_0_0_0_1px_rgba(1,6,26,0.05),0_18px_44px_-26px_rgba(1,6,26,0.32)] transition-[transform,box-shadow] duration-300 ease-out outline-none hover:-translate-y-1 hover:shadow-[inset_0_1px_0_rgba(255,255,255,0.95),inset_0_0_0_1px_rgba(1,6,26,0.06),0_30px_62px_-28px_rgba(1,6,26,0.42)] focus-visible:ring-2 focus-visible:ring-brand focus-visible:ring-offset-2",
+        "market-tile group/tile relative isolate flex h-full flex-col overflow-hidden rounded-[1.75rem] shadow-[inset_0_1px_0_rgba(255,255,255,0.95),inset_0_0_0_1px_rgba(1,6,26,0.045),0_18px_44px_-28px_rgba(1,6,26,0.28)] transition-[transform,box-shadow] duration-300 ease-out outline-none hover:-translate-y-1 hover:shadow-[inset_0_1px_0_rgba(255,255,255,0.95),inset_0_0_0_1px_rgba(19,86,190,0.12),0_30px_64px_-30px_rgba(1,6,26,0.36)] focus-visible:ring-2 focus-visible:ring-brand focus-visible:ring-offset-2",
+        // Passed separately rather than folded into `className`: the plates
+        // are hand-written classes, so `cn` cannot see two of them as
+        // conflicting and would keep both on the element.
+        plate,
         className
       )}
     >
-      <div className="platinum-grain pointer-events-none absolute inset-0 -z-10 opacity-25 mix-blend-overlay" />
       {children}
     </a>
   );
 }
 
-/** The circular affordance the reference parks in the bottom-left corner. */
-function TileArrow({ className }) {
+/**
+ * The count, in the reference's two-line form: the number carries the weight,
+ * the unit sits under it in brand blue. The icon is the only glyph on the
+ * card, so it is the thing that tells you which market this is before you
+ * have read anything.
+ */
+function TileCount({ icon: Icon, count, label }) {
+  return (
+    <span className="flex items-center gap-2.5">
+      <Icon
+        className="h-[19px] w-[19px] shrink-0 text-brand"
+        strokeWidth={2.2}
+        aria-hidden="true"
+      />
+      <span className="leading-none">
+        <span className="tnum block text-[14px] font-bold text-ink">
+          {count}
+        </span>
+        <span className="mt-[3px] block text-[10.5px] font-semibold tracking-[0.09em] text-brand uppercase">
+          {label}
+        </span>
+      </span>
+    </span>
+  );
+}
+
+/** The short rule between the title and the sentence, as in the reference. */
+function TileRule() {
+  return (
+    <span
+      aria-hidden="true"
+      className="mt-3.5 block h-[3px] w-8 rounded-full bg-brand"
+    />
+  );
+}
+
+/**
+ * The CTA. It is a `span`, not a button or a link — the whole tile is already
+ * the anchor, so a nested interactive element would be both a duplicate tab
+ * stop and invalid markup.
+ */
+function TileCta({ children, compact = false, className }) {
   return (
     <span
       className={cn(
-        "flex h-10 w-10 shrink-0 items-center justify-center rounded-full border border-brand/15 bg-surface/85 text-brand shadow-xs backdrop-blur-sm transition-all duration-300 group-hover/tile:-translate-y-0.5 group-hover/tile:translate-x-0.5 group-hover/tile:border-brand-solid group-hover/tile:bg-brand-solid group-hover/tile:text-white",
+        "inline-flex items-center self-start rounded-full border border-black/[0.05] bg-white/90 shadow-[0_6px_18px_-8px_rgba(1,6,26,0.35)] backdrop-blur-sm transition-colors duration-300 group-hover/tile:border-brand/25",
+        compact ? "p-1.5" : "gap-3 py-1.5 pr-1.5 pl-5",
         className
       )}
     >
-      <ArrowUpRight className="h-4 w-4" strokeWidth={2.4} />
+      {!compact && (
+        <span className="text-[13.5px] font-semibold text-ink">{children}</span>
+      )}
+      <span className="flex h-9 w-9 items-center justify-center rounded-full bg-brand-solid text-white transition-transform duration-300 group-hover/tile:-translate-y-0.5 group-hover/tile:translate-x-0.5">
+        <ArrowUpRight className="h-4 w-4" strokeWidth={2.6} />
+      </span>
     </span>
   );
 }
@@ -115,14 +209,15 @@ function TileArrow({ className }) {
 /**
  * Forex is the one moving mark on the page.
  *
- * The clip is opaque — H.264 carries no alpha — so the black studio backdrop
- * it shipped on is luma-keyed out and re-composited onto the plate tone at
- * build time (the recipe is in README). It therefore sits in its own recessed
- * well instead of floating free like the four still marks.
+ * The clip is opaque — the coins are baked onto #EDEBE9 (see README) — so it
+ * cannot float free the way the four still marks do. Instead the clip and a
+ * flat field of that same tone share one wrapper, and one mask feathers the
+ * pair of them together: the tone fades out into the card rather than ending
+ * on an edge, so there is no grey box, and no seam where the two meet.
  *
  * It fetches only once it scrolls into view and pauses again on the way out;
- * the poster covers the gap so the well is never an empty grey box. Under
- * reduced motion the poster is all anyone ever sees.
+ * the poster covers the gap. Under reduced motion the poster is all anyone
+ * ever sees.
  */
 function ForexMark() {
   const ref = useRef(null);
@@ -145,7 +240,7 @@ function ForexMark() {
   }, []);
 
   return (
-    <div className="relative h-full w-full overflow-hidden plate-well rounded-[1.1rem] shadow-[inset_0_0_0_1px_rgba(1,6,26,0.06),inset_0_2px_6px_rgba(1,6,26,0.06)]">
+    <div className="relative h-full w-full">
       <video
         ref={ref}
         src="/assets/forex_coins.webm"
@@ -155,7 +250,7 @@ function ForexMark() {
         playsInline
         preload="none"
         aria-hidden="true"
-        className="h-full w-full object-contain transition-transform duration-500 ease-out group-hover/tile:scale-[1.04]"
+        className="relative h-full w-full scale-[1.04] object-contain transition-transform duration-500 ease-out group-hover/tile:scale-[1.12]"
       />
     </div>
   );
@@ -163,20 +258,29 @@ function ForexMark() {
 
 function MarketTile({ market }) {
   return (
-    <RevealItem as="li" className="min-w-0 list-none xl:col-span-2">
+    <RevealItem
+      as="li"
+      className={cn("min-w-0 list-none", market.span)}
+    >
       <Tile
         href={`/markets/${market.id}`}
-        label={`Explore ${market.title}`}
-        className="min-h-[340px] p-6"
+        label={market.cta}
+        className={cn("p-6 sm:p-7", market.minHeight)}
       >
-        <div className="relative z-10 max-w-[54%]">
-          <h3 className="text-[22px] leading-tight font-bold tracking-[-0.025em] text-ink">
+        <div className={cn("relative z-10 mb-6", market.copyWidth)}>
+          <TileCount
+            icon={market.icon}
+            count={market.count}
+            label={market.countLabel}
+          />
+
+          <h3 className="mt-4 text-[26px] leading-[1.08] font-bold tracking-[-0.03em] text-ink md:text-[30px]">
             {market.title}
           </h3>
-          <p className="tnum mt-1 text-[11.5px] font-semibold tracking-[0.035em] text-brand uppercase">
-            {market.count}
-          </p>
-          <p className="mt-3 text-[13px] leading-relaxed text-body">
+
+          <TileRule />
+
+          <p className="mt-4 text-[13.5px] leading-relaxed text-body">
             {market.description}
           </p>
         </div>
@@ -186,15 +290,17 @@ function MarketTile({ market }) {
           alt={market.alt}
           width={market.width}
           height={market.height}
-          sizes="(min-width: 1280px) 220px, (min-width: 768px) 24vw, 46vw"
+          sizes="(min-width: 1280px) 420px, (min-width: 768px) 38vw, 66vw"
           className={cn(
-            "metal-float pointer-events-none absolute right-1 bottom-2 z-0 h-auto w-[50%] max-w-[190px] transition-transform duration-500 ease-out group-hover/tile:scale-[1.06]",
+            "metal-float pointer-events-none absolute z-0 h-auto transition-transform duration-500 ease-out group-hover/tile:scale-[1.05]",
             market.markClassName
           )}
           style={{ "--float-delay": market.delay }}
         />
 
-        <TileArrow className="relative z-10 mt-auto" />
+        <TileCta compact={market.compactCta} className="relative z-10 mt-auto">
+          {market.cta}
+        </TileCta>
       </Tile>
     </RevealItem>
   );
@@ -202,35 +308,36 @@ function MarketTile({ market }) {
 
 function ForexTile() {
   return (
-    <RevealItem as="li" className="min-w-0 list-none md:col-span-2 xl:col-span-4">
+    <RevealItem as="li" className="min-w-0 list-none md:col-span-2 xl:col-span-7">
       <Tile
         href="/markets/forex"
         label="Explore Forex"
-        className="min-h-[340px] sm:flex-row sm:items-stretch"
+        plate="forex-plate"
+        className="min-h-[380px] md:min-h-[400px] sm:flex-row sm:items-stretch"
       >
-        <div className="relative z-10 flex flex-1 flex-col justify-center p-6 sm:py-8 sm:pr-0 sm:pl-8">
-          <h3 className="text-[32px] leading-[1.04] font-bold tracking-[-0.03em] text-ink md:text-[40px]">
+        <div className="relative z-10 flex flex-1 flex-col p-6 sm:py-9 sm:pr-0 sm:pl-8">
+          <TileCount icon={Send} count="70+" label="Currency pairs" />
+
+          <h3 className="mt-5 text-[36px] leading-[1.02] font-bold tracking-[-0.035em] text-ink md:text-[44px]">
             Forex
           </h3>
-          <p className="tnum mt-2 text-[12px] font-semibold tracking-[0.035em] text-brand uppercase">
-            70+ currency pairs
+
+          <TileRule />
+
+          <p className="mt-4 max-w-[34ch] text-[14.5px] leading-relaxed text-body">
+            Majors, minors and exotics with spreads from 0.0 pips, deep
+            liquidity and execution measured in milliseconds.
           </p>
-          <p className="mt-4 max-w-xs text-[14.5px] leading-relaxed text-body">
-            Majors, minors and exotics with spreads from 0.0 pips, deep liquidity
-            and execution measured in milliseconds.
-          </p>
-          {/* <Button
-            as="span"
-            variant="ghost"
-            size="md"
-            arrow
-            className="mt-7 self-start bg-surface/90 group-hover/tile:border-brand group-hover/tile:text-brand"
-          >
-            Start trading
-          </Button> */}
+
+          <TileCta className="mt-auto pt-8">Explore Forex</TileCta>
         </div>
 
-        <div className="pointer-events-none relative z-0 aspect-square w-full shrink-0 self-center p-4 sm:aspect-auto sm:w-[44%] sm:max-w-[320px] sm:self-stretch sm:py-5 sm:pr-5">
+        {/* Bleeds to the card's edges on every side it can reach — any
+            padding here would put a visible ledge back around the clip. Below
+            `sm` the panel carries the clip's tone itself; from `sm` up the
+            plate's right-hand wash does, so it goes transparent. See the
+            `.forex-plate` note in globals.css. */}
+        <div className="pointer-events-none relative z-0 aspect-[5/4] w-full shrink-0 self-center bg-[#edebe9] sm:aspect-auto sm:w-[46%] sm:max-w-[380px] sm:self-stretch sm:bg-transparent">
           <ForexMark />
         </div>
       </Tile>
@@ -243,11 +350,7 @@ export function Markets() {
     <Section
       id="markets"
       className="platinum-wash border-y border-line"
-      title={
-        <>
-          One platform. Every major market.
-        </>
-      }
+      title={<>One platform. Every major market.</>}
       lead="Forex, indices, crypto, shares, metals and energy from a single MetaTrader 5 account—one balance, one margin pool, one login."
       aside={
         <Button href="/markets" size="md" arrow>
@@ -257,7 +360,7 @@ export function Markets() {
     >
       <RevealGroup
         as="ul"
-        className="grid grid-cols-1 gap-4 md:grid-cols-2 md:gap-5 xl:grid-cols-6"
+        className="grid grid-cols-1 gap-4 md:grid-cols-2 md:gap-5 xl:grid-cols-12"
       >
         <ForexTile />
         {MARKETS.map((market) => (
@@ -265,7 +368,7 @@ export function Markets() {
         ))}
       </RevealGroup>
 
-      <Reveal delay={0.1} className="mt-6 text-center text-[13.5px] text-muted">
+      <Reveal delay={0.1} className="mt-8 text-center text-[13.5px] text-muted">
         Spreads, swaps and margin requirements for every instrument are listed in
         the{" "}
         <a

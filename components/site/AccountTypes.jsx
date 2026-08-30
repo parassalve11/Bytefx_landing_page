@@ -1,17 +1,24 @@
 "use client";
 
-import { useState } from "react";
-import { Check, ChevronDown, Minus } from "lucide-react";
+import { Check, Minus } from "lucide-react";
 import { Section } from "@/components/ui/section";
 import { Button } from "@/components/ui/button";
+import { GlowingEffect } from "@/components/ui/glowing-effect";
 import { RevealGroup, RevealItem } from "@/components/ui/reveal";
 import { cn } from "@/lib/utils";
-import styles from "./AccountTypes.module.css";
 
 /**
- * Every card carries the identical spec list in the identical order, so the
- * eye compares straight down a column. Raw specifications remain available in
- * the comparison table, while its card acts as a contact-led plan preview.
+ * Standard and Pro carry the identical spec list in the identical order, so
+ * the eye compares straight down a column.
+ *
+ * Raw is not one of those. Its pricing is negotiated on volume, so there is no
+ * honest number to put in a "min. deposit" slot and no spec column that means
+ * the same thing as its neighbours'. It used to render the spec list anyway,
+ * blurred, with the real message revealed on hover — which hid the offer
+ * behind an interaction, printed figures nobody was meant to read, and left
+ * touch users looking at a smudge. It is now its own card, stated plainly,
+ * and the pointer-traced border (`GlowingEffect`) is what marks it out as the
+ * different one instead.
  */
 const SPEC_ORDER = [
   "Min. deposit",
@@ -59,24 +66,27 @@ const ACCOUNTS = [
       Platform: "MetaTrader 5",
     },
   },
-  {
-    id: "raw",
-    name: "Raw",
-    blurb:
-      "Raw spreads and direct market access for professionals trading with institutional precision.",
-    deposit: "25,000",
-    specs: {
-      "Min. deposit": "$25,000",
-      "Spread from": "0.0 pips",
-      "Spread type": "Raw",
-      Commission: "$8 round turn",
-      "Max leverage": "1:2000*",
-      "Min. volume per trade": "0.01 lot",
-      "Swap-free support": true,
-      Platform: "MetaTrader 5",
-    },
-  },
 ];
+
+/**
+ * Raw's own card. `highlights` are the three specs that still mean something
+ * without a deposit tier attached to them — the rest of the spec grid does
+ * not apply to a negotiated plan, so it is not printed.
+ */
+const RAW = {
+  id: "raw",
+  name: "Raw",
+  eyebrow: "Raw account",
+  heading: "Pricing built around your volume.",
+  blurb:
+    "Raw spreads and direct market access for professionals trading with institutional precision. Tell us how you trade and we’ll shape the right plan with you.",
+  highlights: [
+    "Raw spreads from 0.0 pips",
+    "$8 round turn commission",
+    "Swap-free support available",
+    "MetaTrader 5, from 0.01 lot",
+  ],
+};
 
 function SpecValue({ value, inverse = false }) {
   if (value === true) {
@@ -130,17 +140,15 @@ function SpecValue({ value, inverse = false }) {
  */
 function AccountCard({ account }) {
   const isPro = account.id === "pro";
-  const isRaw = account.id === "raw";
 
   return (
     <RevealItem
       as="li"
       id={account.id}
       className={cn(
-        "card-frame relative list-none scroll-mt-28",
+        "card-frame relative flex list-none flex-col scroll-mt-28",
         isPro &&
-          "[--frame-top:#dbe8ff] [--frame-bottom:rgba(19,86,190,0.06)] lg:-my-3",
-        isRaw && styles.rawCard
+          "[--frame-top:#dbe8ff] [--frame-bottom:rgba(19,86,190,0.06)] lg:-my-3"
       )}
     >
       {isPro && (
@@ -149,7 +157,7 @@ function AccountCard({ account }) {
         </span>
       )}
 
-      <div className={cn(isRaw && styles.rawContent)} aria-hidden={isRaw || undefined}>
+      <div className="h-full">
         <div
           className={cn(
             "flex h-full flex-col rounded-[18px] p-6 transition-all duration-200 md:p-7",
@@ -235,111 +243,92 @@ function AccountCard({ account }) {
             ))}
           </dl>
 
-          
-            <Button
-              href={`/signup?account=${account.id}`}
-              size="md"
-              arrow
-              className="mt-7 w-full"
-            >
-              Open your account
-            </Button>
-        
+        <Button
+          href={`/signup?account=${account.id}`}
+          size="md"
+          arrow
+          className="mt-7 w-full"
+        >
+          Open your account
+        </Button>
         </div>
       </div>
-
-      {isRaw && (
-        <div className={styles.rawOverlay}>
-          <span className={styles.rawEyebrow}>RAW ACCOUNT</span>
-          <h3>Pricing built around your volume.</h3>
-          <p>
-            Tell us how you trade and we’ll shape the right Raw plan with you.
-          </p>
-          <Button
-            href="/company/contact"
-            size="md"
-            arrow
-            aria-label="Contact ByteFX about a Raw account plan"
-            className="mt-6"
-          >
-            Contact for a plan
-          </Button>
-        </div>
-      )}
     </RevealItem>
   );
 }
 
-function ComparisonTable() {
-  const [open, setOpen] = useState(false);
-
+/**
+ * The Raw card.
+ *
+ * It has to sit in the same row and match the same rhythm as the two spec
+ * cards — eyebrow where their name sits, the offer where their price sits,
+ * proof points where their spec list sits, one CTA at the foot — without
+ * pretending to be a third column of the same table.
+ *
+ * The border is `GlowingEffect`: a brand-hued conic gradient masked to a short
+ * arc that follows the pointer around the card's edge. It has been in the repo
+ * unused since the Markets bento stopped hosting it, and this is the right
+ * home for it — one card on the page is the negotiated one, and a border that
+ * responds to the cursor says "talk to us" in a way a static outline cannot.
+ * `proximity` means it lights up as the pointer nears the card rather than
+ * only once it is inside, and `inactiveZone` keeps it dark when the cursor
+ * rests dead centre, where a traced edge would just be noise.
+ */
+function RawCard() {
   return (
-    <div className="mt-10 overflow-hidden rounded-2xl border border-line bg-surface">
-      <button
-        type="button"
-        onClick={() => setOpen((v) => !v)}
-        aria-expanded={open}
-        aria-controls="account-comparison"
-        className="flex w-full items-center justify-between gap-4 px-5 py-4 text-left md:px-6"
-      >
-        <span className="text-[15px] font-semibold text-ink">
-          Compare every specification side by side
-        </span>
-        <ChevronDown
-          className={cn(
-            "h-4 w-4 shrink-0 text-muted transition-transform duration-200",
-            open && "rotate-180"
-          )}
-          strokeWidth={2.4}
+    <RevealItem
+      as="li"
+      id={RAW.id}
+      className="card-frame relative flex list-none flex-col scroll-mt-28 [--frame-top:#e7edf7] [--frame-bottom:rgba(19,86,190,0.05)]"
+    >
+      <div className="relative isolate flex h-full flex-col overflow-hidden rounded-[18px] border border-line bg-surface p-6 shadow-sm transition-all duration-200 hover:-translate-y-1 hover:shadow-md md:p-7">
+        <GlowingEffect
+          disabled={false}
+          glow
+          spread={38}
+          proximity={72}
+          inactiveZone={0.42}
+          borderWidth={2}
+          movementDuration={1.4}
         />
-      </button>
 
-      {open && (
-        <div id="account-comparison" className="overflow-x-auto border-t border-line">
-          <table className="w-full min-w-[640px] text-left">
-            <caption className="sr-only">
-              ByteFX account specifications compared
-            </caption>
-            <thead>
-              <tr className="bg-sunken">
-                <th
-                  scope="col"
-                  className="eyebrow px-5 py-3 text-left md:px-6"
-                >
-                  Specification
-                </th>
-                {ACCOUNTS.map((a) => (
-                  <th
-                    key={a.id}
-                    scope="col"
-                    className="px-5 py-3 text-left text-[13.5px] font-semibold text-ink md:px-6"
-                  >
-                    {a.name}
-                  </th>
-                ))}
-              </tr>
-            </thead>
-            <tbody className="divide-y divide-line">
-              {SPEC_ORDER.map((key) => (
-                <tr key={key}>
-                  <th
-                    scope="row"
-                    className="px-5 py-3 text-[13.5px] font-normal text-muted md:px-6"
-                  >
-                    {key}
-                  </th>
-                  {ACCOUNTS.map((a) => (
-                    <td key={a.id} className="px-5 py-3 md:px-6">
-                      <SpecValue value={a.specs[key]} />
-                    </td>
-                  ))}
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
-      )}
-    </div>
+        <span className="relative text-[10.5px] font-bold tracking-[0.12em] text-brand uppercase">
+          {RAW.eyebrow}
+        </span>
+
+        <h3 className="relative mt-3 text-[26px] leading-[1.08] font-bold tracking-[-0.03em] text-balance text-ink">
+          {RAW.heading}
+        </h3>
+
+        <p className="relative mt-4 text-[14.5px] leading-relaxed text-body">
+          {RAW.blurb}
+        </p>
+
+        <ul className="relative mt-6 flex-1 space-y-3 border-t border-line pt-6">
+          {RAW.highlights.map((item) => (
+            <li key={item} className="flex items-start gap-2.5">
+              <span
+                aria-hidden="true"
+                className="mt-[3px] flex h-[18px] w-[18px] shrink-0 items-center justify-center rounded-full bg-go-50"
+              >
+                <Check className="h-3 w-3 text-go-600" strokeWidth={3.2} />
+              </span>
+              <span className="text-[14px] leading-snug text-ink">{item}</span>
+            </li>
+          ))}
+        </ul>
+
+        <Button
+          href="/company/contact"
+          size="md"
+          arrow
+          aria-label="Contact ByteFX about a Raw account plan"
+          className="relative mt-7 w-full"
+        >
+          Contact for a plan
+        </Button>
+      </div>
+    </RevealItem>
   );
 }
 
@@ -358,16 +347,15 @@ export function AccountTypes() {
     >
       <RevealGroup
         as="ul"
-        className="grid gap-5 lg:grid-cols-3 lg:items-start lg:gap-6"
+        className="grid gap-5 lg:grid-cols-3 lg:items-stretch lg:gap-6"
       >
         {ACCOUNTS.map((a) => (
           <AccountCard key={a.id} account={a} />
         ))}
+        <RawCard />
       </RevealGroup>
 
-      <ComparisonTable />
-
-      <p className="mt-6 text-center text-[13.5px] text-muted">
+      <p className="mt-8 text-center text-[13.5px] text-muted">
         * Maximum leverage depends on instrument class and account equity.
         Trading on leverage carries a high level of risk.{" "}
         <a

@@ -141,27 +141,36 @@ so nothing ships to the browser but the paths actually used. Re-run the
 extraction only if a mark needs updating. Amazon, Microsoft and LinkedIn are
 not in simple-icons v16 (trademark removals); LinkedIn falls back to lucide.
 
-## Markets: the platinum bento
+## Markets: the bento
 
-Five tiles on a six-column grid — Forex (4) + Indices (2), then Crypto,
-Stocks and Metals & Energy (2 each). Reference: `references/market.png`.
+Five tiles on a twelve-column grid — Forex (7) + Indices (5), then Crypto,
+Stocks and Metals & Energy (4 each). Reference: `references/market.png`.
 
-**Where the platinum goes.** On the **tile**, not on the section and not in a
-well behind each mark. The supplied marks are dark steel cut out on
-transparency; on flat white they read as stickers, so they need a metal
-surface, and a card is the right size for that surface. Flooding the whole
-section instead drops a slab of mid-grey into a page whose entire hierarchy is
-the white/alt alternation — so `platinum-wash` on the section is deliberately
-only a whisper of the same cool cast. The three utilities are `platinum-plate`
-(the tile), `platinum-grain` (milled micro-texture over it) and
-`platinum-wash` (the section).
+Every tile reads in the same order: the count with its icon, the market, a
+short blue rule, one sentence, then the CTA pinned to the bottom-left, with the
+artwork bleeding off the bottom-right corner behind all of it. That is what
+lets the marks run large without ever colliding with the type — each tile caps
+its copy column (`copyWidth` in `MARKETS`) and the artwork starts where it
+ends. Indices is the one tile whose CTA is the bare arrow rather than a
+labelled pill: the rising bar its medallions are mounted on lands in the
+bottom-left corner, exactly where the label would go, and the reference makes
+the same call.
 
-**Marks.** `indices.png`, `CrypoCurrency.png` and `gold_and_sliver.png` are
-used as delivered. Two were not usable as delivered and were derived:
+**The card surface is near-white, not platinum.** It used to be brushed
+platinum, because the marks then in the repo were dark steel cutouts that read
+as stickers on flat white and needed a metal ground under them. The current
+set is saturated — gold bars, a green NVIDIA chip, blue orbit trails — and
+colour of that strength on grey goes muddy, so `market-plate` is white with a
+cool bottom edge and the only tint is a whisper of brand blue pooled in the
+bottom-right corner under the mark. `platinum-wash` on the section then has to
+be a shade *cooler* than the cards, or the bento dissolves into the page;
+`platinum-plate` and `platinum-grain` are no longer used by anything.
+
+**Marks.** `indices.png`, `CrypoCurrency.png`, `stocks_metal.png` and
+`gold_and_sliver.png` are used as delivered. The clip was derived:
 
 | Asset | Derived from | How |
 | --- | --- | --- |
-| `stocks_metal.png` | `company_stocks.png` | The five brand cards cut out and composited 3 + 2, then flattened to one steel tone with a top-lit ramp. Five brand palettes on a metal plate was the only thing in the section not sharing an art direction. |
 | `forex_coins.mp4` + `.jpg` poster | `forex_video.mp4` | Watermark cropped, black studio backdrop luma-keyed out and re-composited onto the plate tone, audio stripped, re-encoded 2.3 MB → 601 KB. |
 
 Recipe for the video, should the source ever be re-cut (needs `ffmpeg`):
@@ -171,15 +180,24 @@ ffmpeg -i forex_video.mp4   -filter_complex "[0:v]crop=544:486:0:0,format=rgba,l
 ffmpeg -i forex_coins.mp4 -frames:v 1 -q:v 5 forex_coins_poster.jpg
 ```
 
-H.264 carries no alpha, so the keyed clip is baked onto `#ECEBE9` and sits in
-a recessed well of the same colour — that is why Forex is the one tile whose
-mark does not float free. **That tone is baked into the video, so it cannot
-follow the theme**: in dark mode Forex is a light media panel on a dark card,
-framed deliberately (see `.plate-well` overrides in `globals.css`). To make it
-go dark too, re-run the recipe above with `color=c=0x171D26` and swap the
-source by theme — it needs `forex_video.mp4`, which is no longer in the repo. It is `preload="none"`, played and paused by an
-IntersectionObserver, and never fetched at all under reduced motion, where the
-poster is the whole story.
+H.264 carries no alpha, so the keyed clip is baked onto `#ECEBE9`, and neither
+does the VP8 cut that actually ships. It used to sit in a visible recessed well
+of that colour, which read as a grey panel bolted into the card.
+
+**The fix is to end the card on that tone rather than hide it.** From `sm` up —
+where the clip takes the card's right column — `.forex-plate` washes `#EDEBE9`
+across the plate's right half, reaching full strength before the clip's left
+edge and holding it to the card's right edge. The clip's own background is then
+indistinguishable from the card under it: no box, no well, no seam, and the
+coins read as floating free like the four still marks. Below `sm` the card
+stacks and the clip spans its full width, so a horizontal wash would put the
+tone under the copy as well; there the clip's panel carries the tone itself
+(`bg-[#edebe9] sm:bg-transparent` in `Markets.jsx`) and the plate stays plain.
+
+Change either the wash or that panel background and you must change the other,
+and both must stay exactly the tone in the `ffmpeg` recipe above. It is
+`preload="none"`, played and paused by an IntersectionObserver, and never
+fetched at all under reduced motion, where the poster is the whole story.
 
 **Unused after this change** — `currency.png` (1.6 MB), `company_stocks.png`
 (1.3 MB), `forex_video.mp4` (2.3 MB) and `mt5_logo.png` (2.1 MB, a marketing
@@ -211,7 +229,7 @@ visual differences instead of unrelated background colours.
 | Property | Reference | Here |
 | --- | --- | --- |
 | Card width | 82% of frame | `lg:w-[82%]` |
-| Card aspect | 2.26 : 1 | `lg:min-h-[460px]` |
+| Card aspect | 2.26 : 1 | `lg:min-h-[440px]` |
 | Art width | ~44% of card | `lg:max-w-[400px]` |
 | Next card | peeks at the right edge | same, a consequence of 82% |
 
@@ -260,6 +278,35 @@ component references the `.webp` files. **The source PNGs in
 the section is approved.** Re-run the conversion if a render is ever replaced;
 620px covers a 2× DPR at the ~240px they display at.
 
+### The cursor, in numbers
+
+The run advances on a 2s timer, so the control under it has two jobs: say
+where in the five you are, and say that the next one is coming. Five dots did
+neither — they read as five equal options, and they showed no time passing at
+all, so a card that changed while you were reading it changed for no visible
+reason.
+
+It is now five numbers. The one you are on is inked and carries a hairline
+meter that fills across the dwell; the ones behind it stay solid because you
+have seen them; the ones ahead are light. A `01 / 05` fraction closes the pill,
+which is the same fact in the form a reader takes in without counting. The same
+index is printed at the top of the card itself, so someone who lands mid-run
+knows where they are without looking away from what they are reading.
+
+The meter is keyed on the active index, so it remounts and restarts on every
+advance rather than resetting a transform. Hovering, or moving focus into the
+track, pauses the run — and pauses the meter with it (`animationPlayState`),
+because a clock that keeps running while the thing it is timing has stopped is
+worse than no clock. It is not rendered at all under reduced motion, where the
+run does not advance by itself and the meter would be measuring nothing.
+
+**The card body was re-laid at the same time.** The label, the number and the
+sentence used to be one block floating in the vertical middle of a 460px panel,
+which left a third of the card empty above and below it. The index and label
+now pin to the top of the copy column and the number centres in what is left,
+so the panel is a composition rather than a box with something in the middle
+of it.
+
 ### The terms grid underneath
 
 Four hairline-framed cells below the carousel (`TERMS`), each a **bold**
@@ -282,6 +329,117 @@ It reflows 1 → 2 → 4 columns, and the cell borders are switched per breakpoi
 (`sm:[&:nth-child(-n+2)]:border-b`, `sm:[&:nth-child(odd)]:border-r`,
 `xl:border-b-0!`) so the frame stays a single hairline lattice at every width
 rather than leaving a stray edge.
+
+## Account types
+
+`components/site/AccountTypes.jsx`. Three cards: Standard, Pro (badged "most
+chosen", raised 12px at `lg`), and Raw.
+
+**Raw is not a third spec column and no longer pretends to be one.** Its
+pricing is negotiated on volume, so there is no honest figure for a "min.
+deposit" slot and no spec row that means the same thing as its neighbours'.
+The card used to render the full spec list anyway, blurred behind a frosted
+overlay, with the real message — "Pricing built around your volume" — revealed
+on hover. That hid the offer behind an interaction, printed figures nobody was
+meant to read, and left every touch user looking at a smudge.
+
+It is now stated plainly: eyebrow where the other two put their name, the offer
+where they put their price, four proof points where they put their spec list,
+and one CTA to contact. The four points are the Raw specs that still mean
+something without a deposit tier attached (0.0 pips, $8 round turn, swap-free,
+MT5 from 0.01 lot); the rest are not printed because they do not apply.
+
+What marks it out as the different one is the border: `GlowingEffect` traces a
+brand-hued arc around its edge that follows the cursor and lights up as the
+pointer nears the card. See "The two Aceternity components".
+
+Cards stretch to a common height (`lg:items-stretch`) so the three CTAs land on
+one baseline — with the spec list gone, Raw is the short card and would
+otherwise float 240px above its neighbours' buttons.
+
+**The "Compare every specification side by side" dropdown is deleted**, along
+with `AccountTypes.module.css`, which existed only for the blur overlay. The
+table restated, behind a click, the two spec lists printed in full directly
+above it, and once Raw stopped carrying a spec column there was no third column
+left for it to compare.
+
+## Funding: the marks, not the render
+
+`components/site/Funding.jsx`.
+
+This was a heading on the left and one composite render on the right — a
+picture of eight payment marks, cropped square, with Visa sliced off one edge
+and UPI off the other. It said "we take cards" and nothing else, the marks it
+showed could not be read at a glance, and 1.9 MB of PNG carried a single
+sentence's worth of information.
+
+`public/assets/payment_methods/` already shipped every logo cut out
+individually, and **none of them were used**. Each one now gets its own card —
+white `pay-puck`, the name, and the one fact a reader actually wants beside it:
+how long the deposit takes. Six cards, six answers, and every card is a link
+into `/funding`.
+
+### The band
+
+It is the site's **second** dark band, carrying the hero's treatment layer for
+layer: `hero-tools`, `hero-tools-grid`, `hero-scrim`, `hero-bloom`. Change the
+hero band and this changes with it.
+
+Two reasons, and the first one is rhythm. Everything between Markets and the
+close is a long light run — conditions, showcase, accounts, mobile — and
+funding is the last section before the close, which is exactly where that run
+needs breaking. Reusing the hero's surface rather than inventing a third one
+means the page opens and closes on the same ground.
+
+The second is the marks themselves. Half of them ship fixed colours that
+disappear on white — Apple Pay's black wordmark, the navy bank glyph — which
+is why each sits on a white `pay-puck`. On a blue band those pucks stop being
+patches of white on white and read as objects.
+
+| Layer | What it is |
+| --- | --- |
+| Backdrop | The composite render, demoted to what it is actually good at. Sits *between* the grid and the scrim, so the scrim dims it behind the headline — the same arrangement that keeps the hero copy legible. |
+| Method rail | Six `hero-proof` glass cards, 2 → 3 → 6 columns. |
+| Promises | Four glass rows: the $0 fee (green puck, because it is the only one that is a number), instant deposits, back to source, audited processing. |
+
+**The backdrop is deliberately faint** (`opacity-[0.32]`, `pay-backdrop` mask).
+The cards underneath show the same six marks at a readable size, so a bright
+backdrop puts every logo on the band twice and reads as a mistake rather than
+as depth. It also has to sit *wholly inside* the band: the section clips its
+own overflow, so anything hanging over the top edge is cut on a straight line
+no mask can soften. It is hidden entirely below `md`, where there is no room
+for it beside the copy.
+
+**The mark widths are optical, not measured.** Every logo ships inside a
+different amount of empty canvas — Visa's wordmark floats in roughly half of
+its 1254px square, the Bitcoin coin fills most of its own — so each card sets
+its own `markClassName`. That is what makes six very different marks read as
+one size in the row. Re-cut an asset and you re-tune its width.
+
+**Two funding facts are stated as fact on this page and no more**: the $0
+ByteFX fee, and instant deposits on everything except bank wire (1–2 business
+days). Withdrawal windows are deliberately not printed per method — they are
+provider- and bank-dependent, the footnote says exactly that, and a number per
+card would be the easiest way to put a promise on the page nobody can keep.
+
+## The closing panel
+
+`components/site/FinalCta.jsx` and `FinalCtaVisual.jsx`.
+
+The artwork used to be a translucent white card floating on the section's
+`brand-50` ground: a pale rectangle with nothing holding it to the page, which
+read as a different component someone had dropped in. It is now a defined box
+built from the section's own palette — a `brand-50` → white plate, the
+section's `brand-100` hairline, and a three-step `figcaption` strip along the
+foot.
+
+Those three steps (open · verify · fund) are the same three the heading
+promises, which is what earns the panel its space: it is not decoration, it is
+the flow. **The three micro-chips that used to sit under the buttons** — "Free
+to open", "No deposit fee", "Verified in minutes" — are gone. Two of them
+repeated things the page had already said (Funding prints the $0 fee, the lead
+here prints the $20), all three competed with the buttons directly above them,
+and the step strip says it better.
 
 ## Platforms: MT5 and TradingView
 
@@ -322,7 +480,7 @@ because neither MetaTrader nor TradingView is in simple-icons and
 Both were shipped as TSX and are **converted to JSX and re-tuned for light mode** here:
 
 - `components/ui/navbar-menu.jsx` — the stock component is a floating dark pill; this is a full-width sticky header. `ProductItem`'s remote-image slot became an icon tile so the menu never depends on a CDN. The `layoutId="active"` shared-layout animation is preserved.
-- `components/ui/glowing-effect.jsx` — the stock conic gradient (pink/gold/olive/slate) is swapped for the brand hues. **Currently unused:** the Markets bento was its only host and that section now carries its own platinum treatment instead. Kept because it is the intended showpiece for whichever section claims one next.
+- `components/ui/glowing-effect.jsx` — the stock conic gradient (pink/gold/olive/slate) is swapped for the brand hues. It hosts on the **Raw account card** in `AccountTypes.jsx`, and only there: one card on the page is the negotiated one, and a border that lights up as the cursor approaches says "talk to us" in a way a static outline cannot. Keep it to one host — a second card with a traced edge and neither of them means anything.
 
 ## ByteFX × Thailand
 
@@ -390,9 +548,9 @@ twice more, so it is the single most load-bearing gap on the page.
 
 ## The hero
 
-The band is one claim, two buttons and three chips on a blue field, with a
-slow orbit of instrument discs behind it. Nothing else is allowed in the
-frame: `Ticker` streams live quotes directly beneath it, `Conditions` prints
+The band is one claim, two buttons and three chips centred on a blue field.
+Nothing else is allowed in the frame: `Ticker` streams live quotes directly
+beneath it, `Conditions` prints
 1:2000, 0.1 pips, 150+, ~20ms and 24/6, and `FinalCta` closes with the risk
 warning — so the hero's only job is to state the claim and get out of the way.
 
@@ -420,7 +578,7 @@ top and against the white `Ticker` at the foot.
 
 `hero-scrim` is two gradients because one cannot do both jobs: a centre radial
 that pulls the middle of the frame down so the H1 clears contrast over the
-lighter end of the gradient and over any disc passing behind it, and a linear
+lighter end of the gradient, and a linear
 that darkens top and bottom — the top so the navbar's white pill has something
 to sit on, the bottom so the band meets the white `Ticker` without a bright
 seam. It is tinted `#04123a`, not near-black; a neutral scrim greys the blue
@@ -432,57 +590,40 @@ photograph was a licensed stock frame with nothing to do with the product, it
 cost ~440 KB on the LCP element, and it needed a heavy scrim to keep the H1
 legible. The gradient costs nothing and is on-brand by construction.
 
-This is still the only dark band on the site. Everything below is the white /
-`alt` alternation, and the hard edge at the foot of this section is the page's
-first and strongest contrast — do not soften it with a border.
+There are exactly **two** dark bands on the landing page: this one and
+`Funding`, which reuses these same four utilities. The page therefore opens and
+closes on the same surface, and everything between them is the white / `alt`
+alternation. The hard edge at the foot of this section is the page's first and
+strongest contrast — do not soften it with a border, and do not add a third
+band without taking one of these two away.
 
-### The orbit
+### The composition
 
-React Bits' `OrbitImages` (`components/ui/OrbitImages.jsx`), with two local
-changes:
-
-1. `"use client"` and `useReducedMotion` — the motion contract says every loop
-   stops under `prefers-reduced-motion`, and an orbit that never stops is
-   exactly what that rule exists for. It parks the discs where they are rather
-   than hiding them, so the composition still holds.
-2. An optional `items` prop. Upstream only orbits `<img>` URLs; the hero
-   orbits the site's own `InstrumentIcon` coin discs, which are components,
-   not files. `images` behaves exactly as upstream when `items` is absent.
-
-Two counter-rotating ellipses at different radii — one ring reads as a
-carousel, two read as depth. Eight instruments covering every asset class the
-eyebrow names: three majors, both metals, both crypto and one index. The ring
-is the product line, not abstract decoration.
-
-It sits **between the grid and the scrim**, so the scrim's centre radial dims
-whichever disc is passing behind the headline and leaves the ones out at the
-edges bright. That is the whole reason the copy stays readable with objects
-moving under it. The layer is `aria-hidden` in the component and
-`pointer-events-none` here: nothing in it is reachable or announced.
-
-`InstrumentIcon` is sized by its `size` prop, not by CSS — `PairCoin` builds a
-fixed pair of overlapping flag discs and ignores width utilities entirely — so
-the rings pick a named size (`lg` is ~56px, `md` is ~44px) and `itemSize` is
-set to leave a margin around it. The glass ring behind each disc is
-`.hero-orbit` in `OrbitImages.css`; it goes *behind* the coin rather than
-around it, because the coin already carries its own gradient, rim light and
-drop shadow.
+The copy stays in one centred column at every breakpoint. The hero does not
+render `public/assets/hero/left-side.png` or reserve a second column for it, so
+the heading, actions and proof chips keep the same balance on wide screens and
+phones.
 
 **Open:** there is no regulator chip. ByteFX Capital Ltd's licence entity and
-number need the same compliance sign-off the Trust items are badged for. Add
-it to `CHIPS` in `Hero.jsx` once legal confirms — the row is built for four
-and currently carries three. The withdrawal-speed line was cut from the lead
+number need the same compliance sign-off the Trust items are badged for. Add a
+fourth `ProofBadge` in `Hero.jsx` once legal confirms — the row is built for
+four and currently carries three. The withdrawal-speed line was cut from the lead
 copy for the same reason.
 
 ## Atlas AI
 
 `components/site/AtlasChat.jsx`, mounted in `app/layout.jsx` so it is on every
-page. A launcher pinned to the **bottom-left** of the viewport that opens a
+page. A launcher pinned to the **bottom-right** of the viewport that opens a
 chat panel above itself.
 
-Bottom-left on purpose: bottom-right is where scroll and cookie furniture
-goes, and on mobile the right thumb rest is already the busiest corner. It
-carries its label ("Ask Atlas AI") on desktop — an unlabelled circle in a
+It sat bottom-left for a while, on the argument that the right corner is where
+scroll and cookie furniture goes. In practice this site has neither, the
+right-hand corner is where every reader already looks for a chat launcher, and
+on mobile the right thumb rest is a reason to put a *tap target* there rather
+than a reason to avoid it. The column is right-aligned (`items-end`) so the
+launcher and the panel share their right edge, and the panel's
+`transformOrigin` is its bottom-right corner so it scales out of the button
+that opened it. It carries its label ("Ask Atlas AI") on desktop — an unlabelled circle in a
 corner is a guess. The panel header uses `hero-tools`, the same gradient as
 the hero band and the tools card, so it reads as part of the site rather than
 a bolted-on third-party bubble.
@@ -535,6 +676,11 @@ words that the answers are scripted and are not financial advice.
 - **Delete `public/assets/2nd_section/image{1..5}.png`** (8.35 MB) once the
   conditions carousel is approved — the component uses the `.webp` versions
   and the PNGs ship for nothing.
+- `.rail-path` in `globals.css` is dead: it styled the connector fan of a
+  funding layout that no longer exists. Delete it with the next cleanup pass.
+- The funding footnote is the only place withdrawal windows are described, and
+  it describes them as indicative. If compliance signs off on real per-method
+  windows, they belong on the method cards — the shape is already there.
 - WebTrader and phone screens are hand-built placeholders; swap for real product captures.
 - `components/site/Ticker.jsx` runs a simulated feed. Replace `useSimulatedFeed` with the real socket; the contract is `{ symbol, price, change }`.
 - Platform capability lines in `MobileApp.jsx`'s `PLATFORMS` are written from
@@ -549,8 +695,8 @@ words that the answers are scripted and are not financial advice.
 - **Delete `public/assets/hero/aurora.jpg`** (440 KB) once the new hero band
   is approved — nothing references it any more.
 - Mobile has been audited statically but not viewed on a device. Check 390 / 768 / 1024.
-  The funding rail (hub + connector fan) is `lg:` and up only; below that the
-  method list carries the section on its own.
+  The funding method rail reflows 2 → 3 → 6 columns and the fee card stacks
+  below `sm`; both have been captured headless at 390 but not touched on glass.
 - **Seen rendered at ~1440 only.** The hero band, the orbit, the terms grid,
   the two-tab platform switcher and the Atlas panel have all been looked at in
   a browser and behave. Confirmed live: the carousel advances on 2s and wraps
