@@ -68,7 +68,7 @@ function ProofBadge({ icon, value, label }) {
  */
 export function Hero() {
   return (
-    <section className="landing-hero relative -mt-[84px] flex min-h-[680px] items-center overflow-hidden pt-[84px] md:min-h-[88vh]">
+    <section className="landing-hero relative -mt-20 flex min-h-[100svh] items-center overflow-hidden pt-20 sm:-mt-[84px] sm:pt-[84px]">
       <div className="pointer-events-none absolute inset-0" aria-hidden="true">
         <div className="landing-hero-art absolute inset-0" />
         <div className="landing-hero-scrim absolute inset-0" />
@@ -77,12 +77,12 @@ export function Hero() {
 
       <div className="container-x relative z-10 w-full py-20 md:py-24 lg:py-28">
         <div className="landing-hero-copy mx-auto max-w-[610px] text-center md:mx-0 md:text-left">
-          <Rise
+          {/* <Rise
             delay={0.04}
             className="landing-hero-eyebrow mx-auto inline-flex rounded-full px-3.5 py-1.5 text-[10.5px] font-semibold tracking-[0.11em] uppercase md:mx-0"
           >
             One account · Global markets
-          </Rise>
+          </Rise> */}
 
           <Rise as="h1" delay={0.1} className="h-display mt-5 text-balance-i">
             <span className="landing-hero-title-soft block font-light">

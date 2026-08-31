@@ -11,14 +11,15 @@ import {
   Flame,
   Gem,
   Globe,
+  GraduationCap,
   LifeBuoy,
   LineChart,
   Mail,
   Menu as MenuIcon,
   Monitor,
-  Newspaper,
   Rocket,
   Scale,
+  Trophy,
   Users,
   X,
 } from "lucide-react";
@@ -124,6 +125,41 @@ const SUPPORT = [
   },
 ];
 
+const SCHOOL = [
+  {
+    title: "School home",
+    href: "/school",
+    icon: <GraduationCap className="h-4 w-4" strokeWidth={2} />,
+    description: "All ByteFX video lessons in one learning hub.",
+  },
+  {
+    title: "Funding guide",
+    href: "/school#funding-and-withdrawals",
+    icon: <CircleDollarSign className="h-4 w-4" strokeWidth={2} />,
+    description: "Deposit and withdrawal workflows, step by step.",
+    accent: "green",
+  },
+  {
+    title: "MT5 on mobile",
+    href: "/school#mt5-mobile",
+    icon: <Monitor className="h-4 w-4" strokeWidth={2} />,
+    description: "Learn the mobile order flow before you trade.",
+  },
+  {
+    title: "Community reviews",
+    href: "/school#community-reviews",
+    icon: <Users className="h-4 w-4" strokeWidth={2} />,
+    description: "Independent creator perspectives on ByteFX.",
+    accent: "green",
+  },
+  {
+    title: "Demo challenge guide",
+    href: "/school#demo-competition",
+    icon: <Trophy className="h-4 w-4" strokeWidth={2} />,
+    description: "See the demo competition workflow in action.",
+  },
+];
+
 /* Landing-page sections are addressed as /#id so they also resolve from sub-pages. */
 const MOBILE_NAV = [
   { label: "Home", href: "/" },
@@ -132,9 +168,8 @@ const MOBILE_NAV = [
   { label: "Trust & Security", href: "/company/trust-security" },
   { label: "Markets", href: "/#markets" },
   { label: "Account Types", href: "/#accounts" },
-  { label: "Competition", href: "/competition" },
   { label: "Partnership", href: "/partnership" },
-  { label: "Tools", href: "/tools" },
+  { label: "School", href: "/school" },
   { label: "Getting started", href: "/getting-started" },
   { label: "Support", href: "/support" },
 ];
@@ -180,7 +215,7 @@ export function Navbar() {
           />
         </a>
 
-        {/* The logo is the home link. Seven top-level items need ~800px; below
+        {/* The logo is the home link. Six top-level items need ~800px; below
             xl the drawer takes over so the auth cluster never gets squeezed. */}
         <Menu setActive={setActive} className="hidden gap-7 xl:flex">
           <MenuItem
@@ -224,13 +259,6 @@ export function Navbar() {
           <MenuItem
             setActive={setActive}
             active={active}
-            item="Competition"
-            href="/competition"
-          />
-
-          <MenuItem
-            setActive={setActive}
-            active={active}
             item="Partnership"
             href="/partnership"
           >
@@ -251,28 +279,11 @@ export function Navbar() {
             </div>
           </MenuItem>
 
-          <MenuItem setActive={setActive} active={active} item="Tools" href="/tools">
-            <div className="grid w-[30rem] grid-cols-2 gap-1">
-              <ProductItem
-                title="Economic calendar"
-                href="/tools/calendar"
-                icon={<Newspaper className="h-4 w-4" strokeWidth={2} />}
-                description="Every release that moves price."
-                accent="green"
-              />
-              <ProductItem
-                title="Trading calculators"
-                href="/tools/calculators"
-                icon={<Scale className="h-4 w-4" strokeWidth={2} />}
-                description="Margin, pip value and swaps."
-              />
-              <ProductItem
-                title="Market news"
-                href="/tools/news"
-                icon={<LineChart className="h-4 w-4" strokeWidth={2} />}
-                description="Daily analysis from our desk."
-                accent="green"
-              />
+          <MenuItem setActive={setActive} active={active} item="School" href="/school">
+            <div className="grid w-[34rem] grid-cols-2 gap-1">
+              {SCHOOL.map((item) => (
+                <ProductItem key={item.title} {...item} />
+              ))}
             </div>
           </MenuItem>
 

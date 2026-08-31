@@ -1,91 +1,100 @@
 "use client";
 
-import { useRef, useState } from "react";
-import { TrendingDown, TrendingUp } from "lucide-react";
-import { InstrumentIcon } from "@/components/ui/asset-icon";
-import { TICKER_SEED, useQuoteFeed } from "@/lib/quotes";
-import { cn } from "@/lib/utils";
+import { useEffect, useMemo, useRef, useState } from "react";
 
-function Quote({ q, flashing }) {
-  const up = q.change >= 0;
-  const Icon = up ? TrendingUp : TrendingDown;
+const SYMBOLS = [
+  { proName: "FOREXCOM:SPXUSD", title: "S&P 500 Index" },
+  { proName: "FOREXCOM:NSXUSD", title: "Nasdaq 100 Index" },
+  { proName: "FX_IDC:EURUSD", title: "EUR/USD" },
+  { proName: "BITSTAMP:BTCUSD", title: "BTC/USD" },
+  { proName: "BITSTAMP:ETHUSD", title: "ETH/USD" },
+  { proName: "OANDA:XAUUSD", description: "Gold" },
+  { proName: "FX:GBPUSD", title: "GBP/USD" },
+  { proName: "FX:USDJPY", title: "USD/JPY" },
+];
 
-  return (
-    <div className="flex shrink-0 items-center gap-2.5 px-5">
-      <InstrumentIcon symbol={q.symbol} size="sm" />
-      <span className="text-[12.5px] font-semibold text-ink">{q.symbol}</span>
-      <span
-        className={cn(
-          "tnum rounded px-1 text-[12.5px] text-body",
-          flashing === "up" && "tick-up",
-          flashing === "down" && "tick-down"
-        )}
-      >
-        {q.price.toLocaleString("en-US", {
-          minimumFractionDigits: q.decimals,
-          maximumFractionDigits: q.decimals,
-        })}
-      </span>
-      <span
-        className={cn(
-          "tnum inline-flex items-center gap-1 rounded px-1.5 py-0.5 text-[11.5px] font-semibold",
-          up ? "bg-up/8 text-up" : "bg-down/8 text-down"
-        )}
-      >
-        <Icon className="h-3 w-3" strokeWidth={2.6} />
-        {up ? "+" : ""}
-        {q.change.toFixed(2)}%
-      </span>
-    </div>
-  );
+function buildWidgetUrl(theme) {
+  const config = {
+    symbols: SYMBOLS,
+    showSymbolLogo: true,
+    colorTheme: theme,
+    isTransparent: true,
+    displayMode: "regular",
+    width: "100%",
+    height: 46,
+    utm_source: "www.bytefx.com",
+    utm_medium: "widget",
+    utm_campaign: "ticker-tape",
+    "page-uri": "www.bytefx.com/",
+  };
+
+  return `https://www.tradingview-widget.com/embed-widget/ticker-tape/?locale=en#${encodeURIComponent(
+    JSON.stringify(config)
+  )}`;
 }
 
-/**
- * The seed and the random walk moved to `lib/quotes.js` when the market pages
- * needed the same feed. The socket that replaces it replaces it for both —
- * see the TODO there, not here.
- */
 export function Ticker() {
-  const { quotes, flash } = useQuoteFeed(TICKER_SEED);
-  const [paused, setPaused] = useState(false);
-  const liveRef = useRef(null);
+  const hostRef = useRef(null);
+  const [theme, setTheme] = useState(null);
+  const [visible, setVisible] = useState(false);
+
+  useEffect(() => {
+    const root = document.documentElement;
+    const syncTheme = () => {
+      setTheme(root.getAttribute("data-theme") === "dark" ? "dark" : "light");
+    };
+
+    syncTheme();
+    const observer = new MutationObserver(syncTheme);
+    observer.observe(root, { attributes: true, attributeFilter: ["data-theme"] });
+    return () => observer.disconnect();
+  }, []);
+
+  useEffect(() => {
+    const host = hostRef.current;
+    if (!host || !("IntersectionObserver" in window)) {
+      setVisible(true);
+      return undefined;
+    }
+
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (!entry.isIntersecting) return;
+        setVisible(true);
+        observer.disconnect();
+      },
+      { rootMargin: "180px 0px" }
+    );
+
+    observer.observe(host);
+    return () => observer.disconnect();
+  }, []);
+
+  const src = useMemo(() => (theme ? buildWidgetUrl(theme) : null), [theme]);
 
   return (
-    <div
-      className="marquee-host relative overflow-hidden border-b border-line bg-canvas/75 backdrop-blur-xl backdrop-saturate-150"
-      onMouseEnter={() => setPaused(true)}
-      onMouseLeave={() => setPaused(false)}
+    <section
+      ref={hostRef}
+      aria-labelledby="live-market-prices"
+      className="tradingview-ticker-shell relative z-10 px-3 py-2 sm:px-4"
     >
-      {/* Edge fades so items do not hard-cut at the viewport border. */}
-      <div className="pointer-events-none absolute inset-y-0 left-0 z-10 w-16 bg-gradient-to-r from-canvas to-transparent" />
-      <div className="pointer-events-none absolute inset-y-0 right-0 z-10 w-16 bg-gradient-to-l from-canvas to-transparent" />
-
-      <div
-        ref={liveRef}
-        aria-label="Live market prices"
-        className="flex h-12 items-center"
-      >
-        <div
-          className="marquee-track flex w-max items-center"
-          data-paused={paused ? "true" : "false"}
-          style={{ "--marquee-duration": "48s" }}
-        >
-          {/* Duplicated once so the -50% translate loops seamlessly. */}
-          {[0, 1].map((copy) => (
-            <div key={copy} className="flex items-center" aria-hidden={copy === 1}>
-              {quotes.map((q, i) => (
-                <Quote
-                  key={`${copy}-${q.symbol}`}
-                  q={q}
-                  flashing={
-                    copy === 0 && flash.index === i ? flash.dir : undefined
-                  }
-                />
-              ))}
-            </div>
-          ))}
-        </div>
+      <h2 id="live-market-prices" className="sr-only">
+        Live global market prices
+      </h2>
+      <div className="tradingview-ticker-glass mx-auto h-[50px] w-full max-w-[var(--container)] overflow-hidden rounded-2xl">
+        {visible && src ? (
+          <iframe
+            key={theme}
+            title="Live global market prices by TradingView"
+            src={src}
+            loading="lazy"
+            referrerPolicy="strict-origin-when-cross-origin"
+            className="block h-[46px] w-full border-0"
+          />
+        ) : (
+          <div className="h-[46px] w-full" aria-hidden="true" />
+        )}
       </div>
-    </div>
+    </section>
   );
 }

@@ -9,7 +9,6 @@ import {
   useScroll,
   useTransform,
 } from "motion/react";
-import { Apple, Play } from "lucide-react";
 import { Section } from "@/components/ui/section";
 import { Reveal } from "@/components/ui/reveal";
 import { cn } from "@/lib/utils";
@@ -57,21 +56,6 @@ const PLATFORMS = [
     markClass: "h-[26px] w-[26px]",
   },
 ];
-
-function StoreBadge({ icon: Icon, top, bottom, href }) {
-  return (
-    <a
-      href={href}
-      className="inline-flex items-center gap-2.5 rounded-xl bg-ink px-4 py-2.5 text-canvas transition-transform duration-200 hover:-translate-y-0.5"
-    >
-      <Icon className="h-5 w-5" strokeWidth={2} />
-      <span className="text-left leading-tight">
-        <span className="block text-[9.5px] text-canvas/70">{top}</span>
-        <span className="block text-[13.5px] font-semibold">{bottom}</span>
-      </span>
-    </a>
-  );
-}
 
 /**
  * The platforms the same account opens in, as one small switcher rather than a
@@ -254,43 +238,6 @@ export function MobileApp() {
           ))}
         </Reveal>
 
-        <Reveal
-          delay={0.1}
-          className="mt-11 flex flex-wrap items-center justify-center gap-4"
-        >
-          <StoreBadge
-            icon={Apple}
-            top="Download on the"
-            bottom="App Store"
-            href="/download#ios"
-          />
-          <StoreBadge
-            icon={Play}
-            top="Get it on"
-            bottom="Google Play"
-            href="/download#android"
-          />
-          <div className="flex items-center gap-3 rounded-xl border border-line bg-surface p-2.5 pr-4">
-            {/* The code is near-black modules on transparency and it stays
-                that way in dark mode: a scanner needs the light quiet zone,
-                so the puck is white in both themes rather than the code
-                being inverted. */}
-            <span className="flex h-[52px] w-[52px] items-center justify-center rounded-md bg-white p-[3px]">
-              <Image
-                src="/assets/bytefx-app-qr.svg"
-                alt="QR code linking to the ByteFX mobile app"
-                width={52}
-                height={52}
-                className="h-full w-full"
-              />
-            </span>
-            <span className="text-left text-[12px] leading-snug text-muted">
-              Scan to
-              <br />
-              install
-            </span>
-          </div>
-        </Reveal>
       </div>
     </Section>
   );

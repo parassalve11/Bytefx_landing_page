@@ -1,6 +1,6 @@
 "use client";
 
-import React from "react";
+import React, { useId, useRef } from "react";
 import { motion } from "motion/react";
 import { ChevronDown } from "lucide-react";
 import { cn } from "@/lib/utils";
@@ -16,11 +16,50 @@ const transition = {
 
 export const MenuItem = ({ setActive, active, item, href = "#", children }) => {
   const open = active === item;
+  const hasChildren = Boolean(children);
+  const triggerRef = useRef(null);
+  const panelId = useId();
+
+  const handleBlur = (event) => {
+    if (!event.currentTarget.contains(event.relatedTarget)) {
+      setActive(null);
+    }
+  };
+
+  const handleKeyDown = (event) => {
+    if (!hasChildren) return;
+
+    if (event.key === "ArrowDown" && event.target === triggerRef.current) {
+      event.preventDefault();
+      setActive(item);
+      requestAnimationFrame(() => {
+        document.getElementById(panelId)?.querySelector("a[href]")?.focus();
+      });
+      return;
+    }
+
+    if (event.key === "Escape" && open) {
+      event.preventDefault();
+      event.stopPropagation();
+      triggerRef.current?.focus();
+      setActive(null);
+    }
+  };
 
   return (
-    <div onMouseEnter={() => setActive(item)} className="relative">
+    <div
+      onMouseEnter={() => setActive(item)}
+      onFocusCapture={() => hasChildren && setActive(item)}
+      onBlurCapture={handleBlur}
+      onKeyDown={handleKeyDown}
+      className="relative"
+    >
       <motion.a
+        ref={triggerRef}
         href={href}
+        aria-haspopup={hasChildren ? "true" : undefined}
+        aria-expanded={hasChildren ? open : undefined}
+        aria-controls={hasChildren ? panelId : undefined}
         transition={{ duration: 0.3 }}
         className={cn(
           "flex cursor-pointer items-center gap-1 py-2 text-[15px] font-medium transition-colors",
@@ -48,6 +87,9 @@ export const MenuItem = ({ setActive, active, item, href = "#", children }) => {
           {open && (
             <div className="absolute top-full left-1/2 z-20 -translate-x-1/2 pt-6">
               <motion.div
+                id={panelId}
+                role="group"
+                aria-label={`${item} links`}
                 transition={transition}
                 layoutId="active"
                 className="overflow-hidden rounded-2xl border border-line bg-surface shadow-lg"
