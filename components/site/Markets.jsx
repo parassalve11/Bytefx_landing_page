@@ -191,7 +191,7 @@ function TileCta({ children, compact = false, className }) {
   return (
     <span
       className={cn(
-        "inline-flex items-center self-start rounded-full border border-black/[0.05] bg-white/90 shadow-[0_6px_18px_-8px_rgba(1,6,26,0.35)] backdrop-blur-sm transition-colors duration-300 group-hover/tile:border-brand/25",
+        "inline-flex items-center self-start rounded-full border border-black/[0.05] bg-white/90 shadow-[0_6px_18px_-8px_rgba(1,6,26,0.35)] backdrop-blur-sm transition-colors duration-300 group-hover/tile:border-brand/25 dark:border-white/10 dark:bg-surface/90",
         compact ? "p-1.5" : "gap-3 py-1.5 pr-1.5 pl-5",
         className
       )}

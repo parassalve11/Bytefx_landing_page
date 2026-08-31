@@ -148,7 +148,7 @@ function AccountCard({ account }) {
       className={cn(
         "card-frame relative flex list-none flex-col scroll-mt-28",
         isPro &&
-          "[--frame-top:#dbe8ff] [--frame-bottom:rgba(19,86,190,0.06)] lg:-my-3"
+          "[--frame-top:#dbe8ff] [--frame-bottom:rgba(19,86,190,0.06)] lg:-my-3 dark:[--frame-top:#263750] dark:[--frame-bottom:rgba(19,86,190,0.08)]"
       )}
     >
       {isPro && (
@@ -279,7 +279,7 @@ function RawCard() {
     <RevealItem
       as="li"
       id={RAW.id}
-      className="card-frame relative flex list-none flex-col scroll-mt-28 [--frame-top:#e7edf7] [--frame-bottom:rgba(19,86,190,0.05)]"
+      className="card-frame relative flex list-none flex-col scroll-mt-28 [--frame-top:#e7edf7] [--frame-bottom:rgba(19,86,190,0.05)] dark:[--frame-top:#272d34] dark:[--frame-bottom:rgba(18,21,25,0)]"
     >
       <div className="relative isolate flex h-full flex-col overflow-hidden rounded-[18px] border border-line bg-surface p-6 shadow-sm transition-all duration-200 hover:-translate-y-1 hover:shadow-md md:p-7">
         <GlowingEffect

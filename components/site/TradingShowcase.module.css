@@ -1,6 +1,11 @@
 .section {
-  background: #f7f9fc;
+  --showcase-surface-rgb: 255 255 255;
+  background: var(--alt);
   padding: 18px 24px 16px;
+}
+
+:global(html[data-theme="dark"]) .section {
+  --showcase-surface-rgb: 27 31 36;
 }
 
 .srOnly {
@@ -28,9 +33,9 @@
   position: relative;
   min-width: 0;
   overflow: hidden;
-  border: 1px solid rgba(203, 213, 229, 0.48);
+  border: 1px solid var(--line);
   border-radius: 16px;
-  background: #fff;
+  background: var(--surface);
 
   box-shadow:
     0 8px 30px rgba(15, 23, 42, 0.045),
@@ -51,6 +56,18 @@
   box-shadow:
     0 22px 46px rgba(15, 23, 42, 0.14),
     inset 0 1px 0 rgba(255, 255, 255, 0.92);
+}
+
+:global(html[data-theme="dark"]) .card {
+  box-shadow:
+    0 12px 34px rgba(0, 0, 0, 0.28),
+    inset 0 1px 0 rgba(255, 255, 255, 0.08);
+}
+
+:global(html[data-theme="dark"]) .card:hover {
+  box-shadow:
+    0 24px 52px rgba(0, 0, 0, 0.48),
+    inset 0 1px 0 rgba(255, 255, 255, 0.11);
 }
 
 .card h3,
@@ -159,7 +176,7 @@
 }
 
 .mainTitle {
-  color: #01061a;
+  color: var(--ink);
 
   max-width: 440px;
 
@@ -176,7 +193,7 @@
 
   max-width: 320px;
 
-  color: #172033;
+  color: var(--body);
 
   font-size: 16px;
   font-weight: 400;
@@ -250,7 +267,7 @@
 
 .featureCopy h3,
 .promoCopy h3 {
-  color: #01061a;
+  color: var(--ink);
 
   font-size: clamp(27px, 7vw, 32px);
   font-weight: 700;
@@ -264,7 +281,7 @@
 .promoCopy p {
   margin-top: 14px;
 
-  color: #253047;
+  color: var(--body);
 
   font-size: 15px;
   line-height: 1.55;
@@ -548,10 +565,10 @@
     inset: 0;
     background: linear-gradient(
       90deg,
-      #fff 0%,
-      rgba(255, 255, 255, 0.98) 40%,
-      rgba(255, 255, 255, 0.82) 54%,
-      rgba(255, 255, 255, 0) 76%
+      rgb(var(--showcase-surface-rgb) / 1) 0%,
+      rgb(var(--showcase-surface-rgb) / 0.98) 40%,
+      rgb(var(--showcase-surface-rgb) / 0.82) 54%,
+      rgb(var(--showcase-surface-rgb) / 0) 76%
     );
     content: "";
     pointer-events: none;
@@ -916,10 +933,10 @@
   .mainCard::after {
     background: linear-gradient(
       180deg,
-      #fff 0%,
-      rgba(255, 255, 255, 0.98) 45%,
-      rgba(255, 255, 255, 0.72) 57%,
-      rgba(255, 255, 255, 0) 76%
+      rgb(var(--showcase-surface-rgb) / 1) 0%,
+      rgb(var(--showcase-surface-rgb) / 0.98) 45%,
+      rgb(var(--showcase-surface-rgb) / 0.72) 57%,
+      rgb(var(--showcase-surface-rgb) / 0) 76%
     );
   }
 
@@ -1010,10 +1027,10 @@
   .copyCard::after {
     background: linear-gradient(
       180deg,
-      #fff 0%,
-      rgba(255, 255, 255, 0.98) 47%,
-      rgba(255, 255, 255, 0.46) 64%,
-      rgba(255, 255, 255, 0) 80%
+      rgb(var(--showcase-surface-rgb) / 1) 0%,
+      rgb(var(--showcase-surface-rgb) / 0.98) 47%,
+      rgb(var(--showcase-surface-rgb) / 0.46) 64%,
+      rgb(var(--showcase-surface-rgb) / 0) 80%
     );
   }
 }

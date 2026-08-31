@@ -96,7 +96,7 @@ export function FinalCtaVisual() {
         whileHover={reduced ? undefined : { y: -3 }}
         transition={{ duration: 0.35, ease: [0.22, 1, 0.36, 1] }}
         style={{ rotateX, rotateY, transformStyle: "preserve-3d" }}
-        className="group relative overflow-hidden rounded-[24px] border border-brand-100 bg-gradient-to-b from-brand-50 via-white to-white shadow-[0_20px_50px_-32px_rgba(19,86,190,0.55)] will-change-transform motion-reduce:!transform-none"
+        className="group relative overflow-hidden rounded-[24px] border border-brand-100 bg-gradient-to-b from-brand-50 via-white to-white shadow-[0_20px_50px_-32px_rgba(19,86,190,0.55)] will-change-transform motion-reduce:!transform-none dark:via-surface dark:to-surface"
       >
         {/* The artwork's own stage. Square, so the render keeps its
             proportions, with the step strip below it on the flat plate. */}
@@ -137,7 +137,7 @@ export function FinalCtaVisual() {
 
         {/* The flow, as three steps. A `figcaption` because that is exactly
             what it is — the caption that says what the picture is about. */}
-        <figcaption className="relative grid grid-cols-3 border-t border-brand-100 bg-white/70 backdrop-blur-sm">
+        <figcaption className="relative grid grid-cols-3 border-t border-brand-100 bg-white/70 backdrop-blur-sm dark:bg-surface/70">
           {STEPS.map((step, i) => (
             <span
               key={step.n}

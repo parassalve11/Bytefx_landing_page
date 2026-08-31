@@ -29,6 +29,7 @@ import {
   ProductItem,
 } from "@/components/ui/navbar-menu";
 import { Button } from "@/components/ui/button";
+import { ThemeToggle } from "@/components/ui/theme-toggle";
 import { cn } from "@/lib/utils";
 
 const MARKETS = [
@@ -162,11 +163,10 @@ export function Navbar() {
       className="sticky top-0 z-50 bg-transparent px-3 pt-2 sm:px-4 sm:pt-3"
     >
       <div
+        data-stuck={stuck ? "true" : "false"}
         className={cn(
-          "mx-auto flex w-full max-w-[var(--container)] items-center justify-between gap-4 rounded-2xl border px-2 backdrop-blur-xl backdrop-saturate-150 transition-[height,background-color,border-color,box-shadow] duration-300 ease-out sm:px-4 xl:gap-6 xl:px-5",
-          stuck
-            ? "h-16 border-line/60 bg-surface/85 shadow-[0_12px_36px_-12px_rgba(1,6,26,0.24)]"
-            : "h-[72px] border-line/80 bg-surface/95 shadow-[0_10px_30px_-16px_rgba(1,6,26,0.3)]"
+          "site-navbar-shell mx-auto flex w-full max-w-[var(--container)] items-center justify-between gap-4 rounded-2xl border px-2 backdrop-blur-2xl backdrop-saturate-150 transition-[height,background-color,border-color,box-shadow] duration-300 ease-out sm:px-4 xl:gap-6 xl:px-5",
+          stuck ? "h-16" : "h-[72px]"
         )}
       >
         <a href="/" className="flex shrink-0 items-center" aria-label="ByteFX home">
@@ -286,6 +286,7 @@ export function Navbar() {
         </Menu>
 
         <div className="flex items-center gap-2 xl:gap-3">
+          <ThemeToggle />
           <button
             type="button"
             className="hidden items-center gap-1 rounded-full px-2 py-1.5 text-[13.5px] font-medium text-body transition-colors hover:text-ink xl:flex"
@@ -330,7 +331,8 @@ export function Navbar() {
                 height={82}
                 className="h-[26px] w-auto"
               />
-              <div className="flex items-center">
+              <div className="flex items-center gap-2">
+                <ThemeToggle />
                 <button
                   type="button"
                   onClick={() => setOpen(false)}

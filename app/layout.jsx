@@ -29,10 +29,18 @@ export const metadata = {
 };
 
 export const viewport = {
-  themeColor: "#ffffff",
+  // ThemeToggle keeps this in sync after a manual mode change.
+  themeColor: "#f4f6f8",
   width: "device-width",
   initialScale: 1,
 };
+
+/**
+ * Resolve the saved theme before first paint. On a first visit, follow the
+ * device preference; after the navbar toggle is used, the explicit choice
+ * wins on every route and reload.
+ */
+const THEME_SCRIPT = `(function(){try{var saved=localStorage.getItem("bytefx:theme");var theme=saved==="dark"||saved==="light"?saved:(window.matchMedia("(prefers-color-scheme: dark)").matches?"dark":"light");document.documentElement.setAttribute("data-theme",theme);document.documentElement.style.colorScheme=theme}catch(e){document.documentElement.setAttribute("data-theme","light")}})()`;
 
 /**
  * Chrome lives here, not in the pages: the announcement bar, the sticky navbar,
@@ -45,7 +53,15 @@ export const viewport = {
  */
 export default function RootLayout({ children }) {
   return (
-    <html lang="en" className={poppins.variable}>
+    <html
+      lang="en"
+      data-theme="light"
+      className={poppins.variable}
+      suppressHydrationWarning
+    >
+      <head>
+        <script dangerouslySetInnerHTML={{ __html: THEME_SCRIPT }} />
+      </head>
       <body>
         <AnnouncementBar />
         <Navbar />

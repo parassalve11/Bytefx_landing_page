@@ -1,5 +1,9 @@
 @import "tailwindcss";
 
+/* A single pre-paint attribute controls both token overrides and Tailwind's
+   `dark:` variant. See app/layout.jsx and components/ui/theme-toggle.jsx. */
+@custom-variant dark (&:where([data-theme="dark"], [data-theme="dark"] *));
+
 /* ------------------------------------------------------------------
    ByteFX design tokens.
    Brand hues sampled from bytefx.com: blue #1356BE, green #4CD201.
@@ -69,6 +73,52 @@
   --sh-lg: 0 12px 40px rgba(1, 6, 26, 0.08);
   --sh-xl: 0 28px 70px rgba(1, 6, 26, 0.1);
   --sh-brand: 0 16px 44px rgba(19, 86, 190, 0.14);
+}
+
+/* Dark platinum: cool graphite surfaces with silver edges. Elevation rises
+   toward lighter metal instead of becoming a stack of flat black panels. */
+:root[data-theme="dark"] {
+  color-scheme: dark;
+
+  --brand: #78a9f5;
+  --brand-700: #9bc1ff;
+  --brand-100: #263b5d;
+  --brand-50: #17243a;
+  --brand-solid: #1356be;
+  --brand-solid-hover: #0e419a;
+
+  --go: #4cd201;
+  --go-hover: #61e51a;
+  --go-600: #79e33f;
+  --go-50: #18320f;
+
+  --ink: #f0f2f4;
+  --body: #b5bdc8;
+  --muted: #828c99;
+  --line: #2c3239;
+  --line-strong: #424a54;
+  --alt: #15191d;
+  --sunken: #0d1013;
+  --canvas: #111418;
+  --surface: #1b1f24;
+
+  --up: #4ade80;
+  --down: #fb7185;
+  --warn-50: #3a2b13;
+  --warn-600: #f1b965;
+  --shell: #07090c;
+
+  --sh-xs: 0 1px 2px rgba(0, 0, 0, 0.44);
+  --sh-sm: 0 3px 12px rgba(0, 0, 0, 0.42);
+  --sh-md: 0 8px 24px rgba(0, 0, 0, 0.48);
+  --sh-lg: 0 18px 48px rgba(0, 0, 0, 0.52);
+  --sh-xl: 0 30px 76px rgba(0, 0, 0, 0.58);
+  --sh-brand: 0 18px 50px rgba(4, 18, 48, 0.58);
+
+  --frame-top: #252a30;
+  --frame-bottom: rgba(18, 21, 25, 0);
+  --card-blue-mid: #19263c;
+  --card-blue-far: #244c91;
 }
 
 @theme inline {
@@ -141,6 +191,35 @@ body {
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   text-rendering: optimizeLegibility;
+}
+
+/* The navbar remains translucent over both hero artworks. It becomes more
+   opaque only after scrolling, when page content is moving underneath it. */
+.site-navbar-shell {
+  border-color: rgba(255, 255, 255, 0.72);
+  background: rgba(255, 255, 255, 0.7);
+  box-shadow: 0 12px 36px -20px rgba(1, 6, 26, 0.28);
+  -webkit-backdrop-filter: blur(24px) saturate(155%);
+  backdrop-filter: blur(24px) saturate(155%);
+}
+
+.site-navbar-shell[data-stuck="true"] {
+  border-color: rgba(218, 223, 230, 0.78);
+  background: rgba(255, 255, 255, 0.86);
+  box-shadow: 0 16px 40px -18px rgba(1, 6, 26, 0.3);
+}
+
+:root[data-theme="dark"] .site-navbar-shell {
+  border-color: rgba(229, 228, 226, 0.16);
+  background: rgba(12, 15, 19, 0.48);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.07),
+    0 18px 46px -22px rgba(0, 0, 0, 0.82);
+}
+
+:root[data-theme="dark"] .site-navbar-shell[data-stuck="true"] {
+  border-color: rgba(229, 228, 226, 0.2);
+  background: rgba(16, 19, 23, 0.72);
 }
 
 /* Prices must never jitter. */
@@ -646,6 +725,162 @@ summary:focus-visible,
     0 2px 8px rgba(1, 6, 26, 0.08);
 }
 
+/* Landing hero ----------------------------------------------------- */
+
+.landing-hero {
+  --landing-hero-image: url("/assets/hero/light-hero.webp");
+  --landing-hero-title: #263342;
+  --landing-hero-copy: #455468;
+  --landing-hero-glass: rgba(255, 255, 255, 0.62);
+  --landing-hero-glass-hover: rgba(255, 255, 255, 0.82);
+  --landing-hero-glass-border: rgba(28, 39, 54, 0.1);
+  --landing-hero-proof-value: #2a3646;
+  --landing-hero-proof-label: #657287;
+  isolation: isolate;
+  background: #e8eef4;
+}
+
+:root[data-theme="dark"] .landing-hero {
+  --landing-hero-image: url("/assets/hero/dark-hero.webp");
+  --landing-hero-title: #f4f6f8;
+  --landing-hero-copy: rgba(232, 237, 243, 0.78);
+  --landing-hero-glass: rgba(255, 255, 255, 0.085);
+  --landing-hero-glass-hover: rgba(255, 255, 255, 0.15);
+  --landing-hero-glass-border: rgba(255, 255, 255, 0.17);
+  --landing-hero-proof-value: #ffffff;
+  --landing-hero-proof-label: rgba(236, 240, 245, 0.66);
+  background: #081019;
+}
+
+.landing-hero-art {
+  background-image: var(--landing-hero-image);
+  background-position: center;
+  background-size: cover;
+  transform: scale(1.01);
+}
+
+.landing-hero-scrim {
+  background:
+    linear-gradient(
+      90deg,
+      rgba(244, 247, 250, 0.98) 0%,
+      rgba(244, 247, 250, 0.9) 28%,
+      rgba(244, 247, 250, 0.56) 45%,
+      rgba(244, 247, 250, 0.12) 62%,
+      transparent 76%
+    ),
+    linear-gradient(
+      180deg,
+      rgba(235, 241, 247, 0.24) 0%,
+      transparent 34%,
+      rgba(225, 232, 239, 0.2) 100%
+    );
+}
+
+:root[data-theme="dark"] .landing-hero-scrim {
+  background:
+    linear-gradient(
+      90deg,
+      rgba(5, 10, 15, 0.98) 0%,
+      rgba(5, 10, 15, 0.9) 28%,
+      rgba(5, 10, 15, 0.58) 47%,
+      rgba(5, 10, 15, 0.12) 64%,
+      transparent 78%
+    ),
+    linear-gradient(
+      180deg,
+      rgba(3, 7, 11, 0.36) 0%,
+      transparent 36%,
+      rgba(2, 6, 10, 0.35) 100%
+    );
+}
+
+.landing-hero-glow {
+  background: radial-gradient(
+    38% 34% at 24% 72%,
+    rgba(76, 210, 1, 0.07) 0%,
+    rgba(76, 210, 1, 0) 74%
+  );
+}
+
+.landing-hero-title-soft {
+  color: var(--landing-hero-title);
+}
+
+.landing-hero-lead {
+  color: var(--landing-hero-copy);
+}
+
+.landing-hero-eyebrow,
+.landing-hero-proof,
+.landing-hero-secondary {
+  border: 1px solid var(--landing-hero-glass-border);
+  background: var(--landing-hero-glass);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.34),
+    0 12px 34px -22px rgba(15, 23, 42, 0.42);
+  -webkit-backdrop-filter: blur(16px) saturate(135%);
+  backdrop-filter: blur(16px) saturate(135%);
+}
+
+.landing-hero-eyebrow {
+  color: var(--landing-hero-copy);
+}
+
+.landing-hero-secondary {
+  color: var(--landing-hero-title);
+}
+
+.landing-hero-secondary:hover {
+  border-color: var(--landing-hero-glass-border);
+  background: var(--landing-hero-glass-hover);
+  color: var(--brand);
+}
+
+.landing-hero-puck {
+  border: 1px solid rgba(1, 6, 26, 0.06);
+  background: rgba(255, 255, 255, 0.9);
+  box-shadow: 0 6px 18px rgba(15, 23, 42, 0.1);
+}
+
+.landing-hero-puck svg {
+  color: #1356be;
+}
+
+.landing-hero-proof-value {
+  color: var(--landing-hero-proof-value);
+}
+
+.landing-hero-proof-label {
+  color: var(--landing-hero-proof-label);
+}
+
+@media (max-width: 47.999rem) {
+  .landing-hero-art {
+    background-position: 72% center;
+  }
+
+  .landing-hero-scrim {
+    background: linear-gradient(
+      180deg,
+      rgba(244, 247, 250, 0.96) 0%,
+      rgba(244, 247, 250, 0.9) 48%,
+      rgba(244, 247, 250, 0.7) 67%,
+      rgba(236, 241, 246, 0.42) 100%
+    );
+  }
+
+  :root[data-theme="dark"] .landing-hero-scrim {
+    background: linear-gradient(
+      180deg,
+      rgba(4, 9, 14, 0.96) 0%,
+      rgba(4, 9, 14, 0.9) 48%,
+      rgba(4, 9, 14, 0.72) 68%,
+      rgba(3, 7, 11, 0.5) 100%
+    );
+  }
+}
+
 
 /* ------------------------------------------------------------------
    Hero — the blue band.
@@ -743,7 +978,111 @@ summary:focus-visible,
   box-shadow:
     inset 0 1px 0 rgba(255, 255, 255, 0.1),
     0 12px 30px rgba(1, 6, 26, 0.18);
+  -webkit-backdrop-filter: blur(10px);
   backdrop-filter: blur(10px);
+}
+
+.funding-glass {
+  border: 1px solid rgba(255, 255, 255, 0.17);
+  background:
+    linear-gradient(135deg, rgba(255, 255, 255, 0.13), rgba(255, 255, 255, 0.045)),
+    radial-gradient(90% 120% at 8% 0%, rgba(255, 255, 255, 0.1), transparent 55%);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.14),
+    0 28px 70px -34px rgba(1, 6, 26, 0.62);
+  -webkit-backdrop-filter: blur(22px) saturate(145%);
+  backdrop-filter: blur(22px) saturate(145%);
+}
+
+/* Dark-platinum overrides for utilities that contain literal light colours.
+   Saturated blue/green bands intentionally have no override. */
+:root[data-theme="dark"] .arc-wash {
+  background:
+    radial-gradient(60% 42% at 50% 0%, rgba(154, 174, 199, 0.08), transparent 70%),
+    radial-gradient(42% 34% at 84% 12%, rgba(76, 210, 1, 0.055), transparent 72%);
+}
+
+:root[data-theme="dark"] .platinum-wash {
+  background:
+    radial-gradient(68% 48% at 50% 0%, rgba(255, 255, 255, 0.055), transparent 74%),
+    linear-gradient(168deg, #1b1f24 0%, #14181c 52%, #101317 100%);
+}
+
+:root[data-theme="dark"] .platinum-surface {
+  background:
+    radial-gradient(70% 60% at 8% 4%, rgba(255, 255, 255, 0.08), transparent 68%),
+    radial-gradient(54% 62% at 94% 92%, rgba(126, 136, 148, 0.16), transparent 72%),
+    linear-gradient(132deg, #262b31 0%, #191d22 42%, #21262c 66%, #121519 100%);
+}
+
+:root[data-theme="dark"] .platinum-plate {
+  background:
+    radial-gradient(120% 92% at 50% -6%, rgba(255, 255, 255, 0.09), transparent 60%),
+    radial-gradient(76% 68% at 82% 100%, rgba(0, 0, 0, 0.4), transparent 70%),
+    linear-gradient(150deg, #2a3037 0%, #1c2127 36%, #252a31 56%, #13171c 100%);
+}
+
+:root[data-theme="dark"] .platinum-grain {
+  background-image: repeating-linear-gradient(
+    114deg,
+    rgba(255, 255, 255, 0.07) 0,
+    rgba(255, 255, 255, 0) 1.5px,
+    rgba(0, 0, 0, 0.07) 3px,
+    rgba(255, 255, 255, 0) 4.5px
+  );
+}
+
+:root[data-theme="dark"] .market-plate {
+  background:
+    radial-gradient(88% 76% at 88% 104%, rgba(76, 120, 190, 0.18), transparent 68%),
+    linear-gradient(158deg, #272c32 0%, #1d2228 38%, #191e24 74%, #12161b 100%);
+}
+
+:root[data-theme="dark"] .forex-plate {
+  background: linear-gradient(158deg, #272c32 0%, #1d2228 42%, #14191e 100%);
+}
+
+@media (min-width: 40rem) {
+  :root[data-theme="dark"] .forex-plate {
+    background:
+      linear-gradient(
+        to right,
+        rgba(237, 235, 233, 0) 24%,
+        rgba(237, 235, 233, 0.42) 38%,
+        #edebe9 48%,
+        #edebe9 100%
+      ),
+      linear-gradient(158deg, #272c32 0%, #1d2228 42%, #14191e 100%);
+  }
+}
+
+:root[data-theme="dark"] .condition-platinum {
+  --metal-hi: #2b3036;
+  --metal-mid: #20252b;
+  --metal-flash: #353b43;
+  --metal-low: #14181d;
+}
+
+:root[data-theme="dark"] .condition-metal {
+  background-image:
+    radial-gradient(110% 85% at 8% 0%, rgba(255, 255, 255, 0.1), transparent 52%),
+    linear-gradient(
+      135deg,
+      var(--metal-hi) 0%,
+      var(--metal-mid) 43%,
+      var(--metal-flash) 62%,
+      var(--metal-low) 100%
+    );
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.12),
+    inset 0 0 0 1px rgba(255, 255, 255, 0.06),
+    0 28px 58px -32px rgba(0, 0, 0, 0.72);
+}
+
+:root[data-theme="dark"] .pay-puck {
+  box-shadow:
+    inset 0 0 0 1px rgba(1, 6, 26, 0.08),
+    0 8px 22px rgba(0, 0, 0, 0.34);
 }
 
 @keyframes hero-rise-in {

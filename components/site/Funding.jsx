@@ -1,6 +1,7 @@
 "use client";
 
 import Image from "next/image";
+import { BadgeCheck } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Reveal, RevealGroup, RevealItem } from "@/components/ui/reveal";
 import { cn } from "@/lib/utils";
@@ -111,8 +112,7 @@ const METHODS = [
 function MethodCard({ method }) {
   return (
     <RevealItem as="li" className="min-w-0 list-none">
-      <a
-        href={`/funding#${method.id}`}
+      <article
         className="hero-proof group/pay flex h-full flex-col items-center gap-3 rounded-2xl px-3 py-5 text-center transition-all duration-300 ease-out outline-none hover:-translate-y-1 hover:border-white/35 focus-visible:ring-2 focus-visible:ring-white/70"
       >
         <span className="pay-puck flex h-16 w-16 shrink-0 items-center justify-center rounded-2xl transition-transform duration-300 ease-out group-hover/pay:scale-105">
@@ -133,7 +133,7 @@ function MethodCard({ method }) {
         <span className="mt-auto inline-flex items-center rounded-full bg-white/12 px-2.5 py-1 text-[11px] leading-none font-semibold text-white/70 transition-colors duration-300 group-hover/pay:bg-white group-hover/pay:text-brand">
           {method.speed}
         </span>
-      </a>
+      </article>
     </RevealItem>
   );
 }
@@ -180,6 +180,7 @@ export function Funding() {
       </div>
 
       <div className="container-x relative z-10 py-16 md:py-24">
+        <div className="funding-glass rounded-[30px] p-5 sm:p-7 md:p-9 lg:p-10">
         <div className="mb-10 flex flex-col gap-6 md:mb-14 md:flex-row md:items-end md:justify-between">
           <div className="max-w-xl">
             <Reveal as="h2" className="h-section text-white">
@@ -193,6 +194,12 @@ export function Funding() {
               Six ways in and out of your account, all of them settled by
               automated, audited processing. Withdrawals always return to the
               method you funded with.
+            </Reveal>
+            <Reveal delay={0.07}>
+              <span className="mt-5 inline-flex items-center gap-2 rounded-full border border-white/18 bg-white/10 px-3.5 py-2 text-[12.5px] font-semibold text-white backdrop-blur-md">
+                <BadgeCheck className="h-4 w-4 text-[#a8f55b]" strokeWidth={2.4} />
+                $0 ByteFX fee on deposits and withdrawals
+              </span>
             </Reveal>
           </div>
 
@@ -227,6 +234,7 @@ export function Funding() {
             .
           </p>
         </Reveal>
+        </div>
       </div>
     </section>
   );

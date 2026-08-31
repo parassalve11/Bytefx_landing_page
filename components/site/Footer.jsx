@@ -79,7 +79,7 @@ const SOCIALS = [
 
 export function Footer() {
   return (
-    <footer className="platinum-surface relative isolate overflow-hidden border-t border-line-strong/70 text-ink shadow-[inset_0_1px_0_rgba(255,255,255,0.9)]">
+    <footer className="platinum-surface relative isolate overflow-hidden border-t border-line-strong/70 text-ink shadow-[inset_0_1px_0_rgba(255,255,255,0.9)] dark:shadow-[inset_0_1px_0_rgba(255,255,255,0.1)]">
       <div
         aria-hidden="true"
         className="platinum-grain pointer-events-none absolute inset-0 z-0 opacity-20 mix-blend-overlay"
@@ -111,7 +111,7 @@ export function Footer() {
                     <a
                       href={s.href}
                       aria-label={s.label}
-                      className="grid h-10 w-10 place-items-center rounded-xl border border-line-strong/70 bg-white/45 text-body shadow-xs transition-[transform,color,background-color,border-color,box-shadow] duration-200 hover:-translate-y-0.5 hover:border-brand/30 hover:bg-white/80 hover:text-brand hover:shadow-sm"
+                      className="grid h-10 w-10 place-items-center rounded-xl border border-line-strong/70 bg-white/45 text-body shadow-xs transition-[transform,color,background-color,border-color,box-shadow] duration-200 hover:-translate-y-0.5 hover:border-brand/30 hover:bg-white/80 hover:text-brand hover:shadow-sm dark:bg-surface/55 dark:hover:bg-surface/90"
                     >
                       {s.brand ? (
                         <BrandGlyph name={s.brand} className="h-4 w-4" />
@@ -153,7 +153,7 @@ export function Footer() {
           </div>
 
           {/* Company ----------------------------------------------- */}
-          <div className="rounded-[24px] border border-white/70 bg-white/40 p-6 shadow-[inset_0_1px_0_rgba(255,255,255,0.9),0_18px_48px_-36px_rgba(1,6,26,0.34)] sm:p-7">
+          <div className="rounded-[24px] border border-white/70 bg-white/40 p-6 shadow-[inset_0_1px_0_rgba(255,255,255,0.9),0_18px_48px_-36px_rgba(1,6,26,0.34)] sm:p-7 dark:border-white/10 dark:bg-surface/55 dark:shadow-[inset_0_1px_0_rgba(255,255,255,0.08),0_18px_48px_-30px_rgba(0,0,0,0.5)]">
             <h2 className="text-[11px] font-semibold tracking-[0.08em] text-ink/60 uppercase">
               Company details
             </h2>

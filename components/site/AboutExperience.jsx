@@ -357,7 +357,7 @@ export function AboutExperience() {
           </a>
           <a
             href="/company/why-bytefx"
-            className="inline-flex h-[52px] items-center justify-center rounded-full border border-line-strong bg-white/60 px-7 text-[15.5px] font-semibold whitespace-nowrap text-ink transition-colors duration-200 hover:border-brand hover:text-brand"
+            className="inline-flex h-[52px] items-center justify-center rounded-full border border-line-strong bg-white/60 px-7 text-[15.5px] font-semibold whitespace-nowrap text-ink transition-colors duration-200 hover:border-brand hover:text-brand dark:bg-surface/60"
           >
             Why ByteFX
           </a>
