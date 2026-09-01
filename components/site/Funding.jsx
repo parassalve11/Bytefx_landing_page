@@ -18,10 +18,9 @@ import { cn } from "@/lib/utils";
  *
  * ── The marks ─────────────────────────────────────────────────────────────
  *
- * `public/assets/payment_methods/` already shipped every logo cut out
- * individually and none of them were used. Each one now has its own card with
- * the one fact a reader wants beside it — how long the deposit takes. The
- * composite render is demoted to what it is actually good at: a backdrop.
+ * `public/assets/payment_methods/` ships every logo cut out individually. Each
+ * one has its own readable card, while the composite render is used only as a
+ * quiet backdrop.
  *
  * ── The band ──────────────────────────────────────────────────────────────
  *
@@ -41,18 +40,9 @@ import { cn } from "@/lib/utils";
  *
  * ── What is claimed ───────────────────────────────────────────────────────
  *
- * **Two funding facts, and no more**: the $0 ByteFX fee, and instant deposits
- * on everything except bank wire. Withdrawal windows are deliberately not
- * printed per method — they are provider- and bank-dependent, the footnote
- * says exactly that, and a number per card would be the easiest way to put a
- * promise on the page nobody can keep.
- *
- * A four-up row of promise cards used to sit under the rail — $0 fee, instant
- * deposits, back to source, audited processing. Every one of those four lines
- * was already on the band: the fee and the settlement claim are in the lead
- * paragraph, the timings are on the cards themselves, and the withdrawal rule
- * is the lead's last sentence. It was the same section written twice, so it
- * is gone.
+ * Provider timings are deliberately omitted. Availability and third-party
+ * terms vary, so the section identifies accepted methods without promising a
+ * settlement window.
  */
 
 const METHODS = [
@@ -60,7 +50,6 @@ const METHODS = [
     id: "visa",
     name: "Visa",
     image: "/assets/payment_methods/visa.png",
-    speed: "Instant",
     // Every logo ships inside a different amount of empty canvas — Visa's
     // wordmark floats in roughly half of its 1254px square, the Bitcoin coin
     // fills most of its own — so each mark is scaled to its own optical size.
@@ -71,35 +60,30 @@ const METHODS = [
     id: "mastercard",
     name: "Mastercard",
     image: "/assets/payment_methods/master_card.png",
-    speed: "Instant",
     markClassName: "w-[86%]",
   },
   {
     id: "apple-pay",
     name: "Apple Pay",
     image: "/assets/payment_methods/apple_pay.png",
-    speed: "Instant",
     markClassName: "w-[90%]",
   },
   {
     id: "bitcoin",
     name: "Bitcoin",
     image: "/assets/payment_methods/crypto.png",
-    speed: "Instant",
     markClassName: "w-[72%]",
   },
   {
     id: "usdt",
     name: "USDT",
     image: "/assets/payment_methods/USDT.png",
-    speed: "Instant",
     markClassName: "w-[72%]",
   },
   {
     id: "bank-wire",
     name: "Bank wire",
     image: "/assets/payment_methods/bank_wire.png",
-    speed: "1–2 days",
     markClassName: "w-[64%]",
   },
 ];
@@ -130,9 +114,6 @@ function MethodCard({ method }) {
           {method.name}
         </span>
 
-        <span className="mt-auto inline-flex items-center rounded-full bg-white/12 px-2.5 py-1 text-[11px] leading-none font-semibold text-white/70 transition-colors duration-300 group-hover/pay:bg-white group-hover/pay:text-brand">
-          {method.speed}
-        </span>
       </article>
     </RevealItem>
   );
@@ -221,10 +202,8 @@ export function Funding() {
 
         <Reveal delay={0.1}>
           <p className="mt-10 max-w-3xl text-[13.5px] leading-relaxed text-white/60">
-            Deposits land instantly on every method except bank wire, which
-            takes 1–2 business days. Withdrawal windows are indicative —
-            third-party payment providers and banks may apply their own fees and
-            cut-off times.{" "}
+            Method availability and third-party fees can vary by region and
+            provider. Review the applicable terms before funding your account.{" "}
             <a
               href="/funding"
               className="font-semibold text-white underline-offset-4 hover:underline"

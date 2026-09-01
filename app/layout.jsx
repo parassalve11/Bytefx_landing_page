@@ -20,6 +20,16 @@ export const metadata = {
   },
   description:
     "Trade 150+ instruments with leverage up to 1:2000, spreads from 0.0 pips and ~20ms execution. Standard, Pro and Raw accounts on MetaTrader 5.",
+  icons: {
+    icon: [
+      {
+        url: "/assets/payment_methods/bytefx-logo.png",
+        type: "image/png",
+      },
+    ],
+    shortcut: "/assets/payment_methods/bytefx-logo.png",
+    apple: "/assets/payment_methods/bytefx-logo.png",
+  },
   openGraph: {
     title: "ByteFX | Discover your trading edge",
     description:

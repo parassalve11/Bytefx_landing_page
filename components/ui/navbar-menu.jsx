@@ -1,29 +1,36 @@
 "use client";
 
-import React, { useId, useRef } from "react";
+import { useId, useRef } from "react";
+import Link from "next/link";
 import { motion } from "motion/react";
 import { ChevronDown } from "lucide-react";
+
 import { cn } from "@/lib/utils";
 
-const transition = {
+const panelTransition = {
   type: "spring",
-  mass: 0.5,
-  damping: 11.5,
-  stiffness: 100,
+  mass: 0.45,
+  damping: 19,
+  stiffness: 220,
   restDelta: 0.001,
   restSpeed: 0.001,
 };
 
-export const MenuItem = ({ setActive, active, item, href = "#", children }) => {
+export function MenuItem({
+  setActive,
+  active,
+  item,
+  href = "#",
+  selected = false,
+  children,
+}) {
   const open = active === item;
   const hasChildren = Boolean(children);
   const triggerRef = useRef(null);
   const panelId = useId();
 
   const handleBlur = (event) => {
-    if (!event.currentTarget.contains(event.relatedTarget)) {
-      setActive(null);
-    }
+    if (!event.currentTarget.contains(event.relatedTarget)) setActive(null);
   };
 
   const handleKeyDown = (event) => {
@@ -35,130 +42,131 @@ export const MenuItem = ({ setActive, active, item, href = "#", children }) => {
       requestAnimationFrame(() => {
         document.getElementById(panelId)?.querySelector("a[href]")?.focus();
       });
-      return;
     }
 
     if (event.key === "Escape" && open) {
       event.preventDefault();
       event.stopPropagation();
-      triggerRef.current?.focus();
       setActive(null);
+      triggerRef.current?.focus();
     }
   };
 
   return (
     <div
-      onMouseEnter={() => setActive(item)}
+      onMouseEnter={() => setActive(hasChildren ? item : null)}
       onFocusCapture={() => hasChildren && setActive(item)}
       onBlurCapture={handleBlur}
       onKeyDown={handleKeyDown}
-      className="relative"
+      className="relative flex h-full items-center"
     >
-      <motion.a
+      <Link
         ref={triggerRef}
         href={href}
         aria-haspopup={hasChildren ? "true" : undefined}
         aria-expanded={hasChildren ? open : undefined}
         aria-controls={hasChildren ? panelId : undefined}
-        transition={{ duration: 0.3 }}
         className={cn(
-          "flex cursor-pointer items-center gap-1 py-2 text-[15px] font-medium transition-colors",
-          open ? "text-brand" : "text-ink hover:text-brand"
+          "group/nav relative flex h-full items-center gap-1.5 whitespace-nowrap px-0.5 text-[14px] font-medium tracking-[-0.01em] transition-colors duration-200",
+          open || selected ? "text-brand" : "text-ink hover:text-brand"
         )}
       >
         {item}
-        {children ? (
+        {hasChildren ? (
           <ChevronDown
             className={cn(
-              "h-3.5 w-3.5 transition-transform duration-200",
-              open && "rotate-180"
+              "h-3.5 w-3.5 text-muted transition-transform duration-200 group-hover/nav:text-brand",
+              open && "rotate-180 text-brand"
             )}
-            strokeWidth={2.5}
+            strokeWidth={2.3}
           />
         ) : null}
-      </motion.a>
-
-      {children && active !== null && (
-        <motion.div
-          initial={{ opacity: 0, scale: 0.96, y: 8 }}
-          animate={{ opacity: 1, scale: 1, y: 0 }}
-          transition={transition}
-        >
-          {open && (
-            <div className="absolute top-full left-1/2 z-20 -translate-x-1/2 pt-6">
-              <motion.div
-                id={panelId}
-                role="group"
-                aria-label={`${item} links`}
-                transition={transition}
-                layoutId="active"
-                className="overflow-hidden rounded-2xl border border-line bg-surface shadow-lg"
-              >
-                <motion.div layout className="h-full w-max p-5">
-                  {children}
-                </motion.div>
-              </motion.div>
-            </div>
+        <span
+          aria-hidden="true"
+          className={cn(
+            "absolute inset-x-0 bottom-0 h-0.5 origin-center rounded-full bg-brand transition-transform duration-200",
+            open || selected ? "scale-x-100" : "scale-x-0 group-hover/nav:scale-x-100"
           )}
+        />
+      </Link>
+
+      {hasChildren && open ? (
+        <motion.div
+          initial={{ opacity: 0, y: 9, scale: 0.985 }}
+          animate={{ opacity: 1, y: 0, scale: 1 }}
+          transition={panelTransition}
+          className="absolute top-full left-1/2 z-30 -translate-x-1/2 pt-3"
+        >
+          <div
+            id={panelId}
+            role="group"
+            aria-label={`${item} links`}
+            className="nav-mega-panel overflow-hidden rounded-[22px] border border-line bg-surface p-2 shadow-[0_24px_70px_-26px_rgba(1,6,26,.38)]"
+          >
+            <div className="w-max p-3">{children}</div>
+          </div>
         </motion.div>
-      )}
+      ) : null}
     </div>
   );
-};
+}
 
-export const Menu = ({ setActive, className, children }) => {
+export function Menu({ setActive, className, children }) {
   return (
     <nav
+      aria-label="Primary navigation"
       onMouseLeave={() => setActive(null)}
-      className={cn("flex items-center gap-7", className)}
+      className={cn("flex h-full items-center gap-7", className)}
     >
       {children}
     </nav>
   );
-};
+}
 
-export const HoveredLink = ({ children, className, ...rest }) => {
+export function HoveredLink({ children, className, ...rest }) {
   return (
-    <a
+    <Link
       {...rest}
       className={cn(
-        "block rounded-lg px-2 py-1.5 text-[14.5px] text-body transition-colors hover:bg-brand-50 hover:text-brand",
+        "group/link flex items-center justify-between gap-4 rounded-lg px-2.5 py-2 text-[13.5px] font-medium text-body transition-colors hover:bg-brand-50 hover:text-brand",
         className
       )}
     >
       {children}
-    </a>
+      <span
+        aria-hidden="true"
+        className="h-1.5 w-1.5 shrink-0 rounded-full bg-brand opacity-0 transition-opacity group-hover/link:opacity-100"
+      />
+    </Link>
   );
-};
+}
 
-/**
- * Light-mode rework of Aceternity's ProductItem: the "src" image slot is
- * replaced by an icon tile so the menu never depends on remote screenshots.
- */
-export const ProductItem = ({ title, description, href, icon, accent = "blue" }) => {
+export function ProductItem({ title, description, href, icon, accent = "blue" }) {
   return (
-    <a
+    <Link
       href={href}
-      className="group flex gap-3 rounded-xl p-2.5 transition-colors hover:bg-alt"
+      className="group flex min-w-0 gap-3 rounded-xl p-2.5 transition-colors hover:bg-alt"
     >
       <span
         className={cn(
-          "flex h-10 w-10 shrink-0 items-center justify-center rounded-lg border transition-colors",
+          "flex h-9 w-9 shrink-0 items-center justify-center rounded-lg border transition-transform duration-200 group-hover:-translate-y-0.5",
           accent === "green"
-            ? "border-go-50 bg-go-50 text-go-600"
-            : "border-brand-50 bg-brand-50 text-brand"
+            ? "border-go/20 bg-go-50 text-go-600"
+            : "border-brand/15 bg-brand-50 text-brand"
         )}
       >
         {icon}
       </span>
-      <span className="block">
-        <span className="block text-[14.5px] font-semibold text-ink group-hover:text-brand">
+      <span className="block min-w-0">
+        <span className="block text-[13.5px] font-semibold text-ink transition-colors group-hover:text-brand">
           {title}
         </span>
-        <span className="mt-0.5 block max-w-[15rem] text-[13px] leading-snug text-muted">
-          {description}
-        </span>
+        {description ? (
+          <span className="mt-0.5 block max-w-[15rem] text-[11.5px] leading-[1.45] text-muted">
+            {description}
+          </span>
+        ) : null}
       </span>
-    </a>
+    </Link>
   );
-};
+}

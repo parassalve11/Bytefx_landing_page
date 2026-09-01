@@ -18,7 +18,7 @@ function buildWidgetUrl(theme) {
     symbols: SYMBOLS,
     showSymbolLogo: true,
     colorTheme: theme,
-    isTransparent: true,
+    isTransparent: false,
     displayMode: "regular",
     width: "100%",
     height: 46,
@@ -76,12 +76,12 @@ export function Ticker() {
     <section
       ref={hostRef}
       aria-labelledby="live-market-prices"
-      className="tradingview-ticker-shell relative z-10 px-3 py-2 sm:px-4"
+      className="tradingview-ticker-shell relative z-10 w-full"
     >
       <h2 id="live-market-prices" className="sr-only">
         Live global market prices
       </h2>
-      <div className="tradingview-ticker-glass mx-auto h-[50px] w-full max-w-[var(--container)] overflow-hidden rounded-2xl">
+      <div className="tradingview-ticker-glass h-[48px] w-full overflow-hidden">
         {visible && src ? (
           <iframe
             key={theme}
@@ -89,10 +89,10 @@ export function Ticker() {
             src={src}
             loading="lazy"
             referrerPolicy="strict-origin-when-cross-origin"
-            className="block h-[46px] w-full border-0"
+            className="block h-[48px] w-full border-0"
           />
         ) : (
-          <div className="h-[46px] w-full" aria-hidden="true" />
+          <div className="h-[48px] w-full" aria-hidden="true" />
         )}
       </div>
     </section>
