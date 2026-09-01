@@ -369,7 +369,7 @@ export function Competition() {
       {/* Band one — the offer, on the trophy plate. */}
       <div className="relative isolate overflow-hidden">
         <Image
-          src="/assets/compatation/background-trimmed.png"
+          src="/assets/compatation/background-trimmed.webp"
           alt=""
           aria-hidden="true"
           fill

@@ -166,42 +166,69 @@ bottom-right corner under the mark. `platinum-wash` on the section then has to
 be a shade *cooler* than the cards, or the bento dissolves into the page;
 `platinum-plate` and `platinum-grain` are no longer used by anything.
 
-**Marks.** `indices.png`, `CrypoCurrency.png`, `stocks_metal.png` and
-`gold_and_sliver.png` are used as delivered. The clip was derived:
+**Marks.** `indices.webp`, `CrypoCurrency.webp`, `stocks_metal.webp` and
+`gold_and_sliver.webp` are the delivered renders, converted (see “Asset
+formats”). The clip was derived:
 
 | Asset | Derived from | How |
 | --- | --- | --- |
-| `forex_coins.mp4` + `.jpg` poster | `forex_video.mp4` | Watermark cropped, black studio backdrop luma-keyed out and re-composited onto the plate tone, audio stripped, re-encoded 2.3 MB → 601 KB. |
+| `forex_coins.webm` + `.webp` poster | `media-source/forex_coins_source.mp4` | Rendered transparency checkerboard keyed back out to a real alpha channel, cropped to content, scaled to 816×540, encoded VP9 `yuva420p`. 3.5 MB → 1.6 MB. |
 
-Recipe for the video, should the source ever be re-cut (needs `ffmpeg`):
+**The clip now carries real alpha, and that is the whole design.** The source
+is a "transparent background" stock render whose transparency was flattened
+into the pixels as an editor checkerboard — two flat greys in ~26px squares.
+A luma key cannot lift it: the coins are silver, so their own mid-greys land
+on the board's greys and the key bites holes through the rims and faces. The
+pass that does work is in `scripts/key-checkerboard.py`, and it is three
+stages — learn the board per pixel from the frames where each pixel is
+uncovered, key against that plate and repair the bite marks morphologically,
+then *demodulate*: an empty pixel still carries the board's ±swing and nothing
+the coins cover does, which is the only test that tells a dark coin face from
+genuine emptiness. Re-run it as:
 
 ```sh
-ffmpeg -i forex_video.mp4   -filter_complex "[0:v]crop=544:486:0:0,format=rgba,lumakey=threshold=0.045:tolerance=0.075:softness=0.045[k];color=c=0xECEBE9:s=544x486[bg];[bg][k]overlay=shortest=1,hqdn3d=3:2:6:6,format=yuv420p"   -an -c:v libx264 -profile:v high -crf 33 -preset veryslow   -movflags +faststart forex_coins.mp4
-ffmpeg -i forex_coins.mp4 -frames:v 1 -q:v 5 forex_coins_poster.jpg
+python scripts/key-checkerboard.py media-source/forex_coins_source.mp4 \
+  public/assets/forex_coins.webm --crop 1088:720:100:0 --scale 816:540 \
+  --crf 42 --poster public/assets/forex_coins_poster.webp
 ```
 
-H.264 carries no alpha, so the keyed clip is baked onto `#ECEBE9`, and neither
-does the VP8 cut that actually ships. It used to sit in a visible recessed well
-of that colour, which read as a grey panel bolted into the card.
+`-auto-alt-ref 0` in that script is load-bearing: libvpx silently drops the
+alpha stream without it. Note also that ffmpeg cannot *decode* WebM alpha, so
+`ffmpeg -i out.webm` will report `yuv420p` and an alphaextract will come back
+solid — check the result in a browser, not in ffmpeg.
 
-**The fix is to end the card on that tone rather than hide it.** From `sm` up —
-where the clip takes the card's right column — `.forex-plate` washes `#EDEBE9`
-across the plate's right half, reaching full strength before the clip's left
-edge and holding it to the card's right edge. The clip's own background is then
-indistinguishable from the card under it: no box, no well, no seam, and the
-coins read as floating free like the four still marks. Below `sm` the card
-stacks and the clip spans its full width, so a horizontal wash would put the
-tone under the copy as well; there the clip's panel carries the tone itself
-(`bg-[#edebe9] sm:bg-transparent` in `Markets.jsx`) and the plate stays plain.
+**What the alpha bought.** The old opaque cut was baked onto `#EDEBE9` and the
+card had to be built around hiding that: `.forex-plate` washed the same tone
+across its right half so the clip's background and the card were
+indistinguishable, and below `sm` the clip's own panel carried the tone.
+All of that is deleted. The Forex tile now wears the ordinary `market-plate`
+and the clip is a corner mark exactly like the other four — same bleed off the
+bottom-right, same `metal-float` drift, same hover scale — and, because there
+is no baked tone left, it works unchanged on the dark card, which the old cut
+never could. Below `sm` the card stacks and the clip becomes a full-bleed band
+of its own between the copy and the CTA, where a corner mark would be squeezed
+behind the pill.
 
-Change either the wash or that panel background and you must change the other,
-and both must stay exactly the tone in the `ffmpeg` recipe above. It is
-`preload="none"`, played and paused by an IntersectionObserver, and never
-fetched at all under reduced motion, where the poster is the whole story.
+It is `preload="none"`, played and paused by an IntersectionObserver, and never
+fetched at all under reduced motion, where the transparent poster is the whole
+story.
 
-**Unused after this change** — `currency.png` (1.6 MB), `company_stocks.png`
-(1.3 MB), `forex_video.mp4` (2.3 MB) and `mt5_logo.png` (2.1 MB, a marketing
-composite rather than a mark) are still in `public/assets` and still ship. Delete them once you are happy with the derived versions.
+## Asset formats: WebP and WebM everywhere
+
+Every raster asset under `public/assets` is WebP and every clip is WebM. The
+raster pass converted 39 PNG/JPEG files, **49.6 MB → 5.0 MB**, encoding each
+one both lossy (q84) and lossless and keeping whichever came out smaller —
+which picks lossy for the renders and would pick lossless for anything flat
+enough to deserve it. Alpha is preserved. The originals are deleted, not left
+beside the conversions.
+
+What is deliberately *not* WebP: `bytefx-app-qr.svg` and the 265 flags in
+`public/assets/flags/`, which are vectors and are already smaller and sharper
+than any raster of them would be.
+
+`media-source/` holds the delivered mp4 that `forex_coins.webm` was cut from.
+It sits outside `public/` on purpose — nothing under `public/` is shipped that
+the site does not use.
 
 ## Trading conditions: the metallic carousel
 
@@ -273,10 +300,9 @@ genuine user swipe does. The order is therefore always 0→1→2→3→4→0.
 
 **Assets.** The five renders were supplied as 1254px PNGs totalling 8.35 MB.
 They are converted to 620px WebP (358 KB total, a 23× saving) and the
-component references the `.webp` files. **The source PNGs in
-`public/assets/2nd_section/` are now unused and still ship — delete them once
-the section is approved.** Re-run the conversion if a render is ever replaced;
-620px covers a 2× DPR at the ~240px they display at.
+component references the `.webp` files. The source PNGs are deleted. Re-run the
+conversion if a render is ever replaced; 620px covers a 2× DPR at the ~240px
+they display at.
 
 ### The cursor, in numbers
 
@@ -652,6 +678,46 @@ Escape closes it, the input takes focus on open, the transcript is a
 `role="log"` with `aria-live="polite"`, and the panel footer says in plain
 words that the answers are scripted and are not financial advice.
 
+## Signup: the country picker and the phone field
+
+`components/ui/country-select.jsx`, used by `AuthPanel`. Country and phone are
+one control in two halves: choosing a country writes that country's dialling
+code into the phone field and swaps the phone icon for the country's flag, so
+the number is already in international form before anyone types a digit.
+Switching country afterwards *replaces* the code rather than stacking a second
+one in front of it, and keeps whatever national digits were already typed.
+
+**Why it is not a `<select>`.** A native option cannot carry a flag, and the
+emoji flags a `<select>` would have to fall back on do not render on Windows
+at all — they come out as two letters. So the picker is a listbox built by
+hand, with a filter field, arrow keys, Enter, Escape and click-outside, plus a
+hidden input so the surrounding `<form>` still submits a country code.
+
+That hidden input deliberately carries no `required`. A zero-size control
+cannot be focused, and the browser refuses to report a validation message it
+cannot scroll to — which deadlocks the whole form with nothing on screen. The
+signup handler checks for a country itself and puts the message in the same
+status strip as the password mismatch.
+
+**The data is generated, not hand-kept.** `lib/countries.js` is written by
+`node scripts/generate-countries.mjs`, which reads the flag set out of
+`public/assets/flags/`, the calling codes out of `libphonenumber-js` and the
+English names out of `Intl.DisplayNames`. Both of those packages are dev
+dependencies; the site ships neither. 245 countries survive the intersection
+of "has a flag" and "has a calling code". They are stored as tuples rather
+than objects because the array is inlined into the client bundle.
+
+All 245 rows are in the DOM whenever the menu is open. That is cheap: the
+flags are `loading="lazy"`, so only the dozen on screen are ever fetched, and
+the filter runs over a lowercased haystack precomputed at generation time.
+Names that *start* with the query sort first, so typing "in" reaches India
+before Argentina.
+
+**Theme.** The auth routes render without the site chrome (see `SiteShell`),
+so the navbar's theme switch is not on the page. `AuthHeader` carries its own
+`ThemeToggle`, restyled to match the "Back to website" pill, on all four auth
+routes — signup, login, forgot-password and verify-email.
+
 ## Motion contract
 
 - Section entry: `opacity 0→1, y 24→0`, 0.5s, `[0.22,1,0.36,1]`, `once: true`. Use `Reveal` / `RevealGroup` + `RevealItem`.
@@ -673,9 +739,6 @@ words that the answers are scripted and are not financial advice.
   windows in `Funding.jsx`, need compliance sign-off. The marketing reference
   for the funding section prints INSTANT on crypto/USDT withdrawals; the live
   site says ~1 hour. The conservative number ships — flip it only on sign-off.
-- **Delete `public/assets/2nd_section/image{1..5}.png`** (8.35 MB) once the
-  conditions carousel is approved — the component uses the `.webp` versions
-  and the PNGs ship for nothing.
 - `.rail-path` in `globals.css` is dead: it styled the connector fan of a
   funding layout that no longer exists. Delete it with the next cleanup pass.
 - The funding footnote is the only place withdrawal windows are described, and
@@ -692,8 +755,6 @@ words that the answers are scripted and are not financial advice.
   compliance read `KNOWLEDGE` first — it restates account, spread, leverage
   and funding terms in a conversational voice, which is a different review
   surface from the same facts in a spec table.
-- **Delete `public/assets/hero/aurora.jpg`** (440 KB) once the new hero band
-  is approved — nothing references it any more.
 - Mobile has been audited statically but not viewed on a device. Check 390 / 768 / 1024.
   The funding method rail reflows 2 → 3 → 6 columns and the fee card stacks
   below `sm`; both have been captured headless at 390 but not touched on glass.

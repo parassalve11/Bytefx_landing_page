@@ -270,7 +270,7 @@ export function AtlasChat() {
             <div className="hero-tools relative flex items-center gap-3 px-4 py-3.5 text-white">
               <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-white/12 ring-1 ring-white/25">
                 <Image
-                  src="/assets/mobile-section/atlas.png"
+                  src="/assets/mobile-section/atlas.webp"
                   alt=""
                   width={1254}
                   height={1254}
@@ -395,7 +395,7 @@ export function AtlasChat() {
           ) : (
             <>
               <Image
-                src="/assets/mobile-section/atlas.png"
+                src="/assets/mobile-section/atlas.webp"
                 alt=""
                 width={1254}
                 height={1254}

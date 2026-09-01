@@ -589,59 +589,6 @@ summary:focus-visible,
     linear-gradient(168deg, #f6f8fc 0%, #eef2f8 52%, #e7edf6 100%);
 }
 
-/* The Forex card, and the clip that sits in it.
-
-   The clip is opaque: the coins are baked onto #EDEBE9, the tone they were
-   luma-keyed onto (recipe in README), and neither H.264 nor this VP8 cut
-   carries alpha. It used to sit in a visible recessed box, which read as a
-   grey panel bolted into the card.
-
-   The fix is to stop hiding the tone and start *ending the card on it*. From
-   `sm` up — where the clip takes the card's right column — the plate washes
-   that exact tone across its right half, so the clip's own background is
-   indistinguishable from the card under it: no box, no well, no seam, and the
-   coins read as floating free the way the four still marks do. The wash has to
-   be at full strength before the clip's left edge and hold it to the card's
-   right edge, or the seam comes back at whichever end falls short.
-
-   Below `sm` the card stacks and the clip spans its full width, so a
-   horizontal wash would put the tone under the copy as well. There the clip's
-   own panel carries the tone instead (`bg-[#edebe9] sm:bg-transparent` in
-   Markets.jsx) and the plate stays plain.
-
-   Deliberately a plain class rather than an `@utility`: it needs a media
-   query of its own, and an unlayered rule also beats `market-plate` in the
-   cascade regardless of which is written first. */
-.forex-plate {
-  background: linear-gradient(
-    158deg,
-    #ffffff 0%,
-    #fdfeff 38%,
-    #f4f7fc 74%,
-    #eaf0f8 100%
-  );
-}
-
-@media (min-width: 40rem) {
-  .forex-plate {
-    background:
-      linear-gradient(
-        to right,
-        rgba(237, 235, 233, 0) 24%,
-        rgba(237, 235, 233, 0.5) 38%,
-        #edebe9 48%,
-        #edebe9 100%
-      ),
-      linear-gradient(
-        158deg,
-        #ffffff 0%,
-        #fdfeff 38%,
-        #f4f7fc 74%,
-        #eaf0f8 100%
-      );
-  }
-}
-
 /* The market card surface.
 
    The supplied marks changed: they used to be dark steel cutouts, which need
@@ -1110,24 +1057,6 @@ summary:focus-visible,
   background:
     radial-gradient(88% 76% at 88% 104%, rgba(76, 120, 190, 0.18), transparent 68%),
     linear-gradient(158deg, #272c32 0%, #1d2228 38%, #191e24 74%, #12161b 100%);
-}
-
-:root[data-theme="dark"] .forex-plate {
-  background: linear-gradient(158deg, #272c32 0%, #1d2228 42%, #14191e 100%);
-}
-
-@media (min-width: 40rem) {
-  :root[data-theme="dark"] .forex-plate {
-    background:
-      linear-gradient(
-        to right,
-        rgba(237, 235, 233, 0) 24%,
-        rgba(237, 235, 233, 0.42) 38%,
-        #edebe9 48%,
-        #edebe9 100%
-      ),
-      linear-gradient(158deg, #272c32 0%, #1d2228 42%, #14191e 100%);
-  }
 }
 
 :root[data-theme="dark"] .condition-platinum {

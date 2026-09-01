@@ -35,7 +35,7 @@ function ProofBadge({ icon, value, label }) {
       <ProofPuck>
         {icon === "mt5" ? (
           <Image
-            src="/assets/mobile-section/meta-treader.png"
+            src="/assets/mobile-section/meta-treader.webp"
             alt=""
             width={1254}
             height={1254}

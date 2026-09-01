@@ -24,12 +24,12 @@ export const metadata = {
   icons: {
     icon: [
       {
-        url: "/assets/payment_methods/bytefx-logo.png",
-        type: "image/png",
+        url: "/assets/payment_methods/bytefx-logo.webp",
+        type: "image/webp",
       },
     ],
-    shortcut: "/assets/payment_methods/bytefx-logo.png",
-    apple: "/assets/payment_methods/bytefx-logo.png",
+    shortcut: "/assets/payment_methods/bytefx-logo.webp",
+    apple: "/assets/payment_methods/bytefx-logo.webp",
   },
   openGraph: {
     title: "ByteFX | Discover your trading edge",

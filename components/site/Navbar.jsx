@@ -353,7 +353,7 @@ export function Navbar() {
       <div className="container-x flex h-[68px] items-center justify-between gap-5 lg:h-[70px]">
         <Link href="/" className="flex shrink-0 items-center" aria-label="ByteFX home">
           <Image
-            src="/assets/Logo.png"
+            src="/assets/Logo.webp"
             alt="ByteFX"
             width={384}
             height={82}
@@ -515,7 +515,7 @@ export function Navbar() {
             <div className="flex h-[72px] shrink-0 items-center justify-between border-b border-line px-5">
               <Link href="/" onClick={closeMenu} aria-label="ByteFX home">
                 <Image
-                  src="/assets/Logo.png"
+                  src="/assets/Logo.webp"
                   alt="ByteFX"
                   width={384}
                   height={82}

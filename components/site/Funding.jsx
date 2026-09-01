@@ -49,7 +49,7 @@ const METHODS = [
   {
     id: "visa",
     name: "Visa",
-    image: "/assets/payment_methods/visa.png",
+    image: "/assets/payment_methods/visa.webp",
     // Every logo ships inside a different amount of empty canvas — Visa's
     // wordmark floats in roughly half of its 1254px square, the Bitcoin coin
     // fills most of its own — so each mark is scaled to its own optical size.
@@ -59,31 +59,31 @@ const METHODS = [
   {
     id: "mastercard",
     name: "Mastercard",
-    image: "/assets/payment_methods/master_card.png",
+    image: "/assets/payment_methods/master_card.webp",
     markClassName: "w-[86%]",
   },
   {
     id: "apple-pay",
     name: "Apple Pay",
-    image: "/assets/payment_methods/apple_pay.png",
+    image: "/assets/payment_methods/apple_pay.webp",
     markClassName: "w-[90%]",
   },
   {
     id: "bitcoin",
     name: "Bitcoin",
-    image: "/assets/payment_methods/crypto.png",
+    image: "/assets/payment_methods/crypto.webp",
     markClassName: "w-[72%]",
   },
   {
     id: "usdt",
     name: "USDT",
-    image: "/assets/payment_methods/USDT.png",
+    image: "/assets/payment_methods/USDT.webp",
     markClassName: "w-[72%]",
   },
   {
     id: "bank-wire",
     name: "Bank wire",
-    image: "/assets/payment_methods/bank_wire.png",
+    image: "/assets/payment_methods/bank_wire.webp",
     markClassName: "w-[64%]",
   },
 ];
@@ -147,7 +147,7 @@ export function Funding() {
             copy. */}
         <div className="absolute top-[3%] -right-[10%] hidden w-[42%] max-w-[560px] md:block">
           <Image
-            src="/assets/payment_methods/image.png"
+            src="/assets/payment_methods/image.webp"
             alt=""
             width={1448}
             height={1086}

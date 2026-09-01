@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useMemo, useRef, useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
@@ -9,10 +9,8 @@ import {
   ArrowLeft,
   ArrowRight,
   Check,
-  ChevronDown,
   Eye,
   EyeOff,
-  Globe2,
   KeyRound,
   LockKeyhole,
   Mail,
@@ -22,6 +20,9 @@ import {
   UserRound,
 } from "lucide-react";
 
+import { CountrySelect, FlagImage } from "@/components/ui/country-select";
+import { ThemeToggle } from "@/components/ui/theme-toggle";
+import { dialPrefix } from "@/lib/countries";
 import { cn } from "@/lib/utils";
 
 const MODE_CONTENT = {
@@ -93,6 +94,11 @@ function AuthHeader({ mode, reduceMotion }) {
           >
             {content.topLabel}
           </Link>
+
+          {/* The auth routes render without the site chrome (see SiteShell),
+              so the navbar's theme switch is not on the page — this is the
+              only way in or out of dark mode while signing up. */}
+          <ThemeToggle className="h-10 w-10 border-white/75 bg-white/52 text-[#45536b] shadow-[0_10px_28px_-20px_rgba(31,42,60,.8)] backdrop-blur-xl hover:border-white hover:bg-white/82 hover:text-[#1356be] dark:border-white/12 dark:bg-white/[0.055] dark:text-white/68 dark:hover:border-white/24 dark:hover:bg-white/[0.1] dark:hover:text-white" />
         </div>
       </div>
     </motion.header>
@@ -252,7 +258,81 @@ function SecurityNote() {
   );
 }
 
-function SignupForm({ password, setPassword, setConfirmPassword }) {
+/**
+ * Country and phone are one control in two halves: picking a country writes
+ * that country's dialling code into the phone field and swaps the icon slot
+ * for its flag, so the number is already in international form before anyone
+ * types a digit. Switching country later replaces the old code rather than
+ * stacking a second one in front of it.
+ */
+function CountryAndPhone({ country, onCountryChange, phone, setPhone, phoneRef }) {
+  return (
+    <div className="grid gap-4 sm:grid-cols-2">
+      <div>
+        <label
+          htmlFor="country"
+          className="mb-1.5 block text-[12.5px] font-medium text-[#182238] dark:text-white/78"
+        >
+          Country
+        </label>
+        <CountrySelect
+          id="country"
+          name="country"
+          value={country}
+          onChange={onCountryChange}
+          className={inputClassName}
+        />
+      </div>
+
+      <div>
+        <label
+          htmlFor="phone"
+          className="mb-1.5 block text-[12.5px] font-medium text-[#182238] dark:text-white/78"
+        >
+          Phone number
+        </label>
+        <div className="relative">
+          {country ? (
+            <FlagImage
+              country={country}
+              className="pointer-events-none absolute top-1/2 left-3.5 -translate-y-1/2"
+            />
+          ) : (
+            <Phone
+              aria-hidden="true"
+              className="pointer-events-none absolute top-1/2 left-3.5 h-[17px] w-[17px] -translate-y-1/2 text-[#7183a3] dark:text-white/42"
+              strokeWidth={1.9}
+            />
+          )}
+          <input
+            ref={phoneRef}
+            id="phone"
+            name="phone"
+            type="tel"
+            inputMode="tel"
+            autoComplete="tel"
+            required
+            value={phone}
+            onChange={(event) => setPhone(event.target.value)}
+            placeholder={country ? `${country.dial} 00 000 0000` : "Select a country first"}
+            className={inputClassName}
+          />
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function SignupForm({
+  password,
+  setPassword,
+  setConfirmPassword,
+  country,
+  onCountryChange,
+  phone,
+  setPhone,
+  phoneRef,
+}) {
   const requirements = useMemo(
     () => [
       { label: "8+ characters", met: password.length >= 8 },
@@ -271,26 +351,13 @@ function SignupForm({ password, setPassword, setConfirmPassword }) {
       </div>
       <Field id="email" label="Email address" icon={Mail} type="email" placeholder="you@example.com" autoComplete="email" required />
 
-      <div className="grid gap-4 sm:grid-cols-2">
-        <div>
-          <label htmlFor="country" className="mb-1.5 block text-[12.5px] font-medium text-[#182238] dark:text-white/78">
-            Country
-          </label>
-          <div className="relative">
-            <Globe2 aria-hidden="true" className="pointer-events-none absolute left-3.5 top-1/2 h-[17px] w-[17px] -translate-y-1/2 text-[#7183a3] dark:text-white/42" strokeWidth={1.9} />
-            <select id="country" name="country" defaultValue="" required className={cn(inputClassName, "appearance-none pr-10 text-[#65738d]")}>
-              <option value="" disabled>Select your country</option>
-              <option value="gb">United Kingdom</option>
-              <option value="in">India</option>
-              <option value="th">Thailand</option>
-              <option value="ae">United Arab Emirates</option>
-              <option value="other">Other</option>
-            </select>
-            <ChevronDown aria-hidden="true" className="pointer-events-none absolute right-3.5 top-1/2 h-4 w-4 -translate-y-1/2 text-[#7183a3]" strokeWidth={2} />
-          </div>
-        </div>
-        <Field id="phone" label="Phone number" icon={Phone} type="tel" placeholder="+1 (555) 123-4567" autoComplete="tel" required />
-      </div>
+      <CountryAndPhone
+        country={country}
+        onCountryChange={onCountryChange}
+        phone={phone}
+        setPhone={setPhone}
+        phoneRef={phoneRef}
+      />
 
       <PasswordField id="password" label="Password" placeholder="Create a strong password" autoComplete="new-password" minLength={8} required onChange={(event) => setPassword(event.target.value)} />
       <PasswordField id="confirm-password" label="Confirm password" placeholder="Re-enter your password" autoComplete="new-password" minLength={8} required onChange={(event) => setConfirmPassword(event.target.value)} />
@@ -381,14 +448,42 @@ export function AuthPanel({ mode = "signup" }) {
   const [confirmPassword, setConfirmPassword] = useState("");
   const [code, setCode] = useState("");
   const [status, setStatus] = useState("");
+  const [country, setCountry] = useState(null);
+  const [phone, setPhone] = useState("");
+  const phoneRef = useRef(null);
   const isSignup = safeMode === "signup";
   const hasGoogleAuth = safeMode === "signup" || safeMode === "login";
+
+  const handleCountryChange = (next) => {
+    setPhone((current) => {
+      const previous = dialPrefix(country);
+      const national = previous && current.startsWith(previous)
+        ? current.slice(previous.length)
+        // Someone may have typed a code of their own before picking a
+        // country. Only drop it when a separator makes it unambiguous.
+        : current.replace(/^\+\d{1,4}[\s-]+/, "");
+      return dialPrefix(next) + national;
+    });
+    setCountry(next);
+
+    // Land the caret after the code so the next keystroke is the number.
+    requestAnimationFrame(() => {
+      const input = phoneRef.current;
+      if (!input) return;
+      input.focus();
+      input.setSelectionRange(input.value.length, input.value.length);
+    });
+  };
 
   const handleSubmit = (event) => {
     event.preventDefault();
     setStatus("");
 
     if (safeMode === "signup") {
+      if (!country) {
+        setStatus("Choose your country so we can dial your number correctly.");
+        return;
+      }
       if (password !== confirmPassword) {
         setStatus("Passwords do not match. Please check both fields.");
         return;
@@ -436,7 +531,7 @@ export function AuthPanel({ mode = "signup" }) {
             isSignup ? "max-w-[640px]" : "max-w-[510px]"
           )}
         >
-          <Image src="/assets/Logo.png" alt="ByteFX" width={384} height={82} className="h-[25px] w-auto" />
+          <Image src="/assets/Logo.webp" alt="ByteFX" width={384} height={82} className="h-[25px] w-auto" />
 
           <div className="mt-7">
             <h1 className="text-[30px] font-semibold leading-[1.12] tracking-[-0.035em] text-[#101a2e] sm:text-[34px] dark:text-white">{content.title}</h1>
@@ -460,7 +555,18 @@ export function AuthPanel({ mode = "signup" }) {
           ) : null}
 
           <form onSubmit={handleSubmit} className={cn("space-y-4", !hasGoogleAuth && "mt-7")}>
-            {safeMode === "signup" ? <SignupForm password={password} setPassword={setPassword} setConfirmPassword={setConfirmPassword} /> : null}
+            {safeMode === "signup" ? (
+              <SignupForm
+                password={password}
+                setPassword={setPassword}
+                setConfirmPassword={setConfirmPassword}
+                country={country}
+                onCountryChange={handleCountryChange}
+                phone={phone}
+                setPhone={setPhone}
+                phoneRef={phoneRef}
+              />
+            ) : null}
             {safeMode === "login" ? <LoginForm /> : null}
             {safeMode === "forgot" ? <ForgotForm /> : null}
             {safeMode === "verify" ? <VerifyForm code={code} setCode={setCode} onResend={() => setStatus("A new verification code has been requested.")} /> : null}

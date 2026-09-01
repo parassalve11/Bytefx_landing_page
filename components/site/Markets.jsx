@@ -52,7 +52,7 @@ const MARKETS = [
     // pill would go. The reference solves that by dropping the label on this
     // one card and leaving the bare arrow, and so does this.
     compactCta: true,
-    image: "/assets/indices.png",
+    image: "/assets/indices.webp",
     width: 1448,
     height: 1086,
     alt: "S&P 500, Nasdaq 100, Dow Jones and FTSE 100 index medallions",
@@ -71,7 +71,7 @@ const MARKETS = [
     icon: Bitcoin,
     description: "Bitcoin, Ethereum, Solana and Tether, around the clock.",
     cta: "Explore Crypto",
-    image: "/assets/CrypoCurrency.png",
+    image: "/assets/CrypoCurrency.webp",
     width: 1254,
     height: 1254,
     alt: "Bitcoin, Ethereum, Solana and Tether coins",
@@ -89,7 +89,7 @@ const MARKETS = [
     icon: CandlestickChart,
     description: "Long or short on the largest US, UK and European names.",
     cta: "Explore Stocks",
-    image: "/assets/stocks_metal.png",
+    image: "/assets/stocks_metal.webp",
     width: 1254,
     height: 1254,
     alt: "Apple, NVIDIA, Tesla, Google and Meta company marks",
@@ -107,7 +107,7 @@ const MARKETS = [
     icon: Droplet,
     description: "Gold, silver, crude and natural gas at institutional pricing.",
     cta: "Explore Commodities",
-    image: "/assets/gold_and_sliver.png",
+    image: "/assets/gold_and_sliver.webp",
     width: 1254,
     height: 1254,
     alt: "Gold bar, silver bar and a crude oil droplet",
@@ -209,15 +209,15 @@ function TileCta({ children, compact = false, className }) {
 /**
  * Forex is the one moving mark on the page.
  *
- * The clip is opaque — the coins are baked onto #EDEBE9 (see README) — so it
- * cannot float free the way the four still marks do. Instead the clip and a
- * flat field of that same tone share one wrapper, and one mask feathers the
- * pair of them together: the tone fades out into the card rather than ending
- * on an edge, so there is no grey box, and no seam where the two meet.
+ * The clip carries a real alpha channel (VP9 `yuva420p`, see README), so the
+ * coins float free exactly the way the four still marks do — same corner
+ * bleed, same idle drift, same hover scale — and the tile can therefore wear
+ * the ordinary `market-plate` instead of the tone-matched panel the old
+ * opaque clip forced on it.
  *
  * It fetches only once it scrolls into view and pauses again on the way out;
- * the poster covers the gap. Under reduced motion the poster is all anyone
- * ever sees.
+ * the poster — a transparent WebP cut from frame one — covers the gap. Under
+ * reduced motion the poster is all anyone ever sees.
  */
 function ForexMark() {
   const ref = useRef(null);
@@ -240,17 +240,23 @@ function ForexMark() {
   }, []);
 
   return (
-    <div className="relative h-full w-full">
+    <div
+      aria-hidden="true"
+      /* Below `sm` the card stacks and the clip is a band of its own, bled out
+         to the card's edges under the copy. From `sm` up it leaves the flow
+         and becomes a corner mark like the other four. */
+      className="metal-float pointer-events-none relative z-0 -mx-6 -mt-1 aspect-[68/45] w-[calc(100%+3rem)] sm:absolute sm:-right-[12%] sm:-bottom-[10%] sm:mx-0 sm:mt-0 sm:w-[69%] sm:max-w-[482px]"
+      style={{ "--float-delay": "-3.6s" }}
+    >
       <video
         ref={ref}
         src="/assets/forex_coins.webm"
-        poster="/assets/forex_coins_poster.jpg"
+        poster="/assets/forex_coins_poster.webp"
         muted
         loop
         playsInline
         preload="none"
-        aria-hidden="true"
-        className="relative h-full w-full scale-[1.04] object-contain transition-transform duration-500 ease-out group-hover/tile:scale-[1.12]"
+        className="h-full w-full object-contain transition-transform duration-500 ease-out group-hover/tile:scale-[1.05]"
       />
     </div>
   );
@@ -312,10 +318,9 @@ function ForexTile() {
       <Tile
         href="/markets/forex"
         label="Explore Forex"
-        plate="forex-plate"
-        className="min-h-[380px] md:min-h-[400px] sm:flex-row sm:items-stretch"
+        className="min-h-[380px] p-6 sm:p-8 md:min-h-[400px]"
       >
-        <div className="relative z-10 flex flex-1 flex-col p-6 sm:py-9 sm:pr-0 sm:pl-8">
+        <div className="relative z-10 mb-5 sm:mb-6 sm:max-w-[46%]">
           <TileCount icon={Send} count="70+" label="Currency pairs" />
 
           <h3 className="mt-5 text-[36px] leading-[1.02] font-bold tracking-[-0.035em] text-ink md:text-[44px]">
@@ -324,24 +329,15 @@ function ForexTile() {
 
           <TileRule />
 
-          <p className="mt-4 max-w-[34ch] text-[14.5px] leading-relaxed text-body">
+          <p className="mt-4 max-w-[38ch] text-[14.5px] leading-relaxed text-body sm:max-w-[27ch]">
             Majors, minors and exotics with spreads from 0.0 pips, deep
             liquidity and execution measured in milliseconds.
           </p>
-
-          <div className="mt-auto pt-8">
-            <TileCta>Explore Forex</TileCta>
-          </div>
         </div>
 
-        {/* Bleeds to the card's edges on every side it can reach — any
-            padding here would put a visible ledge back around the clip. Below
-            `sm` the panel carries the clip's tone itself; from `sm` up the
-            plate's right-hand wash does, so it goes transparent. See the
-            `.forex-plate` note in globals.css. */}
-        <div className="pointer-events-none relative z-0 aspect-[5/4] w-full shrink-0 self-center bg-[#edebe9] sm:aspect-auto sm:w-[46%] sm:max-w-[380px] sm:self-stretch sm:bg-transparent">
-          <ForexMark />
-        </div>
+        <ForexMark />
+
+        <TileCta className="relative z-10 mt-auto pt-5 sm:pt-0">Explore Forex</TileCta>
       </Tile>
     </RevealItem>
   );

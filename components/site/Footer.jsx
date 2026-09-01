@@ -90,7 +90,7 @@ export function Footer() {
           {/* Brand ------------------------------------------------- */}
           <div className="md:col-span-2 lg:col-span-1">
             <Image
-              src="/assets/Logo.png"
+              src="/assets/Logo.webp"
               alt="ByteFX"
               width={384}
               height={82}

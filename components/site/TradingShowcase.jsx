@@ -1,9 +1,9 @@
 import Image from "next/image";
 import { ArrowRight } from "lucide-react";
-import traderAsset from "@/public/assets/show_case/ChatGPT Image Aug 28, 2026, 02_19_03 PM.png";
-import toolsAsset from "@/public/assets/show_case/ChatGPT Image Aug 28, 2026, 02_21_02 PM.png";
-import competitionAsset from "@/public/assets/show_case/ChatGPT Image Aug 28, 2026, 02_30_08 PM (1).png";
-import copyTradingAsset from "@/public/assets/show_case/7fefebc6-0bec-412e-bd12-10687ce7e5ff.png";
+import traderAsset from "@/public/assets/show_case/ChatGPT Image Aug 28, 2026, 02_19_03 PM.webp";
+import toolsAsset from "@/public/assets/show_case/ChatGPT Image Aug 28, 2026, 02_21_02 PM.webp";
+import competitionAsset from "@/public/assets/show_case/ChatGPT Image Aug 28, 2026, 02_30_08 PM (1).webp";
+import copyTradingAsset from "@/public/assets/show_case/7fefebc6-0bec-412e-bd12-10687ce7e5ff.webp";
 import styles from "./TradingShowcase.module.css";
 
 const SHOWCASE_ASSETS = {

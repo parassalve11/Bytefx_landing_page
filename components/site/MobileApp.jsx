@@ -45,14 +45,14 @@ const PLATFORMS = [
     id: "mt5",
     name: "MetaTrader 5",
     copy: "Every order type, Expert Advisors and 21 timeframes — running on your live balance.",
-    icon: "/assets/mobile-section/meta-treader.png",
+    icon: "/assets/mobile-section/meta-treader.webp",
     markClass: "h-[22px] w-[22px]",
   },
   {
     id: "tradingview",
     name: "TradingView",
     copy: "Chart where you already chart. Orders and open positions stay linked to your account.",
-    icon: "/assets/mobile-section/treadingview.png",
+    icon: "/assets/mobile-section/treadingview.webp",
     markClass: "h-[26px] w-[26px]",
   },
 ];
@@ -207,7 +207,7 @@ export function MobileApp() {
             className="pointer-events-none absolute inset-x-[6%] top-[18%] bottom-[6%] rounded-[50%] bg-brand/20 blur-3xl"
           />
           <Image
-            src="/assets/mobile_section.png"
+            src="/assets/mobile_section.webp"
             alt="The ByteFX trading platform running on tablet, phone and laptop"
             width={1672}
             height={941}

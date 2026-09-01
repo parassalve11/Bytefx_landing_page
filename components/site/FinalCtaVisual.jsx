@@ -10,7 +10,7 @@ import {
   useSpring,
   useTransform,
 } from "motion/react";
-import growthArtwork from "@/public/assets/show_case/ae9eeeb9-2976-4ba4-8326-2dcdeaeb7513.png";
+import growthArtwork from "@/public/assets/show_case/ae9eeeb9-2976-4ba4-8326-2dcdeaeb7513.webp";
 
 const TILT_SPRING = { stiffness: 180, damping: 24, mass: 0.7 };
 

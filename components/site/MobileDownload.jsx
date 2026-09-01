@@ -104,7 +104,7 @@ export function MobileDownload() {
       <div className="container-x">
         <div className="relative isolate hidden aspect-[1672/941] min-h-[520px] overflow-hidden rounded-[30px] border border-[#68ac22]/55 bg-[#002d19] shadow-[0_34px_90px_-45px_rgba(1,77,37,.78)] md:block lg:min-h-[548px]">
           <Image
-            src="/assets/mobile/background.png"
+            src="/assets/mobile/background.webp"
             alt=""
             fill
             sizes="(min-width: 1280px) 1240px, 100vw"
@@ -132,7 +132,7 @@ export function MobileDownload() {
             delay={0.02}
           >
             <Image
-              src="/assets/mobile/mobiles.png"
+              src="/assets/mobile/mobiles.webp"
               alt="Mobile account dashboard and live trading chart"
               width={1536}
               height={1024}
@@ -144,7 +144,7 @@ export function MobileDownload() {
 
         <div className="relative isolate overflow-hidden rounded-[26px] border border-[#68ac22]/50 bg-[#002d19] px-5 pb-5 pt-7 text-center shadow-[0_28px_70px_-42px_rgba(1,77,37,.75)] sm:px-7 sm:pt-9 md:hidden">
           <Image
-            src="/assets/mobile/background.png"
+            src="/assets/mobile/background.webp"
             alt=""
             fill
             sizes="100vw"
@@ -164,7 +164,7 @@ export function MobileDownload() {
             delay={0.03}
           >
             <Image
-              src="/assets/mobile/mobiles.png"
+              src="/assets/mobile/mobiles.webp"
               alt="Mobile account dashboard and live trading chart"
               width={1536}
               height={1024}

@@ -74,7 +74,7 @@ export function Thailand() {
           phones rather than the 2200px master. Not `priority` — this sits six
           sections down and must not compete with the hero for LCP. */}
       <Image
-        src="/assets/thailand-ang-thong.jpg"
+        src="/assets/thailand-ang-thong.webp"
         alt=""
         aria-hidden="true"
         fill
@@ -102,7 +102,7 @@ export function Thailand() {
           <Reveal className="flex items-center gap-3">
             <span className="pay-puck inline-flex items-center rounded-xl px-3 py-2">
               <Image
-                src="/assets/Logo.png"
+                src="/assets/Logo.webp"
                 alt="ByteFX"
                 width={384}
                 height={82}

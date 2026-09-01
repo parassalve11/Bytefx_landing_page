@@ -99,7 +99,7 @@ export function AboutExperience() {
                 loop
                 playsInline
                 preload="metadata"
-                poster="/assets/about/crypto-rain-poster.png"
+                poster="/assets/about/crypto-rain-poster.webp"
                 aria-hidden="true"
                 className="absolute inset-0 h-full w-full object-cover"
               >
@@ -110,7 +110,7 @@ export function AboutExperience() {
 
               <div className="absolute inset-y-0 left-0 flex w-[58%] flex-col justify-between p-7 sm:p-10">
                 <Image
-                  src="/assets/Logo.png"
+                  src="/assets/Logo.webp"
                   alt="ByteFX"
                   width={384}
                   height={82}
@@ -179,7 +179,7 @@ export function AboutExperience() {
         <div className="container-x grid items-center gap-12 lg:grid-cols-[1.02fr_.98fr] lg:gap-16">
           <Reveal className="relative overflow-hidden rounded-[30px] border border-line bg-[#f5f7fa] shadow-[0_28px_80px_-48px_rgba(1,6,26,.5)] dark:bg-[#111820]">
             <Image
-              src="/assets/company_stocks.png"
+              src="/assets/company_stocks.webp"
               alt="Popular global share markets available through ByteFX"
               width={1672}
               height={941}
@@ -244,7 +244,7 @@ export function AboutExperience() {
               Mobile trading
             </div>
             <Image
-              src="/assets/mobile/mobiles.png"
+              src="/assets/mobile/mobiles.webp"
               alt="ByteFX mobile account and trading screens"
               width={1536}
               height={1024}
