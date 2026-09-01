@@ -3,7 +3,8 @@ import { AboutExperience } from "@/components/site/AboutExperience";
 export const metadata = {
   title: "About ByteFX",
   description:
-    "Meet ByteFX: a focused trading experience for forex, metals, indices and crypto, built around clear conditions and direct execution.",
+    "Discover the thinking behind ByteFX: clear market access, connected account tools and a focused trading experience.",
+  alternates: { canonical: "/company/about" },
 };
 
 export default function AboutPage() {

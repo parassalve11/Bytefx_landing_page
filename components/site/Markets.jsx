@@ -329,7 +329,9 @@ function ForexTile() {
             liquidity and execution measured in milliseconds.
           </p>
 
-          <TileCta className="mt-auto pt-8">Explore Forex</TileCta>
+          <div className="mt-auto pt-8">
+            <TileCta>Explore Forex</TileCta>
+          </div>
         </div>
 
         {/* Bleeds to the card's edges on every side it can reach — any

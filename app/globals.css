@@ -193,6 +193,74 @@ body {
   text-rendering: optimizeLegibility;
 }
 
+.auth-grid {
+  background-image:
+    linear-gradient(rgba(19, 86, 190, 0.055) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(19, 86, 190, 0.055) 1px, transparent 1px);
+  background-size: 46px 46px;
+  mask-image: linear-gradient(to bottom, transparent, black 25%, black 75%, transparent);
+}
+
+/* The auth surface uses platinum rather than flat white: a cool metallic base,
+   a restrained highlight and enough translucency to retain depth behind it. */
+.auth-platinum-card {
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
+  border: 1px solid rgba(255, 255, 255, 0.9);
+  background:
+    linear-gradient(
+      145deg,
+      rgba(255, 255, 255, 0.94) 0%,
+      rgba(229, 228, 226, 0.9) 52%,
+      rgba(245, 247, 250, 0.92) 100%
+    );
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.98),
+    inset 0 -1px 0 rgba(145, 153, 164, 0.12),
+    0 34px 85px -42px rgba(31, 42, 60, 0.58);
+  -webkit-backdrop-filter: blur(28px) saturate(125%);
+  backdrop-filter: blur(28px) saturate(125%);
+}
+
+.auth-platinum-card::before {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  border-radius: inherit;
+  background:
+    radial-gradient(circle at 12% 0%, rgba(255, 255, 255, 0.95), transparent 34%),
+    linear-gradient(115deg, transparent 34%, rgba(255, 255, 255, 0.2) 48%, transparent 62%);
+  content: "";
+  pointer-events: none;
+}
+
+.auth-platinum-card > * {
+  position: relative;
+  z-index: 1;
+}
+
+:root[data-theme="dark"] .auth-platinum-card {
+  border-color: rgba(229, 228, 226, 0.2);
+  background:
+    linear-gradient(
+      145deg,
+      rgba(48, 53, 61, 0.92) 0%,
+      rgba(22, 26, 32, 0.93) 52%,
+      rgba(38, 41, 46, 0.9) 100%
+    );
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.16),
+    inset 0 -1px 0 rgba(255, 255, 255, 0.035),
+    0 38px 100px -45px rgba(0, 0, 0, 0.96);
+}
+
+:root[data-theme="dark"] .auth-platinum-card::before {
+  background:
+    radial-gradient(circle at 12% 0%, rgba(255, 255, 255, 0.13), transparent 36%),
+    linear-gradient(115deg, transparent 34%, rgba(229, 228, 226, 0.055) 48%, transparent 62%);
+}
+
 /* Full-width navigation follows the crisp broker-header hierarchy used by the
    reference while retaining ByteFX's softer platinum surfaces. */
 .site-navbar-shell {
@@ -226,22 +294,6 @@ body {
     color-mix(in srgb, var(--surface) 96%, var(--brand-50)),
     var(--surface) 62%
   );
-}
-
-.tradingview-ticker-shell {
-  border-block: 1px solid var(--line);
-  background: var(--surface);
-}
-
-.tradingview-ticker-glass {
-  display: flex;
-  align-items: center;
-  background: var(--surface);
-}
-
-:root[data-theme="dark"] .tradingview-ticker-shell,
-:root[data-theme="dark"] .tradingview-ticker-glass {
-  background: #13171b;
 }
 
 /* Prices must never jitter. */

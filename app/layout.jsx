@@ -4,6 +4,7 @@ import { AnnouncementBar } from "@/components/site/AnnouncementBar";
 import { Navbar } from "@/components/site/Navbar";
 import { Footer } from "@/components/site/Footer";
 import { AtlasChat } from "@/components/site/AtlasChat";
+import { SiteShell } from "@/components/site/SiteShell";
 
 const poppins = Poppins({
   subsets: ["latin"],
@@ -73,11 +74,14 @@ export default function RootLayout({ children }) {
         <script dangerouslySetInnerHTML={{ __html: THEME_SCRIPT }} />
       </head>
       <body>
-        <AnnouncementBar />
-        <Navbar />
-        {children}
-        <Footer />
-        <AtlasChat />
+        <SiteShell
+          announcement={<AnnouncementBar />}
+          navbar={<Navbar />}
+          footer={<Footer />}
+          atlas={<AtlasChat />}
+        >
+          {children}
+        </SiteShell>
       </body>
     </html>
   );

@@ -1,31 +1,8 @@
 import Image from "next/image";
-import { Apple } from "lucide-react";
 
 import { Reveal } from "@/components/ui/reveal";
+import { BrandGlyph } from "@/components/ui/brand-icons";
 import { cn } from "@/lib/utils";
-
-function GooglePlayMark({ className = "" }) {
-  return (
-    <svg viewBox="0 0 48 52" className={className} aria-hidden="true">
-      <path
-        d="M5.2 3.6c-1.2 1.2-1.9 3-1.9 5.2v34.4c0 2.2.7 4 1.9 5.2L6.8 50 26.1 30.7v-.5L6.8 10.8 5.2 3.6Z"
-        fill="#00d4ff"
-      />
-      <path
-        d="M32.6 37.3 26.1 30.7v-.5l6.5-6.5 7.8 4.4c2.2 1.3 2.2 3.3 0 4.6l-7.8 4.6Z"
-        fill="#ffd500"
-      />
-      <path
-        d="m32.6 37.3-6.5-6.6L6.8 50c1.9 2 5 2.2 8.5.2l17.3-9.8v-3.1Z"
-        fill="#ff3a44"
-      />
-      <path
-        d="M32.6 23.7 15.3 13.9C11.8 12 8.7 12.1 6.8 14l19.3 16.2 6.5-6.5Z"
-        fill="#00e676"
-      />
-    </svg>
-  );
-}
 
 function StoreBadge({ store }) {
   const apple = store === "apple";
@@ -34,13 +11,12 @@ function StoreBadge({ store }) {
     <a
       href={apple ? "/download#ios" : "/download#android"}
       aria-label={apple ? "Download on the App Store" : "Get it on Google Play"}
-      className="group/store flex min-h-11 items-center gap-2.5 rounded-xl border border-white/15 bg-[#050806]/90 px-3.5 py-2 text-white shadow-[0_10px_24px_-16px_rgba(0,0,0,.9)] transition duration-300 hover:-translate-y-0.5 hover:border-[#8ee72f]/65 hover:bg-[#071008] focus-visible:ring-2 focus-visible:ring-[#8ee72f]"
+      className="group/store flex min-h-11 items-center gap-2.5 rounded-xl border border-white/15 bg-[#050806]/92 px-3.5 py-2 text-white shadow-[0_10px_24px_-16px_rgba(0,0,0,.9)] transition duration-300 hover:-translate-y-0.5 hover:border-[#8ee72f]/65 hover:bg-[#071008] focus-visible:ring-2 focus-visible:ring-[#8ee72f]"
     >
-      {apple ? (
-        <Apple className="h-6 w-6 shrink-0 fill-white" strokeWidth={1.3} />
-      ) : (
-        <GooglePlayMark className="h-6 w-6 shrink-0" />
-      )}
+      <BrandGlyph
+        name={apple ? "apple" : "googleplay"}
+        className="h-6 w-6 shrink-0 text-white"
+      />
       <span className="text-left leading-none">
         <span className="block text-[8px] font-medium tracking-[0.02em] text-white/65">
           {apple ? "Download on the" : "GET IT ON"}
@@ -56,17 +32,25 @@ function StoreBadge({ store }) {
 function DownloadPanel({ compact = false }) {
   return (
     <div
-      className={`grid items-center gap-3 rounded-2xl border border-[#89d72e]/35 bg-[#03150d]/64 p-3 shadow-[inset_0_1px_0_rgba(255,255,255,.08),0_18px_40px_-28px_rgba(0,0,0,.9)] backdrop-blur-xl ${
-        compact ? "grid-cols-[76px_1fr]" : "grid-cols-[88px_1fr]"
-      }`}
+      className={cn(
+        "grid items-center gap-3 rounded-2xl border border-[#89d72e]/35 bg-[#03150d]/64 p-3 shadow-[inset_0_1px_0_rgba(255,255,255,.08),0_18px_40px_-28px_rgba(0,0,0,.9)] backdrop-blur-xl",
+        compact
+          ? "grid-cols-[76px_minmax(0,1fr)]"
+          : "grid-cols-[92px_minmax(0,1fr)]"
+      )}
     >
-      <div className="rounded-xl bg-white p-1.5 shadow-[0_8px_20px_-12px_rgba(0,0,0,.9)]">
+      <div
+        className={cn(
+          "flex aspect-square items-center justify-center overflow-hidden rounded-xl bg-white shadow-[0_8px_20px_-12px_rgba(0,0,0,.9)]",
+          compact ? "w-[76px] p-2" : "w-[92px] p-2.5"
+        )}
+      >
         <Image
           src="/assets/bytefx-app-qr.svg"
           alt="QR code for the mobile trading app"
           width={88}
           height={88}
-          className="h-auto w-full"
+          className="block h-full w-full object-contain"
         />
       </div>
 

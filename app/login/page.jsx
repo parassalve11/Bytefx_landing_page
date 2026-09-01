@@ -1,7 +1,7 @@
 import { AuthPanel } from "@/components/site/AuthPanel";
 
 export const metadata = {
-  title: "Log in",
+  title: "Login",
   description:
     "Sign in to the ByteFX client area to trade, fund your account and manage withdrawals.",
   alternates: { canonical: "/login" },
