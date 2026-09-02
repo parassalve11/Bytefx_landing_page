@@ -348,7 +348,7 @@ export function Navbar() {
     <header
       data-stuck={stuck ? "true" : "false"}
       style={open ? { zIndex: 80 } : undefined}
-      className="site-navbar-shell sticky top-0 z-50 border-b"
+      className="site-navbar-shell sticky top-0 z-50  bg-transparent transition-[border-color,background-color] data-[stuck=true]:border-line data-[stuck=true]:bg-surface/95"
     >
       <div className="container-x flex h-[68px] items-center justify-between gap-5 lg:h-[70px]">
         <Link href="/" className="flex shrink-0 items-center" aria-label="ByteFX home">

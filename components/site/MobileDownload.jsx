@@ -160,21 +160,19 @@ export function MobileDownload() {
           </Reveal>
 
           <Reveal
-            className="pointer-events-none relative z-10 -mx-[28%] -mt-1 aspect-[1.42] overflow-hidden sm:-mx-[8%] sm:aspect-[1.75]"
+            className="pointer-events-none relative z-10 -mx-4 mt-3 aspect-[3/2] w-[calc(100%+2rem)] sm:mx-auto sm:mt-4 sm:w-full sm:max-w-[640px]"
             delay={0.03}
           >
             <Image
               src="/assets/mobile/mobiles.webp"
               alt="Mobile account dashboard and live trading chart"
-              width={1536}
-              height={1024}
-              sizes="150vw"
-              style={{ bottom: "-3%" }}
-              className="absolute left-1/2 h-auto w-[145%] max-w-none -translate-x-1/2 drop-shadow-[0_28px_28px_rgba(0,0,0,.36)] sm:w-[112%]"
+              fill
+              sizes="(max-width: 767px) calc(100vw - 32px), 640px"
+              className="object-contain object-center drop-shadow-[0_28px_28px_rgba(0,0,0,.36)]"
             />
           </Reveal>
 
-          <Reveal className="relative z-20 mx-auto -mt-2 max-w-xl text-left sm:-mt-5" delay={0.06}>
+          <Reveal className="relative z-20 mx-auto mt-1 max-w-xl text-left sm:-mt-1" delay={0.06}>
             <DownloadPanel compact />
           </Reveal>
         </div>

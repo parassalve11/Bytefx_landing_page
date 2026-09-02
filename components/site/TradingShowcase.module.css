@@ -919,30 +919,23 @@
    ========================================================= */
 
 @media (max-width: 679px) {
-  .mainCard::after,
-  .toolsCard::after,
-  .competitionCard::after,
-  .copyCard::after {
-    position: absolute;
-    z-index: 3;
-    inset: 0;
-    content: "";
-    pointer-events: none;
-  }
-
-  .mainCard::after {
-    background: linear-gradient(
-      180deg,
-      rgb(var(--showcase-surface-rgb) / 1) 0%,
-      rgb(var(--showcase-surface-rgb) / 0.98) 45%,
-      rgb(var(--showcase-surface-rgb) / 0.72) 57%,
-      rgb(var(--showcase-surface-rgb) / 0) 76%
-    );
+  /* Mobile cards use natural vertical flow so every illustration gets its own
+     space below the copy. Desktop positioning starts at 680px and is left
+     completely unchanged. */
+  .mainCard,
+  .toolsCard,
+  .promoCard {
+    display: flex;
+    min-height: 0;
+    flex-direction: column;
   }
 
   .mainCopy {
-    top: 48px;
-    right: 24px;
+    position: relative;
+    top: auto;
+    right: auto;
+    left: auto;
+    padding: 44px 22px 0;
   }
 
   .mainTitle {
@@ -959,9 +952,12 @@
   }
 
   .traderImage {
-    right: -104px;
-    bottom: -10px;
-    width: 470px;
+    position: relative;
+    right: auto;
+    bottom: auto;
+    align-self: center;
+    width: min(430px, 116vw);
+    margin-top: 12px;
   }
 
   .featureCopy,
@@ -976,62 +972,38 @@
   }
 
   .toolsCard {
-    min-height: 380px;
-  }
-
-  .toolsCard::after {
-    background: linear-gradient(
-      180deg,
-      #2f66d1 0%,
-      rgba(47, 102, 209, 0.98) 42%,
-      rgba(47, 102, 209, 0.42) 62%,
-      rgba(47, 102, 209, 0) 78%
-    );
+    min-height: 0;
   }
 
   .toolsImage {
-    right: -30px;
-    bottom: 4px;
-
-    width: 390px;
+    position: relative;
+    right: auto;
+    bottom: auto;
+    align-self: center;
+    width: min(420px, calc(100% - 24px));
+    margin: 14px auto 16px;
   }
 
   .promoCard {
-    min-height: 360px;
+    min-height: 0;
   }
 
   .competitionImage {
-    right: -15px;
-    bottom: 4px;
-
-    width: 300px;
-  }
-
-  .competitionCard::after {
-    background: linear-gradient(
-      180deg,
-      #43c800 0%,
-      rgba(67, 200, 0, 0.98) 46%,
-      rgba(67, 200, 0, 0.42) 62%,
-      rgba(67, 200, 0, 0) 78%
-    );
+    position: relative;
+    right: auto;
+    bottom: auto;
+    align-self: center;
+    width: min(330px, calc(100% - 20px));
+    margin: 12px auto 14px;
   }
 
   .copyImage {
-    right: 8px;
-    bottom: 4px;
-
-    width: 185px;
-  }
-
-  .copyCard::after {
-    background: linear-gradient(
-      180deg,
-      rgb(var(--showcase-surface-rgb) / 1) 0%,
-      rgb(var(--showcase-surface-rgb) / 0.98) 47%,
-      rgb(var(--showcase-surface-rgb) / 0.46) 64%,
-      rgb(var(--showcase-surface-rgb) / 0) 80%
-    );
+    position: relative;
+    right: auto;
+    bottom: auto;
+    align-self: center;
+    width: min(280px, calc(100% - 42px));
+    margin: 12px auto 14px;
   }
 }
 

@@ -210,7 +210,7 @@ function ForexMark() {
   return (
     <div
       aria-hidden="true"
-      className="pointer-events-none relative z-0 -mx-6 -mt-2 aspect-[4/3] w-[calc(100%+3rem)] sm:absolute sm:-right-[7%] sm:-bottom-[11%] sm:mx-0 sm:mt-0 sm:w-[66%] sm:max-w-[500px]"
+      className="pointer-events-none relative z-0 -mx-6 -mt-2 aspect-[4/3] w-[calc(100%+3rem)] sm:absolute sm:right-[1%] sm:top-1/2 sm:mx-0 sm:mt-0 sm:w-[62%] sm:max-w-[460px] sm:-translate-y-1/2"
     >
       <span className="absolute inset-x-[12%] inset-y-[17%] rounded-full bg-brand/20 opacity-55 blur-3xl transition-[opacity,transform] duration-700 ease-out group-hover/tile:scale-110 group-hover/tile:opacity-80 dark:opacity-35" />
 
