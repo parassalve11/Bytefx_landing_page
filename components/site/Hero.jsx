@@ -64,11 +64,11 @@ function ProofBadge({ icon, value, label }) {
 /**
  * CSS selects the active day/night image, so the browser requests one hero
  * asset instead of downloading both. The artwork's quiet left third is kept
- * for the copy while the doorway remains the visual destination on the right.
+ * for the copy while the glass wave remains the visual focus on the right.
  */
 export function Hero() {
   return (
-    <section className="landing-hero relative -mt-20 flex min-h-[100svh] items-center overflow-hidden pt-20 sm:-mt-[84px] sm:pt-[84px]">
+    <section className="landing-hero relative -mt-20 flex min-h-[calc(100svh+72px)] items-center overflow-hidden pt-20 sm:-mt-[84px] sm:pt-[84px]">
       <div className="pointer-events-none absolute inset-0" aria-hidden="true">
         <div className="landing-hero-art absolute inset-0" />
         <div className="landing-hero-scrim absolute inset-0" />
@@ -86,9 +86,9 @@ export function Hero() {
 
           <Rise as="h1" delay={0.1} className="h-display mt-5 text-balance-i">
             <span className="landing-hero-title-soft block font-light">
-              Discover your
+              Trade global markets
             </span>
-            <span className="block text-brand">trading edge</span>
+            <span className="block text-brand">with clarity</span>
           </Rise>
 
           <Rise
@@ -96,8 +96,8 @@ export function Hero() {
             delay={0.17}
             className="landing-hero-lead text-balance-i mx-auto mt-6 max-w-[560px] text-[16.5px] leading-relaxed md:mx-0"
           >
-            One account for forex, metals, indices and crypto, on MetaTrader 5.
-            Open it in minutes and fund it instantly.
+            Access forex, metals, indices and crypto through MetaTrader 5, with
+            clear conditions and support when markets move.
           </Rise>
 
           <Rise

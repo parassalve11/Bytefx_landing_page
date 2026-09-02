@@ -1,7 +1,6 @@
 "use client";
 
 import Image from "next/image";
-import { useEffect, useRef } from "react";
 import {
   ArrowUpRight,
   BarChart3,
@@ -206,58 +205,30 @@ function TileCta({ children, compact = false, className }) {
   );
 }
 
-/**
- * Forex is the one moving mark on the page.
- *
- * The clip carries a real alpha channel (VP9 `yuva420p`, see README), so the
- * coins float free exactly the way the four still marks do — same corner
- * bleed, same idle drift, same hover scale — and the tile can therefore wear
- * the ordinary `market-plate` instead of the tone-matched panel the old
- * opaque clip forced on it.
- *
- * It fetches only once it scrolls into view and pauses again on the way out;
- * the poster — a transparent WebP cut from frame one — covers the gap. Under
- * reduced motion the poster is all anyone ever sees.
- */
+/** The supplied Forex mark, with a restrained idle drift and hover response. */
 function ForexMark() {
-  const ref = useRef(null);
-
-  useEffect(() => {
-    const video = ref.current;
-    if (!video) return;
-    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
-
-    const io = new IntersectionObserver(
-      ([entry]) => {
-        if (entry.isIntersecting) video.play().catch(() => {});
-        else video.pause();
-      },
-      { threshold: 0.2 }
-    );
-
-    io.observe(video);
-    return () => io.disconnect();
-  }, []);
-
   return (
     <div
       aria-hidden="true"
-      /* Below `sm` the card stacks and the clip is a band of its own, bled out
-         to the card's edges under the copy. From `sm` up it leaves the flow
-         and becomes a corner mark like the other four. */
-      className="metal-float pointer-events-none relative z-0 -mx-6 -mt-1 aspect-[68/45] w-[calc(100%+3rem)] sm:absolute sm:-right-[12%] sm:-bottom-[10%] sm:mx-0 sm:mt-0 sm:w-[69%] sm:max-w-[482px]"
-      style={{ "--float-delay": "-3.6s" }}
+      className="pointer-events-none relative z-0 -mx-6 -mt-2 aspect-[4/3] w-[calc(100%+3rem)] sm:absolute sm:-right-[7%] sm:-bottom-[11%] sm:mx-0 sm:mt-0 sm:w-[66%] sm:max-w-[500px]"
     >
-      <video
-        ref={ref}
-        src="/assets/forex_coins.webm"
-        poster="/assets/forex_coins_poster.webp"
-        muted
-        loop
-        playsInline
-        preload="none"
-        className="h-full w-full object-contain transition-transform duration-500 ease-out group-hover/tile:scale-[1.05]"
-      />
+      <span className="absolute inset-x-[12%] inset-y-[17%] rounded-full bg-brand/20 opacity-55 blur-3xl transition-[opacity,transform] duration-700 ease-out group-hover/tile:scale-110 group-hover/tile:opacity-80 dark:opacity-35" />
+
+      <div
+        className="metal-float relative h-full w-full"
+        style={{ "--float-delay": "-3.6s" }}
+      >
+        <Image
+          src="/assets/forex.webp"
+          alt=""
+          width={1024}
+          height={768}
+          sizes="(min-width: 1280px) 500px, (min-width: 640px) 46vw, 100vw"
+          className="h-full w-full origin-[58%_56%] object-contain drop-shadow-[0_24px_30px_rgba(4,26,74,0.18)] transition-[transform,filter] duration-700 ease-out group-hover/tile:-rotate-[0.8deg] group-hover/tile:scale-[1.045] group-hover/tile:drop-shadow-[0_30px_36px_rgba(19,86,190,0.28)]"
+        />
+      </div>
+
+      <span className="absolute top-[14%] right-[22%] h-10 w-10 rounded-full bg-white/50 opacity-0 blur-2xl transition-opacity duration-500 group-hover/tile:opacity-65" />
     </div>
   );
 }
