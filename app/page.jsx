@@ -3,7 +3,7 @@ import { Markets } from "@/components/site/Markets";
 import { Conditions } from "@/components/site/Conditions";
 import { AccountTypes } from "@/components/site/AccountTypes";
 import { MobileApp } from "@/components/site/MobileApp";
-import { MobileDownload } from "@/components/site/MobileDownload";
+import { MobileTrading } from "@/components/site/MobileTrading";
 import { Funding } from "@/components/site/Funding";
 import { FinalCta } from "@/components/site/FinalCta";
 import { Hero } from "@/components/site/Hero";
@@ -18,8 +18,8 @@ export default function Home() {
       <Conditions />
       <TradingShowcase />
       <AccountTypes />
+      <MobileTrading />
       <MobileApp />
-      <MobileDownload />
       <Funding />
       <FinalCta />
     </main>
