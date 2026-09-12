@@ -10,6 +10,9 @@
     radial-gradient(ellipse at 43% 103%, #54b3ff 0%, transparent 35%),
     linear-gradient(120deg, #0750a8 0%, #146bd1 47%, #339bfa 78%, #0760c4 100%);
   scroll-margin-top: 90px;
+  height: 100vh;
+  height: 100dvh;
+  min-height: 650px; /* Ensures items don't collide on shorter displays */
 }
 
 .section::before,
@@ -44,7 +47,7 @@
 .stage {
   position: relative;
   max-width: 1480px;
-  min-height: clamp(520px, 46vw, 640px); /* Tighter total section height */
+  height: 100%;
   margin-inline: auto;
   display: flex;
   align-items: center;
@@ -53,7 +56,7 @@
 .content {
   position: relative;
   width: 50%;
-  padding: clamp(40px, 4vw, 60px) 0 clamp(40px, 4vw, 60px) 5%;
+  padding: 0 0 0 5%;
 }
 
 .eyebrow {
@@ -84,7 +87,6 @@
   text-wrap: pretty;
 }
 
-/* Compact App Store & Google Play Badges */
 .stores {
   display: flex;
   flex-wrap: wrap;
@@ -96,7 +98,7 @@
   display: inline-flex;
   align-items: center;
   gap: 8px;
-  padding: 6px 14px; /* Reduced button padding */
+  padding: 6px 14px;
   border: 1px solid #b4c0d3;
   border-radius: 6px;
   background: #000;
@@ -118,7 +120,7 @@
 }
 
 .storeIcon {
-  width: clamp(20px, 1.6vw, 24px); /* Scaled down store icon */
+  width: clamp(20px, 1.6vw, 24px);
   height: clamp(22px, 1.8vw, 28px);
   flex-shrink: 0;
 }
@@ -130,12 +132,12 @@
 }
 
 .storeEyebrow {
-  font-size: clamp(8px, .75vw, 10px); /* Compact badge label */
+  font-size: clamp(8px, .75vw, 10px);
   line-height: 1.1;
 }
 
 .storeName {
-  font-size: clamp(14px, 1.25vw, 17px); /* Compact store name */
+  font-size: clamp(14px, 1.25vw, 17px);
   line-height: 1.1;
   font-weight: 600;
 }
@@ -191,10 +193,9 @@
   mask-size: 100% 100%;
 }
 
-/* Hero Phone Mockup (Restored Prominence) */
 .phone {
   position: absolute;
-  width: clamp(400px, 46vw, 680px); /* Prominent visual size */
+  width: clamp(380px, 44vw, 650px);
   right: 2%;
   top: 50%;
   transform: translateY(-50%);
@@ -207,8 +208,8 @@
 }
 
 @media (min-width: 768px) and (max-width: 1100px) {
-  .stage { min-height: 500px; }
-  .content { width: 52%; padding: 36px 0 36px 4%; }
+  .section { height: 100vh; min-height: 580px; }
+  .content { width: 52%; padding-left: 4%; }
   .title { font-size: clamp(38px, 5vw, 56px); }
   .description { font-size: 14px; margin-top: 14px; }
   .stores { gap: 8px; margin-top: 18px; }
@@ -216,12 +217,13 @@
   .storeName { font-size: 14px; }
   .downloadDetails { gap: 16px; margin-top: 18px; }
   .rating { width: 150px; padding-left: 12px; }
-  .phone { width: 46%; right: 0; }
+  .phone { width: 44%; right: 1%; }
 }
 
 @media (max-width: 767px) {
-  .stage { min-height: auto; display: block; }
-  .content { width: 100%; padding: 40px 20px 0; }
+  .section { height: auto; min-height: 100vh; min-height: 100dvh; }
+  .stage { display: block; height: auto; }
+  .content { width: 100%; padding: 60px 20px 0; }
   .eyebrow { font-size: 11px; margin-bottom: 10px; }
   .title { font-size: clamp(36px, 9vw, 54px); }
   .description { max-width: 100%; margin-top: 14px; font-size: 14px; line-height: 1.5; }
@@ -236,7 +238,7 @@
   .rating { width: 160px; padding-left: 12px; }
   .phone { 
     position: relative; 
-    width: min(92%, 460px); 
+    width: min(90%, 420px); 
     margin: 24px auto 0; 
     top: auto; 
     right: auto; 
